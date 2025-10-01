@@ -7,7 +7,97 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
+<body><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The EXBIO Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
 <body>
+
+    <div id="selection-screen" class="screen active">
+        <div class="selection-container">
+            <h1>Welcome to The EXBIO portal</h1>
+            <p>Please select your user type:</p>
+            <div class="user-types">
+                <div class="user-card" data-type="Scientist">
+                    <i class="fas fa-flask"></i>
+                    <h2>Scientist</h2>
+                    <p>Generate new hypotheses</p>
+                </div>
+                <div class="user-card" data-type="Manager">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Manager</h2>
+                    <p>Identify opportunities for investment</p>
+                </div>
+                <div class="user-card" data-type="Architect">
+                    <i class="fas fa-drafting-compass"></i>
+                    <h2>Mission Architect</h2>
+                    <p>Explore the Moon and Mars safely</p>
+                </div>
+                <div class="user-card" data-type="Visitor">
+                    <i class="fas fa-globe-americas"></i>
+                    <h2>Visitor</h2>
+                    <p>Explore public content</p>
+                </div>
+            </div>
+            <button id="continue-btn" disabled>Continue</button>
+            <p class="support-text">Don't see your type? Contact Support.</p>
+        </div>
+    </div>
+
+    <div id="portal-screen" class="screen">
+        <header>
+            <div class="logo">EXBIOPORTAL</div>
+            <nav id="main-nav">
+                </nav>
+        </header>
+
+        <main id="content">
+            <section id="home-page" class="page active-page">
+                <h2>Welcome to EXBIOPORTAL</h2>
+                <p>Leveraging AI to enable a new era of human space exploration by summarizing NASA bioscience publications.</p>
+                </section>
+            
+            <section id="publications-page" class="page hidden-page">
+                <h2>Publications</h2>
+                <div class="publication-controls">
+                    <select id="publication-filter">
+                        <option value="all">All Publications</option>
+                        <option value="latest">Latest Publications</option>
+                        <option value="announcements">Announcements</option>
+                    </select>
+                    <button>Submit a Publication</button>
+                </div>
+                
+                <table id="publications-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Link</th>
+                            <th>Summary</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="3">Publications data will load here...</td></tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            </main>
+        
+        <div id="chatbot-icon" class="chatbot-icon">
+            <i class="fas fa-comments"></i>
+        </div>
+        
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
 
     <div class="app-container">
         
