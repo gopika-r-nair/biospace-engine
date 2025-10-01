@@ -1,759 +1,267 @@
-/* ===================================================================
-    GLOBAL STYLES & RESET 
-    ===================================================================
-*/
+/* --- General Setup & Variables --- */
 :root {
-    --primary-blue: #007bff;
-    --primary-dark: #2c3e50;
-    --accent-light: #ecf0f1;
-    --text-color: #34495e;
-    --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --background-color: #f8f9fa;
+    --surface-color: #ffffff;
+    --text-color: #333;
+    --border-color: #dee2e6;
+    --hover-color: #e9ecef;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    background-color: var(--background-color);
     color: var(--text-color);
-    background-color: var(--accent-light);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
+    line-height: 1.6;
 }
 
-#app-container {
-    width: 100%;
-    max-width: 1400px; /* Max width for large screens */
-    background-color: #fff;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-    min-height: 100vh;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Utility Class */
 .hidden {
     display: none !important;
 }
 
+/* --- User Type Selection Screen --- */
+.full-screen-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+}
 
-/* ===================================================================
-    UNIVERSAL HEADER STYLES 
-    ===================================================================
-*/
-#universal-header {
+.user-type-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.user-type-box {
+    width: 220px;
+    height: 220px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--surface-color);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.user-type-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.user-type-box h3 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+/* --- Main App Layout --- */
+#main-app {
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
-    border-bottom: 1px solid var(--accent-light);
-    background-color: #fff;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.icon-button {
+.back-nav #back-button {
     background: none;
     border: none;
-    color: var(--primary-dark);
-    font-size: 16px;
+    font-size: 1.5rem;
     cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 5px;
-    transition: background-color 0.2s;
-}
-
-.icon-button:hover {
-    background-color: var(--accent-light);
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-/* User Profile Dropdown */
-.user-profile-nav {
-    position: relative;
-    display: inline-block;
-}
-
-.user-icon {
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--primary-dark);
-}
-
-.user-dropdown {
-    display: none;
-    position: absolute;
-    right: 0;
-    background-color: #fff;
-    min-width: 120px;
-    box-shadow: var(--card-shadow);
-    z-index: 1;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.user-profile-nav:hover .user-dropdown {
-    display: block;
-}
-
-.user-dropdown a {
     color: var(--text-color);
+}
+
+.top-right-nav a {
+    text-decoration: none;
+    color: var(--secondary-color);
+    margin-left: 1.5rem;
+}
+
+.top-right-nav a:hover {
+    color: var(--primary-color);
+}
+
+.portal-title {
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.portal-title h2 {
+    margin: 0;
+}
+
+.portal-title p {
+    margin: 0;
+    font-style: italic;
+    color: var(--secondary-color);
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--surface-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.nav-link:hover {
+    background-color: var(--hover-color);
+}
+
+.nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+}
+
+#content-area {
+    margin-top: 2rem;
+    background-color: var(--surface-color);
+    padding: 2rem;
+    border-radius: 8px;
+    min-height: 400px;
+}
+
+/* --- Content-Specific Styles --- */
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+.grid-item {
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+.image-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+.nav-link-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
     padding: 10px 15px;
-    text-decoration: none;
-    display: block;
-    font-size: 14px;
-}
-
-.user-dropdown a:hover {
-    background-color: var(--accent-light);
-    color: var(--primary-blue);
-}
-
-
-/* ===================================================================
-    VIEW MANAGEMENT (SPA LOGIC)
-    ===================================================================
-*/
-#views-container {
-    flex-grow: 1; /* Allows content area to fill vertical space */
-}
-
-.view {
-    padding: 30px;
-    min-height: calc(100vh - 70px); /* Adjust based on header height */
-    display: none;
-    flex-direction: column;
-    gap: 20px;
-    animation: fadeIn 0.4s ease-out;
-}
-
-.view.active {
-    display: flex;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===================================================================
-    VIEW 1: User Selection Screen 
-    ===================================================================
-*/
-#view-user-select {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    min-height: 100vh;
-    background-color: var(--primary-dark);
-    color: #fff;
-}
-
-#view-user-select h1 {
-    margin-bottom: 50px;
-    font-size: 2.5em;
-}
-
-.user-type-cards {
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.user-type-card {
-    background-color: #fff;
-    color: var(--primary-dark);
-    padding: 30px;
-    border-radius: 10px;
-    width: 250px;
-    height: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: var(--card-shadow);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.user-type-card:hover {
-    transform: translateY(-10px) scale(1.05);
-    box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3);
-}
-
-.user-type-card i {
-    font-size: 4em;
-    color: var(--primary-blue);
-    margin-bottom: 15px;
-}
-
-/* ===================================================================
-    VIEW 2: Main Dashboard (Home) 
-    ===================================================================
-*/
-.branding {
-    color: var(--primary-blue);
-    font-size: 2.2em;
-    margin-bottom: 5px;
-}
-
-.branding small {
-    display: block;
-    font-size: 0.5em;
-    color: #95a5a6;
-    font-weight: normal;
-}
-
-.main-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    padding: 15px 0;
-    border-top: 1px solid var(--accent-light);
-    border-bottom: 1px solid var(--accent-light);
-    margin-bottom: 30px;
-}
-
-.main-nav .nav-link {
-    text-decoration: none;
-    color: var(--primary-dark);
-    font-weight: 600;
-    padding: 8px 15px;
     border-radius: 5px;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.main-nav .nav-link:hover,
-.main-nav .nav-link.active {
-    background-color: var(--primary-blue);
-    color: #fff;
-}
-
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 30px;
-    height: 60vh;
-}
-
-.card {
-    background-color: var(--accent-light);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: var(--card-shadow);
-}
-
-.card h2 {
-    color: var(--primary-dark);
-    margin-bottom: 15px;
-    font-size: 1.5em;
-}
-
-.announcement-card {
-    grid-row: 1 / 3; /* Spans two rows */
-}
-
-.announcement-card ul {
-    list-style: disc;
-    margin-left: 20px;
-}
-
-.submit-card {
-    background-color: var(--primary-blue);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     cursor: pointer;
 }
-
-.submit-card h2 {
-    color: #fff;
-}
-
-.submit-card button {
-    background-color: #fff;
-    color: var(--primary-blue);
+#partner-mode-btn {
+    background-color: #28a745;
+    color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 20px;
     border-radius: 5px;
+    font-size: 1rem;
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
 }
 
-.submit-card button:hover {
-    background-color: var(--accent-light);
-}
-
-.image-area {
-    background-color: #95a5a6;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.placeholder-image {
+/* Publications Page */
+#publication-search {
     width: 100%;
-    height: 100%;
-    background-color: #bdc3c7;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2em;
-    color: #7f8c8d;
-    min-height: 150px;
-}
-/* ===================================================================
-    GENERIC CONTENT PAGE STYLES 
-    ===================================================================
-*/
-.content-page {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.content-page h2 {
-    font-size: 2em;
-    color: var(--primary-blue);
-    border-bottom: 2px solid var(--accent-light);
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-.content-section, .image-section {
-    margin-top: 30px;
-}
-
-.content-section h3 {
-    color: var(--primary-dark);
-    margin-bottom: 10px;
-}
-
-.image-section .placeholder-image.large {
-    min-height: 300px;
-}
-
-/* ===================================================================
-    PUBLICATIONS LIST STYLES 
-    ===================================================================
-*/
-.search-bar-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.search-input {
     padding: 10px;
-    border: 1px solid #ccc;
+    font-size: 1rem;
     border-radius: 5px;
-    flex-grow: 1;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    box-sizing: border-box;
 }
-
-.publications-table-container {
-    overflow-x: auto;
-    margin-bottom: 20px;
+.publication-item {
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
 }
+.publication-item h4 { margin: 0 0 0.5rem 0; }
+.publication-item p { margin: 0.2rem 0; font-size: 0.9em; }
+.publication-item a { color: var(--primary-color); }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    box-shadow: var(--card-shadow);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-th, td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--accent-light);
-}
-
-th {
-    background-color: var(--primary-dark);
-    color: #fff;
+/* Submit Form */
+#publication-form label {
+    display: block;
+    margin-top: 1rem;
     font-weight: bold;
 }
-
-tr:hover {
-    background-color: #f8f9fa;
-}
-
-.small-button {
-    background-color: var(--primary-blue);
-    color: #fff;
-    border: none;
-    padding: 8px 15px;
+#publication-form input,
+#publication-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 0.5rem;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s;
+    box-sizing: border-box;
 }
-
-.small-button:hover {
-    background-color: #0056b3;
-}
-
-.submit-pub-btn {
-    margin-top: 20px;
-    display: block;
-    width: 100%;
-}
-
-/* ===================================================================
-    SUBMISSION FORM STYLES 
-    ===================================================================
-*/
-.submission-form {
+.form-footer {
+    margin-top: 1.5rem;
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    background-color: var(--accent-light);
-    padding: 30px;
-    border-radius: 8px;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.form-section {
-    width: 100%;
-}
-
-.form-section.half-width {
-    width: calc(50% - 10px);
-}
-
-.submission-form h3 {
-    color: var(--primary-dark);
-    margin-bottom: 10px;
-    border-left: 4px solid var(--primary-blue);
-    padding-left: 10px;
-}
-
-.submission-form input[type="text"],
-.submission-form input[type="email"],
-.submission-form input[type="tel"],
-.submission-form textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-.submission-form textarea {
-    resize: vertical;
-    min-height: 150px;
-}
-
-.help-link {
-    display: block;
-    color: var(--primary-blue);
-    text-decoration: none;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.primary-button {
-    background-color: var(--primary-blue);
-    color: #fff;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-
-.primary-button:hover {
-    background-color: #0056b3;
-}
-
-.primary-button.full-width {
-    width: 100%;
-    margin-top: 10px;
-}
-.primary-button.large-button {
-    font-size: 1.2em;
-    padding: 15px 30px;
-}
-
-/* ===================================================================
-    INTERACTIVES STYLES 
-    ===================================================================
-*/
-.interactive-list {
-    display: flex;
-    gap: 30px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-}
-
-.interactive-item {
-    background-color: #fff;
-    border: 2px solid var(--primary-blue);
-    border-radius: 8px;
-    padding: 20px;
-    width: 200px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.interactive-item:hover {
-    background-color: var(--accent-light);
-}
-
-.interactive-item i {
-    font-size: 3em;
-    color: var(--primary-blue);
-    margin-bottom: 10px;
-}
-
-/* ===================================================================
-    NEWS STYLES 
-    ===================================================================
-*/
-.news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-.news-section {
-    background-color: #fff;
-    border: 1px solid var(--accent-light);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: var(--card-shadow);
-}
-
-.news-section h3 {
-    color: var(--primary-blue);
-    margin-bottom: 10px;
-}
-
-/* ===================================================================
-    LIBRARY STYLES 
-    ===================================================================
-*/
-.library-tabs {
-    display: flex;
-    margin-bottom: 20px;
-}
-
-.library-tab {
-    background-color: #fff;
-    border: 1px solid var(--primary-dark);
-    color: var(--primary-dark);
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.library-tab:first-child { border-radius: 5px 0 0 5px; }
-.library-tab:last-child { border-radius: 0 5px 5px 0; }
-
-.library-tab.active {
-    background-color: var(--primary-blue);
-    color: #fff;
-    border-color: var(--primary-blue);
-}
-
-.library-content {
-    background-color: var(--accent-light);
-    padding: 30px;
-    border-radius: 8px;
-}
-
-/* ===================================================================
-    FLOATING CHATBOT BUTTON 
-    ===================================================================
-*/
+/* --- Floating Chatbot --- */
 #chatbot-button {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 2rem;
+    right: 2rem;
     width: 60px;
     height: 60px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
     border-radius: 50%;
-    background-color: var(--primary-blue);
-    color: #fff;
-    font-size: 1.5em;
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
-    z-index: 100;
-    padding: 0;
+    font-size: 1.8rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
 }
 
-#chatbot-button:hover {
-    background-color: #0056b3;
-}
-
-
-/* ===================================================================
-    NEW: NASA Integration Styles 
-    ===================================================================
-*/
-.nasa-promo-card {
-    background-color: var(--primary-dark); /* Distinct background for emphasis */
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 20px;
-}
-
-.nasa-promo-card h2 {
-    color: #fff;
-    margin-bottom: 10px;
-}
-
-.nasa-link-button {
-    display: block;
-    text-decoration: none;
-    background-color: #fff;
-    color: var(--primary-dark);
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-weight: bold;
-    text-align: center;
-    transition: background-color 0.2s;
-}
-
-.nasa-link-button:hover {
-    background-color: var(--accent-light);
-}
-
-.nasa-resource-banner {
-    background-color: var(--accent-light);
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.nasa-resource-banner p {
-    font-weight: 600;
-    color: var(--primary-dark);
-    flex-shrink: 1;
-}
-
-.resource-link-button {
-    text-decoration: none;
-    background-color: var(--primary-blue);
-    color: #fff;
-    padding: 8px 15px;
-    border-radius: 4px;
-    font-size: 0.9em;
-    font-weight: bold;
-    transition: background-color 0.2s;
-    white-space: nowrap; /* Keep the button from wrapping */
-    flex-shrink: 0;
-}
-
-.resource-link-button.primary-dark-button {
-    background-color: var(--primary-dark);
-}
-
-.resource-link-button:hover {
-    background-color: #0056b3;
-}
-
-/* Publications Table Update */
-#view-publications-list table th:nth-child(3),
-#view-publications-list table td:nth-child(3) {
-    width: 150px; /* Allocate space for the Source column */
-}
-
-
-/* ===================================================================
-    NEW: FOOTER/DISCLAIMER STYLES 
-    ===================================================================
-*/
-#app-footer {
-    padding: 15px 30px;
-    background-color: var(--primary-dark);
-    color: #b3c5d6;
-    font-size: 0.8em;
-    text-align: center;
-    border-top: 1px solid #3d5a73;
-    width: 100%;
-    margin-top: auto;
-    flex-shrink: 0; /* Prevents shrinking */
-}
-
-.disclaimer-content {
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.disclaimer-content p:first-child {
-    margin-bottom: 10px;
-    color: #fff;
-    font-weight: bold;
-}
-
-
-/* ===================================================================
-    RESPONSIVENESS (Mobile First Adjustments)
-    ===================================================================
-*/
-@media (max-width: 900px) {
-    #universal-header {
-        padding: 10px 15px;
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    nav {
+        gap: 0.5rem;
     }
-    .main-nav {
-        justify-content: center;
+    .nav-link {
+        padding: 0.5rem;
     }
-
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-        height: auto;
+    .top-right-nav a {
+        margin-left: 0.5rem;
+        font-size: 0.9rem; /* Hide text on small screens */
     }
-
-    .announcement-card {
-        grid-row: auto;
-    }
-
-    .nasa-resource-banner {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .nasa-resource-banner p {
-        margin-bottom: 10px;
-    }
-
-    .form-section.half-width {
-        width: 100%;
-    }
+     .top-right-nav a i {
+        margin-right: 0.2rem;
+     }
 }
