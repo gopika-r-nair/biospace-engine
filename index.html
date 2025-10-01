@@ -3,159 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The EXBIO Portal Dashboard</title>
+    <title>EXBIO Portal Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 
-    <div id="selection-screen" class="screen active">
-        <div class="selection-container">
-            <h1>Welcome to The EXBIO portal</h1>
-            <p>Please select your user type:</p>
-            <div class="user-types">
-                <div class="user-card" data-type="Scientist">
-                    <i class="fas fa-flask"></i>
-                    <h2>Scientist</h2>
-                    <p>Generate new hypotheses</p>
-                </div>
-                <div class="user-card" data-type="Manager">
-                    <i class="fas fa-chart-line"></i>
-                    <h2>Manager</h2>
-                    <p>Identify opportunities for investment</p>
-                </div>
-                <div class="user-card" data-type="Architect">
-                    <i class="fas fa-drafting-compass"></i>
-                    <h2>Mission Architect</h2>
-                    <p>Explore the Moon and Mars safely</p>
-                </div>
-                <div class="user-card" data-type="Visitor">
-                    <i class="fas fa-globe-americas"></i>
-                    <h2>Visitor</h2>
-                    <p>Explore public content</p>
-                </div>
-            </div>
-            <button id="continue-btn" disabled>Continue</button>
-            <p class="support-text">Don't see your type? Contact Support.</p>
-        </div>
-    </div>
+    <div id="app-container">
 
-    <div id="portal-screen" class="screen">
-        <header>
-            <div class="logo">EXBIOPORTAL</div>
+        <header id="universal-header" class="hidden">
+            <div class="header-left">
+                <button id="back-button" class="icon-button"><i class="fas fa-arrow-left"></i> Back</button>
+            </div>
+            <div class="header-right">
+                <div class="user-profile-nav">
+                    <i class="fas fa-user-circle user-icon"></i>
+                    <div class="user-dropdown">
+                        <a href="#" onclick="handlePlaceholderClick('Settings')">Settings</a>
+                        <a href="#" onclick="handlePlaceholderClick('Login')">Login</a>
+                        <a href="#" onclick="handlePlaceholderClick('Register')">Register</a>
+                    </div>
+                </div>
+                <button class="icon-button" onclick="handlePlaceholderClick('Settings')"><i class="fas fa-cog"></i></button>
+            </div>
         </header>
 
-        <div class="dashboard-container">
-            <aside id="sidebar">
-                <div class="sidebar-header">
-                    <button id="logout-btn">Change Role/Logout</button>
-                </div>
-                <nav id="main-nav">
-                    </nav>
-            </aside>
+        <main id="views-container">
 
-            <main id="content">
-                <section id="home-page" class="page active-page">
-                    <h2>Welcome to EXBIOPORTAL</h2>
-                    <p>Leveraging AI to enable a new era of human space exploration by summarizing NASA bioscience publications.</p>
-                    <p class="user-info">You are currently logged in as: <span id="current-user-role"></span></p>
-                    </section>
-                
-                <section id="publications-page" class="page hidden-page">
-                    <h2>Publications Hub</h2>
-                    <div class="publication-controls">
-                        <select id="publication-filter">
-                            <option value="all">All Publications</option>
-                            <option value="latest">Latest Publications</option>
-                            <option value="announcements">Announcements</option>
-                        </select>
-                        <button class="submit-pub-btn"><i class="fas fa-upload"></i> Submit a Publication</button>
+            <section id="view-user-select" class="view active">
+                <div class="user-select-container">
+                    <h1>Select Your User Type</h1>
+                    <div class="user-type-cards">
+                        <div class="user-type-card" data-target="view-dashboard">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h2>Student</h2>
+                        </div>
+                        <div class="user-type-card" data-target="view-dashboard">
+                            <i class="fas fa-flask"></i>
+                            <h2>Researcher</h2>
+                        </div>
+                        <div class="user-type-card" data-target="view-dashboard">
+                            <i class="fas fa-users"></i>
+                            <h2>Public</h2>
+                        </div>
                     </div>
-                    
-                    <table id="publications-table">
+                </div>
+            </section>
+
+            <section id="view-dashboard" class="view">
+                <div class="dashboard-header">
+                    <h1 class="branding">WELCOME TO EXBIO PORTAL <small>powered by cosmic minds</small></h1>
+                </div>
+
+                <nav class="main-nav">
+                    <a href="#" class="nav-link active" data-target="view-dashboard">Home</a>
+                    <a href="#" class="nav-link" data-target="view-about-us">About us</a>
+                    <a href="#" class="nav-link" data-target="view-publications-list">Publications</a>
+                    <a href="#" class="nav-link" data-target="view-activities">Activities</a>
+                    <a href="#" class="nav-link" data-target="view-career">Career</a>
+                    <a href="#" class="nav-link" data-target="view-library">Library</a>
+                    <a href="#" class="nav-link" data-target="view-interactives">Interactives</a>
+                    <a href="#" class="nav-link" data-target="view-news">News</a>
+                    <a href="#" class="nav-link" data-target="view-life-of-nasa">Life of Nasa</a>
+                    <a href="#" class="nav-link" data-target="view-future">Future of Biospace</a>
+                    <a href="#" class="nav-link" data-target="view-qa">Q/A</a>
+                </nav>
+
+                <div class="dashboard-grid">
+                    <div class="card announcement-card">
+                        <h2>Announcements</h2>
+                        <ul>
+                            <li>New study published on Mars' atmosphere.</li>
+                            <li>Webinar on Biospace safety next week!</li>
+                        </ul>
+                    </div>
+                    <div class="card submit-card" onclick="navigateTo('view-submit-publication')">
+                        <h2>Submit a publication</h2>
+                        <p>Share your work with the EXBIO community.</p>
+                        <button>Start Submission</button>
+                    </div>
+                    <div class="card image-area">
+                        <h2>Featured Image</h2>
+                        <div class="placeholder-image">Image Placeholder</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-about-us" class="view content-page">
+                <h2>About us</h2>
+                <p>Some description about the page: EXBIO Portal is dedicated to advancing the public and scientific understanding of biospace studies and technologies.</p>
+                <div class="content-section">
+                    <h3>Major strides in biospace studies</h3>
+                    <p>Highlighting key achievements and breakthroughs in the field.</p>
+                </div>
+                <div class="image-section">
+                    <div class="placeholder-image large">Images Placeholder</div>
+                </div>
+            </section>
+            
+            <section id="view-publications-list" class="view content-page">
+                <h2>Publications Directory</h2>
+                <div class="search-bar-container">
+                    <input type="text" placeholder="Search by Title..." class="search-input">
+                    <input type="text" placeholder="Search by Link/DOI..." class="search-input">
+                    <button class="primary-button">Search</button>
+                </div>
+
+                <div class="publications-table-container">
+                    <table>
                         <thead>
                             <tr>
                                 <th>Title</th>
-                                <th>Link</th>
-                                <th>Summary</th>
+                                <th>Link/DOI</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td colspan="3">Click the Publications link in the sidebar to load data...</td></tr>
+                            <tr>
+                                <td>Example Publication 1</td>
+                                <td>https://link-to-pub1.org</td>
+                                <td><button class="small-button">Get Details/CSV</button></td>
+                            </tr>
+                             <tr>
+                                <td>Example Publication 2</td>
+                                <td>https://link-to-pub2.org</td>
+                                <td><button class="small-button">Get Details/CSV</button></td>
+                            </tr>
                         </tbody>
                     </table>
-                    
-                    <div class="summary-generator">
-                        <h3>Publication Summary Generator</h3>
-                        <div id="summary-output">
-                            <p>Select an item from the table and click the 'Summary' icon to generate an AI-driven summary.</p>
-                            <div class="visualization-placeholder">
-                                <i class="fas fa-satellite-dish"></i>
-                                <span>Space Bio Visualization Placeholder</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                
-                <section id="library-page" class="page hidden-page">
-                    <h2>Library</h2>
-                    <div class="library-resources">
-                        <div class="library-card">
-                            <h3>NASA Open Science Data Repository (OSDR)</h3>
-                            <p>The NASA OSDR provides access to data from over 500 biological experiments either performed in space, or in support of space exploration.</p>
-                            <a href="https://science.nasa.gov/biological-physical/data/osdr/" target="_blank">Explore Data & Metadata <i class="fas fa-external-link-alt"></i></a>
-                        </div>
-                        
-                        <div class="library-card">
-                            <h3>NASA Space Life Sciences Library (NSLSL)</h3>
-                            <p>Consolidates global space life sciences literature into a single database to support research that addresses the effects of the space environment on biological systems.</p>
-                            <a href="https://public.ksc.nasa.gov/nslsl/" target="_blank">Search Literature <i class="fas fa-external-link-alt"></i></a>
-                        </div>
-                        
-                        <div class="library-card">
-                            <h3>NASA Task Book</h3>
-                            <p>An online database of research projects supported by NASA's BPS and HRP. View project descriptions, reports, and bibliographical listings.</p>
-                            <a href="https://taskbook.nasa.gov/" target="_blank">View Research Projects <i class="fas fa-external-link-alt"></i></a>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="about-us-page" class="page hidden-page"><h2>About Us</h2><p>Content under construction.</p></section>
-                <section id="activities-page" class="page hidden-page"><h2>Activities</h2><p>Content under construction (Q/A section, Interactives).</p></section>
-                <section id="news-page" class="page hidden-page"><h2>News</h2><p>Content under construction.</p></section>
-                <section id="career-page" class="page hidden-page"><h2>Career</h2><p>Content under construction (Life at NASA, Future of BioSpace).</p></section>
-            </main>
-        </div>
-        
-        <div id="chatbot-icon" class="chatbot-icon">
-            <i class="fas fa-comments"></i>
-        </div>
-
-        <div id="chatbot-panel" class="chatbot-panel hidden">
-            <div class="chat-header">
-                <span class="chat-title">EXBICHAT AI</span>
-                <button class="chat-close-btn" id="chat-close-btn"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="chat-messages" id="chat-messages">
-                <div class="message bot-message">
-                    <p>Hi there 👋</p>
-                    <p>Welcome to EXBICHAT! How can I help you today? I can answer questions about publications, the library, and the AI summary features.</p>
                 </div>
-            </div>
-            <div class="chat-footer">
-                <button class="quick-reply-btn" data-query="Latest Publications">Latest Publications</button>
-                <button class="quick-reply-btn" data-query="About the Library">About the Library</button>
-                <button class="quick-reply-btn" data-query="How does the AI Summary work?">How does the AI Summary work?</button>
-            </div>
-            <div class="chat-input">
-                <input type="text" id="chat-input-field" placeholder="Ask me anything...">
-                <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
-        
+                <button class="primary-button submit-pub-btn" onclick="navigateTo('view-submit-publication')">Submit a New Publication</button>
+            </section>
+
+            <section id="view-submit-publication" class="view content-page">
+                <h2>Submit a New Publication</h2>
+                <form class="submission-form">
+                    <div class="form-section">
+                        <h3>Define Your Idea</h3>
+                        <textarea placeholder="Briefly describe your research idea/summary."></textarea>
+                    </div>
+                    <div class="form-section">
+                        <h3>Motive (if any)</h3>
+                        <input type="text" placeholder="e.g., Contribution to specific study, personal research.">
+                    </div>
+                    <div class="form-section half-width">
+                        <h3>Personal Details</h3>
+                        <input type="text" placeholder="Full Name">
+                        <input type="email" placeholder="Email Address">
+                    </div>
+                    <div class="form-section half-width">
+                        <h3>Contact</h3>
+                        <input type="tel" placeholder="Phone Number">
+                        <input type="text" placeholder="Affiliation/Institution">
+                    </div>
+                    <a href="#" class="help-link" onclick="handlePlaceholderClick('Submission Help')">Click for help</a>
+                    <button type="submit" class="primary-button full-width">Submit Publication</button>
+                </form>
+            </section>
+
+            <section id="view-activities" class="view content-page">
+                <h2>Activities</h2>
+                <h3 class="important-note">Important: Upcoming Field Trips & Workshops</h3>
+                <p>Some description: A list of current and past projects, workshops, and collaborative efforts in biospace exploration.</p>
+                <div class="image-section">
+                    <div class="placeholder-image large">Activity Images Placeholder</div>
+                </div>
+            </section>
+
+            <section id="view-interactives" class="view content-page">
+                <h2>Interactives</h2>
+                <p>Some description: Engage with our educational games and simulations!</p>
+                <div class="interactive-list">
+                    <div class="interactive-item" onclick="handlePlaceholderClick('Game 1')">
+                        <i class="fas fa-rocket"></i>
+                        <p>Game 1 (Click to Game 1)</p>
+                    </div>
+                    <div class="interactive-item" onclick="handlePlaceholderClick('Game 2')">
+                        <i class="fas fa-satellite"></i>
+                        <p>Game 2 (Click to Game 2)</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-news" class="view content-page">
+                <h2>News & Media</h2>
+                <div class="news-grid">
+                    <div class="news-section"><h3>Trending</h3><p>Latest hot topics.</p></div>
+                    <div class="news-section"><h3>Articles</h3><p>In-depth features.</p></div>
+                    <div class="news-section"><h3>Episode</h3><p>Video/Podcast series.</p></div>
+                    <div class="news-section"><h3>Others</h3><p>Miscellaneous updates.</p></div>
+                </div>
+            </section>
+
+            <section id="view-library" class="view content-page">
+                <h2>EXBIO Library</h2>
+                <div class="library-tabs">
+                    <button class="library-tab active">Book</button>
+                    <button class="library-tab">Journal</button>
+                    <button class="library-tab">Past papers/thesis</button>
+                </div>
+                <div class="library-content">
+                    <p>Content for selected tab will be loaded here.</p>
+                </div>
+            </section>
+
+            <section id="view-career" class="view content-page">
+                <h2>Career Opportunities</h2>
+                <p>Some description: Explore opportunities in biospace, from research to engineering and public outreach roles.</p>
+                <button class="primary-button large-button" onclick="handlePlaceholderClick('Partner Mode')">Partner Mode</button>
+                <p class="partner-desc">Apply for institutional partnerships and collaborations.</p>
+            </section>
+
+            <section id="view-life-of-nasa" class="view content-page">
+                <h2>Life of NASA</h2>
+                <h3>Experience shared by NASA workers</h3>
+                <p>Personal stories and interviews from individuals working on cutting-edge space projects.</p>
+                <div class="image-section">
+                    <div class="placeholder-image large">NASA Worker Images/Videos Placeholder</div>
+                </div>
+            </section>
+
+            <section id="view-future" class="view content-page">
+                <h2>Future of Biospace Studies</h2>
+                <h3>Scope in field?</h3>
+                <p>Detailed analysis of emerging trends, required skills, and long-term career outlook in biospace research.</p>
+                <div class="image-section">
+                    <div class="placeholder-image large">Future Concept Art/Images Placeholder</div>
+                </div>
+            </section>
+            
+            <section id="view-qa" class="view content-page">
+                <h2>Q/A (Questions & Answers)</h2>
+                <p>Frequently Asked Questions and community forum for biospace topics.</p>
+            </section>
+
+        </main>
+
+        <button id="chatbot-button" class="icon-button floating-button" onclick="handlePlaceholderClick('Chatbot')">
+            <i class="fas fa-comments"></i>
+        </button>
+
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
