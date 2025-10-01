@@ -3,16 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXBIO Portal Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-</head>
-<body><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The EXBIO Portal</title>
+    <title>The EXBIO Portal Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -52,153 +43,119 @@
     <div id="portal-screen" class="screen">
         <header>
             <div class="logo">EXBIOPORTAL</div>
-            <nav id="main-nav">
-                </nav>
         </header>
 
-        <main id="content">
-            <section id="home-page" class="page active-page">
-                <h2>Welcome to EXBIOPORTAL</h2>
-                <p>Leveraging AI to enable a new era of human space exploration by summarizing NASA bioscience publications.</p>
-                </section>
-            
-            <section id="publications-page" class="page hidden-page">
-                <h2>Publications</h2>
-                <div class="publication-controls">
-                    <select id="publication-filter">
-                        <option value="all">All Publications</option>
-                        <option value="latest">Latest Publications</option>
-                        <option value="announcements">Announcements</option>
-                    </select>
-                    <button>Submit a Publication</button>
+        <div class="dashboard-container">
+            <aside id="sidebar">
+                <div class="sidebar-header">
+                    <button id="logout-btn">Change Role/Logout</button>
                 </div>
+                <nav id="main-nav">
+                    </nav>
+            </aside>
+
+            <main id="content">
+                <section id="home-page" class="page active-page">
+                    <h2>Welcome to EXBIOPORTAL</h2>
+                    <p>Leveraging AI to enable a new era of human space exploration by summarizing NASA bioscience publications.</p>
+                    <p class="user-info">You are currently logged in as: <span id="current-user-role"></span></p>
+                    </section>
                 
-                <table id="publications-table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Link</th>
-                            <th>Summary</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td colspan="3">Publications data will load here...</td></tr>
-                    </tbody>
-                </table>
-            </section>
-            
+                <section id="publications-page" class="page hidden-page">
+                    <h2>Publications Hub</h2>
+                    <div class="publication-controls">
+                        <select id="publication-filter">
+                            <option value="all">All Publications</option>
+                            <option value="latest">Latest Publications</option>
+                            <option value="announcements">Announcements</option>
+                        </select>
+                        <button class="submit-pub-btn"><i class="fas fa-upload"></i> Submit a Publication</button>
+                    </div>
+                    
+                    <table id="publications-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Link</th>
+                                <th>Summary</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="3">Click the Publications link in the sidebar to load data...</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="summary-generator">
+                        <h3>Publication Summary Generator</h3>
+                        <div id="summary-output">
+                            <p>Select an item from the table and click the 'Summary' icon to generate an AI-driven summary.</p>
+                            <div class="visualization-placeholder">
+                                <i class="fas fa-satellite-dish"></i>
+                                <span>Space Bio Visualization Placeholder</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="library-page" class="page hidden-page">
+                    <h2>Library</h2>
+                    <div class="library-resources">
+                        <div class="library-card">
+                            <h3>NASA Open Science Data Repository (OSDR)</h3>
+                            <p>The NASA OSDR provides access to data from over 500 biological experiments either performed in space, or in support of space exploration.</p>
+                            <a href="https://science.nasa.gov/biological-physical/data/osdr/" target="_blank">Explore Data & Metadata <i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                        
+                        <div class="library-card">
+                            <h3>NASA Space Life Sciences Library (NSLSL)</h3>
+                            <p>Consolidates global space life sciences literature into a single database to support research that addresses the effects of the space environment on biological systems.</p>
+                            <a href="https://public.ksc.nasa.gov/nslsl/" target="_blank">Search Literature <i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                        
+                        <div class="library-card">
+                            <h3>NASA Task Book</h3>
+                            <p>An online database of research projects supported by NASA's BPS and HRP. View project descriptions, reports, and bibliographical listings.</p>
+                            <a href="https://taskbook.nasa.gov/" target="_blank">View Research Projects <i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="about-us-page" class="page hidden-page"><h2>About Us</h2><p>Content under construction.</p></section>
+                <section id="activities-page" class="page hidden-page"><h2>Activities</h2><p>Content under construction (Q/A section, Interactives).</p></section>
+                <section id="news-page" class="page hidden-page"><h2>News</h2><p>Content under construction.</p></section>
+                <section id="career-page" class="page hidden-page"><h2>Career</h2><p>Content under construction (Life at NASA, Future of BioSpace).</p></section>
             </main>
+        </div>
         
         <div id="chatbot-icon" class="chatbot-icon">
             <i class="fas fa-comments"></i>
         </div>
-        
-    </div>
 
-    <script src="script.js"></script>
-</body>
-</html>
-
-    <div class="app-container">
-        
-        <header class="top-header">
-            <div class="logo">EXBIOPORTAL</div>
-            
-            <nav class="nav-tabs">
-                <a href="#" class="active">Dashboard</a>
-                <a href="#">Publications</a>
-                <a href="#">About</a>
-                <a href="#">Careers</a>
-            </nav>
-
-            <div class="user-controls">
-                <div class="user-role-icon" title="Current Role: Scientist">
-                    <i class="fas fa-user-astronaut"></i>
-                </div>
-                
-                <button class="icon-button" title="Settings">
-                    <i class="fas fa-cog"></i>
-                </button>
-                
-                <button class="icon-button logout-button" title="Change Role/Logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+        <div id="chatbot-panel" class="chatbot-panel hidden">
+            <div class="chat-header">
+                <span class="chat-title">EXBICHAT AI</span>
+                <button class="chat-close-btn" id="chat-close-btn"><i class="fas fa-times"></i></button>
             </div>
-        </header>
-
-        <main class="main-layout">
-            
-            <aside class="left-sidebar">
-                <div class="sidebar-nav">
-                    <h3>NAVIGATION</h3>
-                    <ul class="nav-list">
-                        <li><a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                        <li class="dropdown-toggle">
-                            <a href="#"><i class="fas fa-book"></i> Library <i class="fas fa-caret-down"></i></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">All Publications</a></li>
-                                <li><a href="#">Submit a new publication</a></li>
-                                <li><a href="#">Announcements</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown-toggle">
-                            <a href="#"><i class="fas fa-trophy"></i> Awards <i class="fas fa-caret-down"></i></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Q/A Section</a></li>
-                                <li><a href="#">Simulations</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot-message">
+                    <p>Hi there 👋</p>
+                    <p>Welcome to EXBICHAT! How can I help you today? I can answer questions about publications, the library, and the AI summary features.</p>
                 </div>
-
-                <div class="exbichat-panel">
-                    <h3>Activities (EXBIChat AI)</h3>
-                    <div class="chat-box">
-                        <p class="ai-msg">AI: Welcome, Scientist. How can I assist with your hypothesis generation today?</p>
-                        </div>
-                    <input type="text" placeholder="Prompt EXBIChat...">
-                </div>
-            </aside>
-            
-            <section class="main-content">
-                <h1 class="page-heading">Publications Hub</h1>
-
-                <div class="content-cards-container">
-                    
-                    <div class="content-card ai-summary-card">
-                        <h2>AI-Driven Publication Summary (Scientist View)</h2>
-                        <p><strong>Focus:</strong> Hypotheses and Research Gaps</p>
-                        <p class="summary-text">
-                            The analysis of the latest paper on *Artemia salina* suggests a gap in long-term multi-generational studies under partial gravity. The key hypothesis for future work is to test DNA repair efficacy against increased oxidative stress across three generations. This is a high-priority research gap.
-                        </p>
-                    </div>
-
-                    <div class="content-card graph-visualization-card">
-                        <h2>Knowledge Graph Visualization</h2>
-                        <div class="graph-placeholder">
-                            <p>Visualizing relationships between keywords, authors, and mission impacts...</p>
-                            </div>
-                    </div>
-
-                    <div class="content-card publications-table-card">
-                        <h2>All Space Bioscience Publications (608)</h2>
-                        <div class="table-placeholder">
-                            <table>
-                                <thead>
-                                    <tr><th>Title</th><th>Authors</th><th>Date</th><th>Link</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>Paper 1: ...</td><td>Gopika R. Nair et al.</td><td>2024</td><td><a href="#">View</a></td></tr>
-                                    </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-
-            </section>
-        </main>
+            </div>
+            <div class="chat-footer">
+                <button class="quick-reply-btn" data-query="Latest Publications">Latest Publications</button>
+                <button class="quick-reply-btn" data-query="About the Library">About the Library</button>
+                <button class="quick-reply-btn" data-query="How does the AI Summary work?">How does the AI Summary work?</button>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input-field" placeholder="Ask me anything...">
+                <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
