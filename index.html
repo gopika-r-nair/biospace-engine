@@ -82,9 +82,10 @@
                         <p>Share your work with the EXBIO community.</p>
                         <button>Start Submission</button>
                     </div>
-                    <div class="card image-area">
-                        <h2>Featured Image</h2>
-                        <div class="placeholder-image">Image Placeholder</div>
+                    <div class="card nasa-promo-card">
+                        <h2>Researcher Resource</h2>
+                        <p>Access raw data from space and ground experiments.</p>
+                        <a href="https://osdr.nasa.gov/" target="_blank" class="nasa-link-button">NASA Open Science Data Repository (OSDR)</a>
                     </div>
                 </div>
             </section>
@@ -103,6 +104,12 @@
             
             <section id="view-publications-list" class="view content-page">
                 <h2>Publications Directory</h2>
+                
+                <div class="nasa-resource-banner">
+                    <p>Looking for funded NASA projects? </p>
+                    <a href="https://taskbook.nasa.gov/" target="_blank" class="resource-link-button">Search NASA Task Book</a>
+                </div>
+
                 <div class="search-bar-container">
                     <input type="text" placeholder="Search by Title..." class="search-input">
                     <input type="text" placeholder="Search by Link/DOI..." class="search-input">
@@ -115,18 +122,27 @@
                             <tr>
                                 <th>Title</th>
                                 <th>Link/DOI</th>
+                                <th>Source</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Example Publication 1</td>
-                                <td>https://link-to-pub1.org</td>
+                                <td>Example: Gene Expression in Yeast during Spaceflight</td>
+                                <td>https://link-to-nasa-pub-a.org</td>
+                                <td>NASA Open Access List</td>
                                 <td><button class="small-button">Get Details/CSV</button></td>
                             </tr>
                              <tr>
-                                <td>Example Publication 2</td>
-                                <td>https://link-to-pub2.org</td>
+                                <td>Example: Plant Growth in Microgravity</td>
+                                <td>https://link-to-nasa-pub-b.org</td>
+                                <td>NASA Open Access List</td>
+                                <td><button class="small-button">Get Details/CSV</button></td>
+                            </tr>
+                            <tr>
+                                <td>Community Submission: Microbial Analysis</td>
+                                <td>https://link-to-exbio-sub.org</td>
+                                <td>EXBIO Portal</td>
                                 <td><button class="small-button">Get Details/CSV</button></td>
                             </tr>
                         </tbody>
@@ -164,39 +180,18 @@
             <section id="view-activities" class="view content-page">
                 <h2>Activities</h2>
                 <h3 class="important-note">Important: Upcoming Field Trips & Workshops</h3>
-                <p>Some description: A list of current and past projects, workshops, and collaborative efforts in biospace exploration.</p>
-                <div class="image-section">
-                    <div class="placeholder-image large">Activity Images Placeholder</div>
-                </div>
+                <p>A list of current and past projects, workshops, and collaborative efforts in biospace exploration.</p>
+                <div class="image-section"><div class="placeholder-image large">Activity Images Placeholder</div></div>
             </section>
-
-            <section id="view-interactives" class="view content-page">
-                <h2>Interactives</h2>
-                <p>Some description: Engage with our educational games and simulations!</p>
-                <div class="interactive-list">
-                    <div class="interactive-item" onclick="handlePlaceholderClick('Game 1')">
-                        <i class="fas fa-rocket"></i>
-                        <p>Game 1 (Click to Game 1)</p>
-                    </div>
-                    <div class="interactive-item" onclick="handlePlaceholderClick('Game 2')">
-                        <i class="fas fa-satellite"></i>
-                        <p>Game 2 (Click to Game 2)</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="view-news" class="view content-page">
-                <h2>News & Media</h2>
-                <div class="news-grid">
-                    <div class="news-section"><h3>Trending</h3><p>Latest hot topics.</p></div>
-                    <div class="news-section"><h3>Articles</h3><p>In-depth features.</p></div>
-                    <div class="news-section"><h3>Episode</h3><p>Video/Podcast series.</p></div>
-                    <div class="news-section"><h3>Others</h3><p>Miscellaneous updates.</p></div>
-                </div>
-            </section>
-
+            
             <section id="view-library" class="view content-page">
                 <h2>EXBIO Library</h2>
+                
+                <div class="nasa-resource-banner library-banner">
+                    <p>Need comprehensive space life sciences literature? </p>
+                    <a href="https://www.nasa.gov/general/space-life-sciences-library/" target="_blank" class="resource-link-button primary-dark-button">Search NASA Space Life Sciences Library (NSLSL)</a>
+                </div>
+
                 <div class="library-tabs">
                     <button class="library-tab active">Book</button>
                     <button class="library-tab">Journal</button>
@@ -206,42 +201,28 @@
                     <p>Content for selected tab will be loaded here.</p>
                 </div>
             </section>
-
-            <section id="view-career" class="view content-page">
-                <h2>Career Opportunities</h2>
-                <p>Some description: Explore opportunities in biospace, from research to engineering and public outreach roles.</p>
-                <button class="primary-button large-button" onclick="handlePlaceholderClick('Partner Mode')">Partner Mode</button>
-                <p class="partner-desc">Apply for institutional partnerships and collaborations.</p>
-            </section>
-
-            <section id="view-life-of-nasa" class="view content-page">
-                <h2>Life of NASA</h2>
-                <h3>Experience shared by NASA workers</h3>
-                <p>Personal stories and interviews from individuals working on cutting-edge space projects.</p>
-                <div class="image-section">
-                    <div class="placeholder-image large">NASA Worker Images/Videos Placeholder</div>
-                </div>
-            </section>
-
-            <section id="view-future" class="view content-page">
-                <h2>Future of Biospace Studies</h2>
-                <h3>Scope in field?</h3>
-                <p>Detailed analysis of emerging trends, required skills, and long-term career outlook in biospace research.</p>
-                <div class="image-section">
-                    <div class="placeholder-image large">Future Concept Art/Images Placeholder</div>
-                </div>
-            </section>
             
-            <section id="view-qa" class="view content-page">
-                <h2>Q/A (Questions & Answers)</h2>
-                <p>Frequently Asked Questions and community forum for biospace topics.</p>
-            </section>
+            <section id="view-interactives" class="view content-page">...</section>
+            <section id="view-news" class="view content-page">...</section>
+            <section id="view-career" class="view content-page">...</section>
+            <section id="view-life-of-nasa" class="view content-page">...</section>
+            <section id="view-future" class="view content-page">...</section>
+            <section id="view-qa" class="view content-page">...</section>
 
         </main>
 
         <button id="chatbot-button" class="icon-button floating-button" onclick="handlePlaceholderClick('Chatbot')">
             <i class="fas fa-comments"></i>
         </button>
+
+        <footer id="app-footer" class="hidden">
+            <div class="disclaimer-content">
+                <p>
+                    **IMPORTANT DISCLAIMER REGARDING NASA DATA:** NASA does not endorse any non-U.S. Government entity and is not responsible for information contained on non-U.S. Government websites. For non-U.S. Government websites, participants must comply with any data use parameters of that specific website.
+                </p>
+                <p>&copy; 2025 EXBIO PORTAL. All rights reserved.</p>
+            </div>
+        </footer>
 
     </div>
 
