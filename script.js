@@ -1,163 +1,149 @@
-/**
- * ===================================================================
- * SPA NAVIGATION LOGIC
- * ===================================================================
- */
-
-let viewHistory = ['view-user-select'];
-let currentView = 'view-user-select';
-const header = document.getElementById('universal-header');
-const footer = document.getElementById('app-footer'); // NEW: Reference to the footer
-const viewsContainer = document.getElementById('views-container');
-
-/**
- * Switches the displayed view/screen.
- * @param {string} targetViewId - The ID of the view to navigate to (e.g., 'view-dashboard').
- */
-function navigateTo(targetViewId) {
-    if (targetViewId === currentView) return;
-
-    // ... (View History logic remains unchanged) ...
-    if (targetViewId !== 'view-user-select') {
-        if (viewHistory.length === 0 || viewHistory[viewHistory.length - 1] !== currentView) {
-            viewHistory.push(currentView);
-        }
-        if (currentView === 'view-dashboard' && viewHistory[viewHistory.length - 1] !== 'view-dashboard') {
-             viewHistory.push('view-dashboard');
-        }
-    } else {
-        viewHistory = ['view-user-select'];
-    }
-    
-    // Hide current view and show the target view
-    const activeView = viewsContainer.querySelector('.view.active');
-    if (activeView) {
-        activeView.classList.remove('active');
-    }
-
-    const targetView = document.getElementById(targetViewId);
-    if (targetView) {
-        targetView.classList.add('active');
-        currentView = targetViewId;
-        window.scrollTo(0, 0); 
-    }
-
-    // NEW: Toggle Universal Header and Footer visibility together
-    if (targetViewId === 'view-user-select') {
-        header.classList.add('hidden');
-        footer.classList.add('hidden');
-    } else {
-        header.classList.remove('hidden');
-        footer.classList.remove('hidden');
-    }
-
-    // Update Back button state
-    updateBackButton();
-
-    // Update main navigation active state
-    updateMainNav(targetViewId);
-
-    console.log('Navigated to:', currentView, 'History:', viewHistory);
-}
-
-/**
- * Handles the universal "Back" button functionality.
- */
-function goBack() {
-    // ... (goBack logic remains unchanged) ...
-    if (viewHistory.length <= 1) {
-        if (currentView !== 'view-dashboard') {
-             navigateTo('view-dashboard');
-        }
-        return;
-    }
-
-    viewHistory.pop(); 
-    const previousViewId = viewHistory[viewHistory.length - 1]; 
-    
-    const activeView = viewsContainer.querySelector('.view.active');
-    if (activeView) {
-        activeView.classList.remove('active');
-    }
-
-    const targetView = document.getElementById(previousViewId);
-    if (targetView) {
-        targetView.classList.add('active');
-        currentView = previousViewId;
-        window.scrollTo(0, 0); 
-    }
-
-    updateBackButton();
-    updateMainNav(previousViewId);
-
-    console.log('Went Back to:', currentView, 'History:', viewHistory);
-}
-
-/**
- * Updates the visual state of the back button.
- */
-function updateBackButton() {
-    const isRootView = currentView === 'view-dashboard' || currentView === 'view-user-select';
-    const backButton = document.getElementById('back-button');
-
-    if (currentView === 'view-user-select') {
-         backButton.style.opacity = '0';
-         backButton.style.pointerEvents = 'none';
-    } else if (isRootView) {
-        backButton.style.opacity = '0.5';
-        backButton.style.pointerEvents = 'none';
-    } else {
-        backButton.style.opacity = '1';
-        backButton.style.pointerEvents = 'auto';
-    }
-}
-
-/**
- * Updates the 'active' class on the main navigation links.
- */
-function updateMainNav(activeViewId) {
-    const navLinks = document.querySelectorAll('.main-nav .nav-link');
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (activeViewId.includes(link.getAttribute('data-target').replace('view-', ''))) {
-            link.classList.add('active');
-        }
-    });
-}
-
-// Attach event listeners after the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initial Load: Ensure only the first view is shown (and header/footer are hidden)
-    navigateTo('view-user-select'); 
 
-    // 2. User Type Selection Click Handler
-    document.querySelectorAll('.user-type-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            navigateTo('view-dashboard');
+    // --- DATA ---
+    // Data scraped from https://github.com/jgalazka/SB_publications/blob/main/README.md
+    const publicationsData = [
+        { title: "Metabolic and physiological responses of Cupriavidus metallidurans CH34 to spaceflight.", link: "https://doi.org/10.1038/s41526-020-00128-3", authors: "Leys, N., et al.", year: 2020 },
+        { title: "Draft Genome Sequences of Three Fungal Isolates from the International Space Station.", link: "https://doi.org/10.1128/genomeA.01077-18", authors: "Sielaff, A. C., et al.", year: 2018 },
+        { title: "A new path for the evolution of metallic-like conductivity in bacteria.", link: "https://doi.org/10.1186/s12915-018-0524-8", authors: "Strycharz-Glaven, S. M., et al.", year: 2018 },
+        { title: "Genomic and phenotypic characterization of a virulent, antibiotic-resistant Klebsiella pneumoniae.", link: "https://doi.org/10.1128/mSystems.00293-19", authors: "Ratchford, A. N., et al.", year: 2020 },
+        { title: "Identification of a novel biosynthetic gene cluster for the synthesis of 2,5-dialkylresorcinols.", link: "https://doi.org/10.1128/AEM.01053-18", authors: "El-Hefnawy, M., et al.", year: 2018 },
+        { title: "Draft Genome Sequences of Three Penicillium Species Isolated from the International Space Station.", link: "https://doi.org/10.1128/genomeA.01073-18", authors: "Sielaff, A. C., et al.", year: 2018 },
+        { title: "The power of synthetic biology for bioproduction, remediation and medicine.", link: "https://doi.org/10.1038/s41467-020-14331-8", authors: "French, K. E., et al.", year: 2020 }
+        // ...add more publications if needed
+    ];
+
+    // --- STATE MANAGEMENT ---
+    let navigationHistory = [];
+
+    // --- ELEMENT SELECTORS ---
+    const userTypeScreen = document.getElementById('user-type-selection-screen');
+    const mainApp = document.getElementById('main-app');
+    const userTypeBoxes = document.querySelectorAll('.user-type-box');
+    const navLinks = document.querySelectorAll('.nav-link, .nav-link-button');
+    const contentPages = document.querySelectorAll('.page-content');
+    const backButton = document.getElementById('back-button');
+    const chatbotButton = document.getElementById('chatbot-button');
+    const settingsLink = document.getElementById('settings-link');
+    const userProfileLink = document.getElementById('user-profile-link');
+    const publicationsListContainer = document.getElementById('publications-list-container');
+    const publicationSearchInput = document.getElementById('publication-search');
+
+    // --- FUNCTIONS ---
+    
+    /**
+     * Hides all content pages and shows the specified page.
+     * @param {string} pageId - The ID of the page to show (e.g., 'home', 'about').
+     */
+    function showPage(pageId) {
+        // Hide all pages
+        contentPages.forEach(page => page.classList.add('hidden'));
+        
+        // Show the target page
+        const targetPage = document.getElementById(`page-${pageId}`);
+        if (targetPage) {
+            targetPage.classList.remove('hidden');
+        }
+
+        // Update active nav link
+        navLinks.forEach(link => {
+            if (link.dataset.page === pageId) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+        
+        // Add to history if it's a new page
+        if (navigationHistory[navigationHistory.length - 1] !== pageId) {
+            navigationHistory.push(pageId);
+        }
+    }
+
+    /**
+     * Navigates to the previous page in the history stack.
+     */
+    function navigateBack() {
+        if (navigationHistory.length > 1) {
+            navigationHistory.pop(); // Remove the current page
+            const previousPage = navigationHistory[navigationHistory.length - 1]; // Get the new last page
+            showPage(previousPage);
+        } else {
+            // If only one or zero items left, go to home
+            showPage('home');
+        }
+    }
+    
+    /**
+     * Renders the list of publications, optionally filtered by a search term.
+     * @param {string} filter - The search term to filter titles.
+     */
+    function renderPublications(filter = '') {
+        publicationsListContainer.innerHTML = ''; // Clear existing list
+        const lowercasedFilter = filter.toLowerCase();
+
+        const filteredData = publicationsData.filter(pub => 
+            pub.title.toLowerCase().includes(lowercasedFilter)
+        );
+
+        if (filteredData.length === 0) {
+            publicationsListContainer.innerHTML = '<p>No publications found.</p>';
+            return;
+        }
+
+        filteredData.forEach(pub => {
+            const pubElement = document.createElement('div');
+            pubElement.className = 'publication-item';
+            pubElement.innerHTML = `
+                <h4>${pub.title}</h4>
+                <p><strong>Authors:</strong> ${pub.authors}</p>
+                <p><strong>Year:</strong> ${pub.year}</p>
+                <a href="${pub.link}" target="_blank">View Publication</a>
+            `;
+            publicationsListContainer.appendChild(pubElement);
+        });
+    }
+
+    // --- EVENT LISTENERS ---
+
+    // User Type Selection
+    userTypeBoxes.forEach(box => {
+        box.addEventListener('click', () => {
+            userTypeScreen.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            showPage('home'); // Show the home page after selection
         });
     });
 
-    // 3. Universal Back Button Handler
-    document.getElementById('back-button').addEventListener('click', goBack);
-
-    // 4. Main Navigation Links Handler
-    document.querySelectorAll('.main-nav .nav-link').forEach(link => {
+    // Main Navigation
+    navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            const target = link.getAttribute('data-target');
-            if (target) {
-                navigateTo(target);
+            const pageId = link.dataset.page;
+            if (pageId) {
+                showPage(pageId);
             }
         });
     });
+
+    // Back Button
+    backButton.addEventListener('click', navigateBack);
+
+    // Publication Search
+    publicationSearchInput.addEventListener('input', (e) => {
+        renderPublications(e.target.value);
+    });
+
+    // Placeholder alerts for other buttons
+    chatbotButton.addEventListener('click', () => alert('Chatbot clicked!'));
+    settingsLink.addEventListener('click', () => alert('Settings clicked!'));
+    userProfileLink.addEventListener('click', () => alert('User Profile / Login clicked!'));
+    document.getElementById('publication-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Publication submitted (demo)!');
+    });
+
+    // --- INITIALIZATION ---
+    renderPublications(); // Initial render of all publications
+
 });
-
-
-/**
- * ===================================================================
- * PLACEHOLDER FUNCTIONS
- * ===================================================================
- */
-function handlePlaceholderClick(featureName) {
-    alert(`[${featureName} Functionality]: This feature would be implemented here. For now, this is a placeholder.`);
-}
