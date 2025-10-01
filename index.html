@@ -1,67 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SpaceBIO Engine Dashboard</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #001f3f; /* navy blue */
-      color: white;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #000c1a;
-      padding: 1rem;
-      text-align: center;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      background: #002b5c;
-      padding: 10px;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    main {
-      padding: 2rem;
-      text-align: center;
-    }
-    footer {
-      background: #000c1a;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXBIO Portal Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
-  <header>
-    <h1>🚀 SpaceBIO Engine</h1>
-    <p>Powered by NASA Space Apps Challenge 2025</p>
-  </header>
 
-  <nav>
-    <a href="#">Home</a>
-    <a href="#">Publications</a>
-    <a href="#">Activities</a>
-    <a href="#">Careers</a>
-    <a href="#">Library</a>
-  </nav>
+    <div class="app-container">
+        
+        <header class="top-header">
+            <div class="logo">EXBIOPORTAL</div>
+            
+            <nav class="nav-tabs">
+                <a href="#" class="active">Dashboard</a>
+                <a href="#">Publications</a>
+                <a href="#">About</a>
+                <a href="#">Careers</a>
+            </nav>
 
-  <main>
-    <h2>Welcome to the Space Biology Knowledge Engine</h2>
-    <p>Select a section from the menu to explore resources, publications, and more.</p>
-  </main>
+            <div class="user-controls">
+                <div class="user-role-icon" title="Current Role: Scientist">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+                
+                <button class="icon-button" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                
+                <button class="icon-button logout-button" title="Change Role/Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
 
-  <footer>
-    <p>© 2025 SpaceBIO Team | In partnership with NASA</p>
-  </footer>
+        <main class="main-layout">
+            
+            <aside class="left-sidebar">
+                <div class="sidebar-nav">
+                    <h3>NAVIGATION</h3>
+                    <ul class="nav-list">
+                        <li><a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                        <li class="dropdown-toggle">
+                            <a href="#"><i class="fas fa-book"></i> Library <i class="fas fa-caret-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">All Publications</a></li>
+                                <li><a href="#">Submit a new publication</a></li>
+                                <li><a href="#">Announcements</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown-toggle">
+                            <a href="#"><i class="fas fa-trophy"></i> Awards <i class="fas fa-caret-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Q/A Section</a></li>
+                                <li><a href="#">Simulations</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="exbichat-panel">
+                    <h3>Activities (EXBIChat AI)</h3>
+                    <div class="chat-box">
+                        <p class="ai-msg">AI: Welcome, Scientist. How can I assist with your hypothesis generation today?</p>
+                        </div>
+                    <input type="text" placeholder="Prompt EXBIChat...">
+                </div>
+            </aside>
+            
+            <section class="main-content">
+                <h1 class="page-heading">Publications Hub</h1>
+
+                <div class="content-cards-container">
+                    
+                    <div class="content-card ai-summary-card">
+                        <h2>AI-Driven Publication Summary (Scientist View)</h2>
+                        <p><strong>Focus:</strong> Hypotheses and Research Gaps</p>
+                        <p class="summary-text">
+                            The analysis of the latest paper on *Artemia salina* suggests a gap in long-term multi-generational studies under partial gravity. The key hypothesis for future work is to test DNA repair efficacy against increased oxidative stress across three generations. This is a high-priority research gap.
+                        </p>
+                    </div>
+
+                    <div class="content-card graph-visualization-card">
+                        <h2>Knowledge Graph Visualization</h2>
+                        <div class="graph-placeholder">
+                            <p>Visualizing relationships between keywords, authors, and mission impacts...</p>
+                            </div>
+                    </div>
+
+                    <div class="content-card publications-table-card">
+                        <h2>All Space Bioscience Publications (608)</h2>
+                        <div class="table-placeholder">
+                            <table>
+                                <thead>
+                                    <tr><th>Title</th><th>Authors</th><th>Date</th><th>Link</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Paper 1: ...</td><td>Gopika R. Nair et al.</td><td>2024</td><td><a href="#">View</a></td></tr>
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+        </main>
+    </div>
+
 </body>
 </html>
