@@ -35,6 +35,8 @@ body {
     min-height: 100vh;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Utility Class */
@@ -126,6 +128,10 @@ body {
     VIEW MANAGEMENT (SPA LOGIC)
     ===================================================================
 */
+#views-container {
+    flex-grow: 1; /* Allows content area to fill vertical space */
+}
+
 .view {
     padding: 30px;
     min-height: calc(100vh - 70px); /* Adjust based on header height */
@@ -146,7 +152,6 @@ body {
 
 /* ===================================================================
     VIEW 1: User Selection Screen 
-    (References external layout for visual inspiration)
     ===================================================================
 */
 #view-user-select {
@@ -610,6 +615,114 @@ tr:hover {
 
 
 /* ===================================================================
+    NEW: NASA Integration Styles 
+    ===================================================================
+*/
+.nasa-promo-card {
+    background-color: var(--primary-dark); /* Distinct background for emphasis */
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.nasa-promo-card h2 {
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.nasa-link-button {
+    display: block;
+    text-decoration: none;
+    background-color: #fff;
+    color: var(--primary-dark);
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.nasa-link-button:hover {
+    background-color: var(--accent-light);
+}
+
+.nasa-resource-banner {
+    background-color: var(--accent-light);
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.nasa-resource-banner p {
+    font-weight: 600;
+    color: var(--primary-dark);
+    flex-shrink: 1;
+}
+
+.resource-link-button {
+    text-decoration: none;
+    background-color: var(--primary-blue);
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    white-space: nowrap; /* Keep the button from wrapping */
+    flex-shrink: 0;
+}
+
+.resource-link-button.primary-dark-button {
+    background-color: var(--primary-dark);
+}
+
+.resource-link-button:hover {
+    background-color: #0056b3;
+}
+
+/* Publications Table Update */
+#view-publications-list table th:nth-child(3),
+#view-publications-list table td:nth-child(3) {
+    width: 150px; /* Allocate space for the Source column */
+}
+
+
+/* ===================================================================
+    NEW: FOOTER/DISCLAIMER STYLES 
+    ===================================================================
+*/
+#app-footer {
+    padding: 15px 30px;
+    background-color: var(--primary-dark);
+    color: #b3c5d6;
+    font-size: 0.8em;
+    text-align: center;
+    border-top: 1px solid #3d5a73;
+    width: 100%;
+    margin-top: auto;
+    flex-shrink: 0; /* Prevents shrinking */
+}
+
+.disclaimer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.disclaimer-content p:first-child {
+    margin-bottom: 10px;
+    color: #fff;
+    font-weight: bold;
+}
+
+
+/* ===================================================================
     RESPONSIVENESS (Mobile First Adjustments)
     ===================================================================
 */
@@ -629,6 +742,15 @@ tr:hover {
 
     .announcement-card {
         grid-row: auto;
+    }
+
+    .nasa-resource-banner {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nasa-resource-banner p {
+        margin-bottom: 10px;
     }
 
     .form-section.half-width {
