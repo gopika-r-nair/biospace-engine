@@ -3,361 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXBIO Portal Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>EXBIO Portal</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <div id="app-container">
-
-        <header id="universal-header" class="hidden">
-            <div class="header-left">
-                <button id="back-button" class="icon-button"><i class="fas fa-arrow-left"></i> Back</button>
+    <section id="user-selection-page" class="portal-page active">
+        <div class="user-select-container">
+            <h1>Welcome to EXBIO Portal</h1>
+            <h2>Please select your user type to continue:</h2>
+            
+            <div class="user-type-grid">
+                <button class="user-type-button" data-type="Scientist">
+                    Scientist (Generating Hypotheses)
+                </button>
+                <button class="user-type-button" data-type="Manager">
+                    Manager (Identifying Investment)
+                </button>
+                <button class="user-type-button" data-type="Mission Architect">
+                    Mission Architect (Exploration Safety)
+                </button>
+                <button class="user-type-button" data-type="Visitor">
+                    Visitor / Public
+                </button>
             </div>
+        </div>
+    </section>
+
+    <div id="main-application" style="display: none;">
+
+        <header id="main-header">
+            <div class="header-left">
+                <h1>WELCOME TO EXBIO PORTAL</h1>
+                <p>powered by cosmic minds</p>
+            </div>
+            <nav class="main-nav">
+                <a href="#" data-page="home-page">Home</a>
+                <a href="#" data-page="about-page">About us</a>
+                <a href="#" data-page="publications-page">Publications</a>
+                <a href="#" data-page="activity-page">Activity</a>
+                <a href="#" data-page="career-page">Career</a>
+                </nav>
             <div class="header-right">
-                <div class="user-profile-nav">
-                    <i class="fas fa-user-circle user-icon"></i>
-                    <div class="user-dropdown">
-                        <a href="#" onclick="handlePlaceholderClick('Settings')">Settings</a>
-                        <a href="#" onclick="handlePlaceholderClick('Login')">Login</a>
-                        <a href="#" onclick="handlePlaceholderClick('Register')">Register</a>
-                    </div>
+                <div class="user-type-stats" title="User Type Distribution">
+                    <span>👥</span>
+                    <div id="user-type-graph"></div>
                 </div>
-                <button class="icon-button" onclick="handlePlaceholderClick('Settings')"><i class="fas fa-cog"></i></button>
+                
+                <div class="user-profile">
+                    <span class="settings-icon" onclick="alert('Settings menu opened!')">⚙️</span>
+                    <span id="current-user-type">User Profile: None</span>
+                    <button onclick="alert('Login functionality coming soon!')">Login</button>
+                </div>
             </div>
         </header>
 
-
-        <main id="views-container">
-
-            <section id="view-user-select" class="view active">
-                <div class="user-select-container">
-                    <h1>Welcome to EXBIO Portal<br>Please choose your user type</h1>
-                    <div class="user-type-cards">
-                        <div class="user-type-card" data-target="view-dashboard">
-                            <i class="fas fa-flask"></i>
-                            <h2>Researcher/Scientist</h2>
-                        </div>
-                        <div class="user-type-card" data-target="view-dashboard">
-                            <i class="fas fa-rocket"></i>
-                            <h2>Manager/Architect</h2>
-                        </div>
-                        <div class="user-type-card" data-target="view-dashboard">
-                            <i class="fas fa-users"></i>
-                            <h2>Public/Visitor</h2>
-                        </div>
-                    </div>
+        <main>
+            <section id="home-page" class="portal-page active">
+                <div class="home-content">
+                    <div class="card"><h2>Announcements</h2><p>Latest updates...</p></div>
+                    <a href="#" data-page="publications-page" class="card action-card">
+                        <h2>View Publications</h2>
+                        <p>Explore Space Biology Data.</p>
+                    </a>
+                    <a href="#" data-page="submit-publication-page" class="card action-card">
+                        <h2>Submit a publication</h2>
+                        <p>Share your research.</p>
+                    </a>
+                    <div class="card"><h2>Q/A</h2><p>Common questions.</p></div>
+                    <a href="#" data-page="interactives-page" class="card action-card">
+                        <h2>Interactives</h2>
+                        <p>Games and tools.</p>
+                    </a>
+                    <a href="#" data-page="future-of-biospace-page" class="card action-card">
+                        <h2>Future of Biospace</h2>
+                        <p>Scope of the field.</p>
+                    </a>
                 </div>
             </section>
 
-            <section id="view-dashboard" class="view">
-                <div class="dashboard-header">
-                    <h1 class="branding">WELCOME TO EXBIO PORTAL <small>powered by cosmic minds</small></h1>
+            <section id="publications-page" class="portal-page">
+                <button class="back-tab" data-page="home-page">← back to tab</button>
+                <h2>Publications: Space Biology Knowledge Engine</h2>
+                <p class="challenge-summary">Leveraging AI to explore the impacts and results of NASA bioscience publications. </p>
+
+                <div class="publications-actions">
+                    <input type="text" id="search-publications" placeholder="Search: Title, Summary, or Author...">
+                    <button onclick="filterPublications()">Search</button>
                 </div>
-
-                <nav class="main-nav">
-                    <a href="#" class="nav-link active" data-target="view-dashboard">Home</a>
-                    <a href="#" class="nav-link" data-target="view-about-us">About us</a>
-                    <a href="#" class="nav-link" data-target="view-publications-list">Publications</a>
-                    <a href="#" class="nav-link" data-target="view-activities">Activities</a>
-                    <a href="#" class="nav-link" data-target="view-career">Career</a>
-                    <a href="#" class="nav-link" data-target="view-library">Library</a>
-                    <a href="#" class="nav-link" data-target="view-interactives">Interactives</a>
-                    <a href="#" class="nav-link" data-target="view-news">News</a>
-                    <a href="#" class="nav-link" data-target="view-life-of-nasa">Life of Nasa</a>
-                    <a href="#" class="nav-link" data-target="view-future">Future of Biospace</a>
-                    <a href="#" class="nav-link" data-target="view-qa">Q/A</a>
-                </nav>
-
-                <div class="dashboard-grid-revised">
-                    <div class="card description-card">
-                        <h2>Announcements</h2>
-                        <ul>
-                            <li>**New Study:** Published research on microbial resilience in lunar dust.</li>
-                            <li>**Webinar:** Biospace safety protocols for Artemis missions next week!</li>
-                            <li>**Data Release:** Updated High-Density Omics data available in the Library.</li>
-                        </ul>
-                        <div class="description-text">
-                            <h3>A unified resource for space biology and exploration.</h3>
-                            <p>The EXBIO Portal is your gateway to advancing scientific understanding of biological systems in extreme environments. We facilitate data sharing, collaboration, and hypothesis generation for missions to the Moon, Mars, and beyond.</p>
-                        </div>
-                    </div>
-
-                    <div class="card image-area-large">
-                        <div class="placeholder-image large">Compelling Image: Earthrise over Lunar Surface or ISS Bioreactor</div>
-                    </div>
-                    
-                    <div class="card ai-help-card">
-                        <h2>AI</h2>
-                        <p>How can I help you?</p>
-                        <button class="primary-button" onclick="toggleChatbot()">Ask AI <i class="fas fa-question-circle"></i></button>
-                        <div class="nasa-promo-small">
-                            <p>Access Raw Space Data:</p>
-                            <a href="https://osdr.nasa.gov/" target="_blank" class="nasa-link-button">NASA OSDR</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="view-about-us" class="view content-page">
-                <div class="page-content-wrapper">
-                    <h2>About the EXBIO Portal</h2>
-                    <div class="about-grid">
-                        <div class="about-text">
-                            <p>The EXBIO Portal is a centralized platform connecting scientists, mission planners, and the public with the latest research in space biology and extreme environment studies. Our goal is to streamline access to data that supports long-duration spaceflight safety and planetary protection.</p>
-                            <h3>Major Strides in Biospace Studies</h3>
-                            <p>Our focus areas include microbial dynamics in microgravity, the genetic effects of deep space radiation on life, and the development of sustainable, closed-loop life support systems. We highlight key achievements that directly contribute to making human missions to Mars a reality.</p>
-                        </div>
-                        <div class="about-image">
-                            <div class="placeholder-image small">Placeholder: Graphic representing Biospace Data Flow or Core Mission</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <section id="view-publications-list" class="view content-page">
-                <h2>Publications Directory</h2>
                 
-                <div class="nasa-resource-banner">
-                    <p>Looking for funded NASA projects? </p>
-                    <a href="https://taskbook.nasa.gov/" target="_blank" class="resource-link-button">Search NASA Task Book</a>
+                <div class="subject-filters">
+                    <label>Filter by Subject:</label>
+                    <div id="subject-tags">
+                        <button class="tag-button active-tag" data-tag="all">All</button>
+                        <button class="tag-button" data-tag="Artificial Intelligence & Machine Learning">AI & ML</button>
+                        <button class="tag-button" data-tag="Data Management">Data Mgt</button>
+                        <button class="tag-button" data-tag="Flora & Fauna">Flora & Fauna</button>
+                        <button class="tag-button" data-tag="Software">Software</button>
+                        <button class="tag-button" data-tag="Education">Education</button>
+                        <button class="tag-button" data-tag="Writing & Communications">Writing</button>
+                    </div>
                 </div>
 
-                <div class="search-bar-container">
-                    <input type="text" placeholder="Search by Title..." class="search-input">
-                    <input type="text" placeholder="Search by Link/DOI..." class="search-input">
-                    <button class="primary-button">Search</button>
-                </div>
+                <a href="#" data-page="submit-publication-page" class="submit-pub-link">
+                    Click to submit a new publication →
+                </a>
 
-                <div class="publications-table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Link/DOI</th>
-                                <th>Source</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Example: Gene Expression in Yeast during Spaceflight</td>
-                                <td>https://link-to-nasa-pub-a.org</td>
-                                <td>NASA Open Access List</td>
-                                <td><button class="small-button" onclick="handlePlaceholderClick('CSV Download')">Click to get details/CSV file</button></td>
-                            </tr>
-                             <tr>
-                                <td>Example: Plant Growth in Microgravity</td>
-                                <td>https://link-to-nasa-pub-b.org</td>
-                                <td>NASA Open Access List</td>
-                                <td><button class="small-button" onclick="handlePlaceholderClick('CSV Download')">Click to get details/CSV file</button></td>
-                            </tr>
-                            <tr>
-                                <td>Community Submission: Microbial Analysis</td>
-                                <td>https://link-to-exbio-sub.org</td>
-                                <td>EXBIO Portal</td>
-                                <td><button class="small-button" onclick="handlePlaceholderClick('CSV Download')">Click to get details/CSV file</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button class="primary-button submit-pub-btn" onclick="navigateTo('view-submit-publication')">Submit a New Publication</button>
-            </section>
-
-            <section id="view-submit-publication" class="view content-page">
-                <h2>Submit a New Publication/Research Idea</h2>
-                <form class="submission-form">
-                    <div class="form-section">
-                        <h3>Define Your Idea/Abstract</h3>
-                        <textarea placeholder="Briefly describe your research idea/summary (e.g., Hypothesis, Methods, Expected Findings)."></textarea>
-                    </div>
-                    <div class="form-section">
-                        <h3>Relevant Mission/Motive (if applicable)</h3>
-                        <input type="text" placeholder="e.g., Contribution to Artemis, Planetary Protection, or specific study (e.g., Rodent Research-10).">
-                    </div>
-                    <div class="form-section half-width">
-                        <h3>Personal Details</h3>
-                        <input type="text" placeholder="Full Name">
-                        <input type="email" placeholder="Email Address">
-                    </div>
-                    <div class="form-section half-width">
-                        <h3>Contact</h3>
-                        <input type="tel" placeholder="Phone Number">
-                        <input type="text" placeholder="Affiliation/Institution">
-                    </div>
-                    <a href="#" class="help-link" onclick="handlePlaceholderClick('Submission Help')">Click for submission guidelines and data format help</a>
-                    <button type="submit" class="primary-button full-width">Submit for Review</button>
-                </form>
-            </section>
-
-            <section id="view-activities" class="view content-page">
-                <div class="page-content-wrapper">
-                    <h2>EXBIO Community Activities</h2>
-                    <h3 class="important-note">Important: Upcoming Field Missions & Workshops</h3>
-                    <div class="activity-content-grid">
-                        <div class="activity-text">
-                             <p>**Upcoming Workshops:** We regularly host virtual workshops on data analysis using NASA's Open Science Data Repository (OSDR). Check the calendar for the next session on bio-mining techniques (Date: 2025/11/15).</p>
-                             <p>**Field Campaigns:** We sponsor analog missions in extreme environments (e.g., volcanic caves, deep-sea vents) to simulate biospace challenges. Applications for the next Arctic microbial study (Project ICE-LIFE) are now open.</p>
-                             <p>**Collaboration:** Find opportunities to partner with leading scientists on ongoing spaceflight investigations. Our current focus is radiation shielding materials development for crewed missions.</p>
-                        </div>
-                        <div class="activity-image">
-                            <div class="placeholder-image small">Placeholder: Image of a Field Scientist in an Analog Environment (e.g., desert, cave)</div>
-                        </div>
-                    </div>
+                <div id="publications-dashboard">
+                    <p>Loading publications...</p>
                 </div>
             </section>
 
-            <section id="view-interactives" class="view content-page">
-                <h2>Interactives: Explore Space Biology</h2>
-                <p>Engage with our simulation tools and educational games designed to showcase the complexities of biospace exploration, from microbial growth in microgravity to designing closed-loop habitats.</p>
-                <div class="interactive-list">
-                    <div class="interactive-item" onclick="handlePlaceholderClick('Game 1')">
-                        <i class="fas fa-gamepad"></i>
-                        <p>Game 1: Microbial Survivor (Click to Play)</p>
-                    </div>
-                    <div class="interactive-item" onclick="handlePlaceholderClick('Game 2')">
-                        <i class="fas fa-brain"></i>
-                        <p>Game 2: Build a Life Support System (Click to Launch)</p>
-                    </div>
-                    <div class="interactive-item" onclick="handlePlaceholderClick('Simulation')">
-                        <i class="fas fa-chart-line"></i>
-                        <p>Simulation: Predict Radiation Dose on Mars (Click to Analyze)</p>
-                    </div>
-                </div>
-            </section>
+            <section id="submit-publication-page" class="portal-page">
+                <button class="back-tab" data-page="publications-page">← back</button>
+                <h2>Publication Submission</h2>
+                </section>
             
-            <section id="view-news" class="view content-page">
-                <h2>News & Insights</h2>
-                <div class="news-content">
-                    <h3>Trending Stories in Biospace</h3>
-                    <div class="news-grid">
-                        <div class="news-item">
-                            <h4>Recent Discoveries</h4>
-                            <p>Astronauts successfully cultivate edible plants in the Veggie habitat aboard the ISS, paving the way for sustainable food systems.</p>
-                        </div>
-                        <div class="news-item">
-                            <h4>Epidemics/Others</h4>
-                            <p>NASA is developing advanced monitoring systems for potential biohazards and microbial shifts on long-duration missions to ensure crew safety.</p>
-                        </div>
-                        <div class="news-item">
-                            <h4>Policy Update</h4>
-                            <p>New international guidelines released on planetary protection for missions targeting ocean worlds (e.g., Europa, Enceladus).</p>
-                        </div>
+            <section id="about-page" class="portal-page">
+                <button class="back-tab" data-page="home-page">← back</button>
+                <h2>About Us</h2>
+                <p>Major sinner in biospace studies. (Placeholder content)</p>
+            </section>
+
+             <section id="activity-page" class="portal-page">
+                <button class="back-tab" data-page="home-page">← back</button>
+                <h2>Activities</h2>
+                <p>Important! Some description about our activities. (Placeholder content)</p>
+            </section>
+
+            <section id="career-page" class="portal-page">
+                <button class="back-tab" data-page="home-page">← back</button>
+                <h2>Career</h2>
+                <p>Some description. Power mode. (Placeholder content)</p>
+            </section>
+
+            </main>
+
+        <aside class="help-section" id="chatbot-container">
+            <div id="chat-window" style="display: none;">
+                <div class="chat-header">
+                    <h3>EXBIO Assistant</h3>
+                    <button onclick="toggleChat(false)">X</button>
+                </div>
+                <div class="chat-body" id="chat-body">
+                    <div class="chat-message bot">
+                        Hi! I'm the EXBIO Assistant. How can I help you today?
+                    </div>
+                    <div class="chat-options">
+                        <button class="chat-option-btn" onclick="sendChatOption('What is the latest publication?')">Latest Publications</button>
+                        <button class="chat-option-btn" onclick="sendChatOption('How do I submit a publication?')">Submit a Paper</button>
+                        <button class="chat-option-btn" onclick="sendChatOption('What is the NASA Space Apps Challenge?')">About the Challenge</button>
                     </div>
                 </div>
-            </section>
-
-            <section id="view-library" class="view content-page">
-                <h2>Digital Library Resources</h2>
-                
-                <div class="nasa-resource-banner library-banner">
-                    <p>Need comprehensive space life sciences literature? </p>
-                    <a href="https://www.nasa.gov/general/space-life-sciences-library/" target="_blank" class="resource-link-button primary-dark-button">Search NASA Space Life Sciences Library (NSLSL)</a>
-                </div>
-
-                <div class="library-tabs">
-                    <button class="library-tab active">Book</button>
-                    <button class="library-tab">Journal</button>
-                    <button class="library-tab">Past papers/thesis</button>
-                </div>
-                <div class="library-content">
-                    <p>The **Book** section contains key textbooks and reference guides on Astrobiology, Space Physiology, and Bioastronautics.</p>
-                    <p>The **Journal** section provides recent abstracts and full-text links to peer-reviewed articles from major scientific publishers.</p>
-                    <p>The **Past papers/thesis** section archives influential graduate research and mission-specific reports dating back to the Apollo era.</p>
-                </div>
-            </section>
-            
-            <section id="view-career" class="view content-page">
-                <h2>Career Paths in Biospace</h2>
-                <p>Explore opportunities to contribute to human spaceflight. We list key roles, from astrobiology researchers to bio-engineering mission architects, vital for Moon and Mars colonization efforts.</p>
-                <div class="career-content">
-                    <h3>Potential Employers/Institutions</h3>
-                    <ul>
-                        <li>NASA Field Centers (Johnson Space Center, Kennedy Space Center, Ames Research Center)</li>
-                        <li>European Space Agency (ESA) and other International Partners</li>
-                        <li>Private Aerospace Companies (SpaceX, Blue Origin)</li>
-                        <li>Leading University Research Labs focused on Life Sciences</li>
-                    </ul>
-                    <h3>Required Qualifications</h3>
-                    <p>Typically PhD or Masters in Biology, Bioengineering, or related fields. Emphasis on systems thinking, resilience, data science expertise, and experience in extreme or remote environments is highly valued.</p>
-                </div>
-                <div class="image-section">
-                    <div class="placeholder-image small">Placeholder: Image of Diverse Scientists Collaborating in a Lab</div>
-                </div>
-            </section>
-            
-            <section id="view-life-of-nasa" class="view content-page">
-                <h2>Life of NASA: Stories from the Front Lines</h2>
-                <div class="nasa-life-grid">
-                    <div class="nasa-life-text">
-                        <p>Read inspiring testimonials and watch videos from NASA workers—from astronauts and mission control specialists to technicians and researchers. Learn about the culture of innovation, teamwork, and commitment that drives space exploration forward.</p>
-                        <p>**Quote:** "Every experiment we launch is a tiny step for humanity, and a huge victory for the team back on Earth." - *Dr. Elena Rodriguez, Bioscience Lead*</p>
-                        <p>The section will feature rotating stories about mission support, crew training, and the daily work of keeping astronauts healthy in space.</p>
-                    </div>
-                    <div class="nasa-life-image">
-                        <div class="placeholder-image small">Placeholder: Photo of an Astronaut or Scientist Smiling</div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="view-future" class="view content-page">
-                <h2>Future of Biospace Studies</h2>
-                <div class="future-grid">
-                    <div class="future-text">
-                        <h3>Scope in the Field: Preparing for Mars</h3>
-                        <p>Future biospace research is critical for ensuring crew health on multi-year missions. This includes developing radiation countermeasures, optimizing microbial ecosystems for food production (In-Situ Resource Utilization), and creating robust systems for waste recycling and air purification. The scope is defined by the challenges of self-sufficiency beyond the Moon.</p>
-                        <p>Key areas: Artificial gravity studies, closed-loop ecology, and autonomous bio-diagnostics.</p>
-                    </div>
-                    <div class="future-image">
-                        <div class="placeholder-image small">Placeholder: Conceptual Art of a Mars Habitat or Colonization</div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="view-qa" class="view content-page">
-                 <h2>Q/A: Frequently Asked Questions</h2>
-                 <p>Find answers to common questions about the EXBIO Portal, NASA's space biology programs, and how to get involved in community science.</p>
-                 <div class="qa-section">
-                     <h3>Q: How can I access raw data from ISS experiments?</h3>
-                     <p>A: Researchers can access raw data through the NASA Open Science Data Repository (OSDR), linked on the Dashboard and Publications pages.</p>
-                     <h3>Q: Are the Interactive Games scientifically accurate?</h3>
-                     <p>A: Our Interactives are based on current NASA research and physiological models, designed for educational and engagement purposes.</p>
-                     <h3>Q: How do I submit my own research paper?</h3>
-                     <p>A: Use the 'Submit a New Publication' form accessible from the Publications page. Your submission will be peer-reviewed by our community council.</p>
-                 </div>
-            </section>
-
-        </main>
-
-        <div id="chatbot-modal" class="hidden">
-            <div class="chatbot-header">
-                <h2>EXBIO AI Assistant</h2>
-                <button id="close-chatbot" class="icon-button"><i class="fas fa-times"></i></button>
+                <input type="text" id="chat-input" placeholder="Type your question..." onkeypress="handleChatInput(event)">
             </div>
-            <div class="chatbot-messages" id="chatbot-messages">
-                </div>
-            <div class="chatbot-input">
-                <input type="text" id="user-input" placeholder="Type your message...">
-                <button id="send-message" class="primary-button"><i class="fas fa-paper-plane"></i></button>
+            <div id="chat-icon" onclick="toggleChat(true)">
+                <span class="help-icon">?</span>
+                <p>Chat</p>
             </div>
-        </div>
+        </aside>
 
-        <button id="chatbot-button" class="icon-button floating-button" title="Open Chatbot">
-            <i class="fas fa-comments"></i>
-        </button>
-
-        <footer id="app-footer" class="hidden">
-            <div class="disclaimer-content">
-                <p>
-                    **IMPORTANT DISCLAIMER REGARDING NASA DATA:** NASA does not endorse any non-U.S. Government entity and is not responsible for information contained on non-U.S. Government websites. For non-U.S. Government websites, participants must comply with any data use parameters of that specific website.
-                </p>
-                <p>&copy; 2025 EXBIO PORTAL. All rights reserved.</p>
-            </div>
-        </footer>
-
-    </div>
-
-    <script src="script.js"></script>
+    </div> <script src="script.js"></script>
 </body>
 </html>
