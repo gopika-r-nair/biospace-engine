@@ -1,142 +1,255 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Biospace Engine</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BioSpace EXBIO Portal</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/yourkit.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
-  <aside id="sidebar">
-    <h2>🚀 BioSpace</h2>
-    <nav>
-      <ul>
-        <li><a href="#" data-page="about">About Us</a></li>
-        <li><a href="#" data-page="news">News</a></li>
-        <li>
-          <a href="#" data-page="publications">Publications</a>
-        </li>
-        <li>
-          <a href="#" data-page="activities">Activities</a>
-        </li>
-        <li>
-          <a href="#" data-page="career">Career</a>
-        </li>
-        <li>
-          <a href="#" data-page="library">Library</a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
-
-  <!-- Main Content Area -->
-  <div id="main">
-    <!-- Header -->
-    <header id="header">
-      <span class="user-info"><i class="fas fa-user-circle"></i> User: Dr. A. Smith</span>
-      <div class="header-actions">
-        <button id="settings-btn">⚙️ Settings</button>
-        <button id="logout-btn">Logout</button>
-      </div>
-    </header>
-
-    <main id="main-content">
-      <!-- About Page -->
-      <div id="about-page" class="page active">
-        <h1>About Us</h1>
-        <p>Welcome to the BioSpace Engine! This portal curates NASA bioscience data and resources to empower researchers, students, and enthusiasts.</p>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">🚀</div>
+        <div class="logo-text">BioSpace</div>
       </div>
 
-      <!-- News Page -->
-      <div id="news-page" class="page">
-        <h1>News</h1>
-        <p>Latest space biology and NASA mission updates will appear here.</p>
-      </div>
-
-      <!-- Publications Page -->
-      <div id="publications-page" class="page">
-        <h1>Publications</h1>
-        <div id="publications-data-table">Loading publications...</div>
-      </div>
-
-      <!-- Activities Page -->
-      <div id="activities-page" class="page">
-        <h1>Activities</h1>
-        <p>Interactive Q/A sessions, simulations, and community activities will be featured here.</p>
-      </div>
-
-      <!-- Career Page -->
-      <div id="career-page" class="page">
-        <h1>Career</h1>
-        <p>Explore opportunities like Life at NASA, Future of BioSpace, and internships.</p>
-      </div>
-
-      <!-- Library Page -->
-      <div id="library-page" class="page">
-        <h1>NASA Space Biology Resources</h1>
-        <p>Explore curated resources that support research in Space Biology and Human Exploration.</p>
-
-        <div class="resource-card">
-          <h2>NASA Open Science Data Repository (OSDR)</h2>
-          <p>
-            Provides access to data from over 500 biological experiments either performed in space or 
-            in support of space exploration.
-          </p>
-          <div class="placeholder">
-            [Placeholder for OSDR data integration – experiment summaries, datasets, or links]
+      <nav class="nav">
+        <a href="#" class="nav-link" data-page="announcements">Announcements</a>
+        <a href="#" class="nav-link" data-page="news">News</a>
+        <div class="nav-group">
+          <button class="nav-link dropdown-toggle" data-target="publications">Publications <span class="caret">▾</span></button>
+          <div class="dropdown" id="publications-dropdown">
+            <a href="#" class="nav-sublink" data-page="publications">Latest publications</a>
+            <a href="#" class="nav-sublink" data-page="submit-publication">Submit a publication</a>
           </div>
         </div>
-
-        <div class="resource-card">
-          <h2>NASA Space Life Sciences Library (NSLSL)</h2>
-          <p>
-            Consolidates global space life sciences literature into a single database 
-            to support research on the effects of the space environment on biological systems.
-          </p>
-          <div class="placeholder">
-            [Placeholder for NSLSL integration – literature listings or APIs]
+        <div class="nav-group">
+          <button class="nav-link dropdown-toggle" data-target="activities">Activities <span class="caret">▾</span></button>
+          <div class="dropdown" id="activities-dropdown">
+            <a href="#" class="nav-sublink" data-page="qa">Q/A</a>
+            <a href="#" class="nav-sublink" data-page="interactive">Interactive</a>
           </div>
         </div>
-
-        <div class="resource-card">
-          <h2>NASA Task Book</h2>
-          <p>
-            Online database of NASA-supported projects in Space Biology, Physical Sciences, 
-            and Human Research. Includes project descriptions, reports, and bibliographies.
-          </p>
-          <div class="placeholder">
-            [Placeholder for Task Book integration – project metadata or API calls]
+        <a href="#" class="nav-link" data-page="library">Library</a>
+        <div class="nav-group">
+          <button class="nav-link dropdown-toggle" data-target="career">Career <span class="caret">▾</span></button>
+          <div class="dropdown" id="career-dropdown">
+            <a href="#" class="nav-sublink" data-page="life-at-nasa">Life at NASA</a>
+            <a href="#" class="nav-sublink" data-page="future-of-biospace">Future of Biospace</a>
           </div>
         </div>
+        <a href="#" class a="nav-link" data-page="about">About Us</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="chat-toggle" title="Open chatbot">❓</button>
       </div>
-    </main>
+    </aside>
+
+    <!-- Main area -->
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="sidebar-toggle" class="icon-btn"><i class="fa fa-bars"></i></button>
+          <h1 class="app-title">BioSpace Dashboard</h1>
+        </div>
+        <div class="topbar-right">
+          <div class="user-info">
+            <i class="fa fa-user-circle user-icon"></i>
+            <span id="user-display">Not logged in</span>
+          </div>
+          <button id="login-btn" class="btn small">Login / Sign Up</button>
+          <button id="logout-btn" class="btn small hidden">Logout</button>
+          <button id="settings-btn" class="icon-btn" title="Settings"><i class="fa fa-cog"></i></button>
+        </div>
+      </header>
+
+      <main id="main-content" class="content">
+        <!-- Announcements Page -->
+        <section id="announcements-page" class="page active">
+          <h2>Announcements</h2>
+          <ul class="announcement-list">
+            <li><strong>2025-10-01:</strong> New “OSDR Chats” series launched — interviews with space biology researchers. </li>
+            <li><strong>2025-09-20:</strong> Call for proposals: submit your space biology datasets to OSDR. </li>
+            <li><strong>2025-09-05:</strong> Maintenance scheduled for Task Book database on 2025-10-10. </li>
+          </ul>
+        </section>
+
+        <!-- News Page -->
+        <section id="news-page" class="page">
+          <h2>News</h2>
+          <div class="news-item">
+            <h3>NASA integrates OSDR as unified space biology repository</h3>
+            <p>NASA’s Open Science Data Repository enables access to omics, phenotypic, telemetry, bioimaging, and environmental data under a unified portal. :contentReference[oaicite:0]{index=0}</p>
+          </div>
+          <div class="news-item">
+            <h3>New paper celebrates decades of open science data at NASA</h3>
+            <p>The OSDR AWG community released a commemorative article on 30 years of open space life science data. :contentReference[oaicite:1]{index=1}</p>
+          </div>
+        </section>
+
+        <!-- Publications Page -->
+        <section id="publications-page" class="page">
+          <h2>Publications</h2>
+          <div id="publications-status" class="status">Loading publications...</div>
+          <div id="publications-data-table" class="table-wrap"></div>
+        </section>
+
+        <!-- Submit Publication Page -->
+        <section id="submit-publication-page" class="page">
+          <h2>Submit a Publication</h2>
+          <form id="submit-publication-form">
+            <label>Title:<input name="title" required /></label><br/>
+            <label>Authors:<input name="authors" /></label><br/>
+            <label>Year:<input name="year" type="number" /></label><br/>
+            <label>Link:<input name="link" /></label><br/>
+            <button class="btn" type="submit">Submit</button>
+            <div id="submit-pub-msg" class="status"></div>
+          </form>
+        </section>
+
+        <!-- Q/A Page -->
+        <section id="qa-page" class="page">
+          <h2>Q & A — Space Biology</h2>
+          <div class="qa-item">
+            <h4>Q: What is OSDR?</h4>
+            <p>A: The NASA Open Science Data Repository (OSDR) is a portal providing access to space biology datasets including ‘omics, telemetry, and imaging. :contentReference[oaicite:2]{index=2}</p>
+          </div>
+          <div class="qa-item">
+            <h4>Q: How can I join research working groups?</h4>
+            <p>A: You can join OSDR Analysis Working Groups which offer trainings in data analysis, AI, and bioinformatics. :contentReference[oaicite:3]{index=3}</p>
+          </div>
+          <div class="qa-item">
+            <h4>Q: What is the NASA Task Book?</h4>
+            <p>A: It’s a database of NASA-funded research projects in biosciences, physical sciences, and human research. :contentReference[oaicite:4]{index=4}</p>
+          </div>
+        </section>
+
+        <!-- Interactive Page -->
+        <section id="interactive-page" class="page">
+          <h2>Interactive Demo</h2>
+          <p>Try this interactive experiment selector:</p>
+          <label>Pick experiment theme:
+            <select id="exp-theme">
+              <option value="">-- select --</option>
+              <option value="microgravity">Microgravity effects</option>
+              <option value="radiation">Radiation biology</option>
+              <option value="plant">Plant growth in space</option>
+            </select>
+          </label>
+          <div id="exp-display" class="interactive-display">
+            <p>Select a theme above to see experiment ideas.</p>
+          </div>
+        </section>
+
+        <!-- Library Page -->
+        <section id="library-page" class="page">
+          <h2>NASA Space Biology Resources</h2>
+          <div class="resource-card">
+            <h3>NASA Open Science Data Repository (OSDR)</h3>
+            <p>
+              The NASA OSDR enables access to biological, telemetry, imaging, and environmental datasets from spacecraft and space biology missions. :contentReference[oaicite:5]{index=5}
+            </p>
+            <div class="placeholder">
+              [Placeholder: dataset summaries or API integration]
+            </div>
+          </div>
+          <div class="resource-card">
+            <h3>NASA Space Life Sciences Library (NSLSL)</h3>
+            <p>
+              The NSLSL consolidates global space life sciences literature and resources for biological systems in space. :contentReference[oaicite:6]{index=6}
+            </p>
+            <div class="placeholder">
+              [Placeholder: literature links or search widget]
+            </div>
+          </div>
+          <div class="resource-card">
+            <h3>NASA Task Book</h3>
+            <p>
+              The NASA Task Book provides project descriptions, annual progress, reports, and publications of NASA-funded research in space biology and human research. :contentReference[oaicite:7]{index=7}
+            </p>
+            <div class="placeholder">
+              [Placeholder: project listing or search interface]
+            </div>
+          </div>
+        </section>
+
+        <!-- Life at NASA Page -->
+        <section id="life-at-nasa-page" class="page">
+          <h2>Life at NASA</h2>
+          <p>Here are some aspects of working with NASA in space biology and human research:</p>
+          <ul>
+            <li>Opportunity to work on cutting-edge experiments aboard the ISS</li>
+            <li>Collaborations across global research institutions and universities</li>
+            <li>Access to unique datasets and mission telemetry</li>
+            <li>Participation in high-impact publications and translational science</li>
+          </ul>
+        </section>
+
+        <!-- Future of Biospace Page -->
+        <section id="future-of-biospace-page" class="page">
+          <h2>Future of BioSpace / Space Biology</h2>
+          <p>The future directions and challenges in space biology include:</p>
+          <ul>
+            <li>Multi-omics integration: combining genomics, proteomics, and metabolomics data</li>
+            <li>Machine learning and AI for pattern discovery in biological responses to space</li>
+            <li>Advancing human health in deep space missions (Moon, Mars)</li>
+            <li>Bioregenerative life support and closed-loop biosystems</li>
+            <li>Open science policies and community-driven resource sharing</li>
+          </ul>
+        </section>
+
+        <!-- About Page -->
+        <section id="about-page" class="page">
+          <h2>About Us</h2>
+          <p>
+            BioSpace EXBIO Portal is a unified dashboard for exploring NASA’s space biology resources: datasets, publications, project metadata, and interactive tools. We aim to lower the barrier to entry and foster collaboration.  
+          </p>
+        </section>
+      </main>
+    </div>
   </div>
 
   <!-- Chatbot -->
   <div id="chatbot-container" class="hidden">
-    <div id="chatbot-header">Chatbot <button id="close-chatbot">✖</button></div>
-    <div id="chatbot-messages">
-      <p><b>Bot:</b> Hi! How can I help you explore NASA bioscience today?</p>
+    <div class="chat-header">
+      Chatbot <button id="chat-close">✖</button>
     </div>
-    <input type="text" id="chatbot-input" placeholder="Type a message...">
+    <div id="chat-body" class="chat-body">
+      <div class="chat-msg bot">Hi — ask me about space biology topics (demo).</div>
+    </div>
+    <div class="chat-input">
+      <input id="chat-input-field" placeholder="Type a question..." />
+      <button id="chat-send">Send</button>
+    </div>
   </div>
   <button id="chatbot-toggle">❓</button>
 
   <!-- Settings Modal -->
-  <div id="settings-modal" class="hidden">
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
     <div class="modal-content">
-      <span id="close-settings">&times;</span>
-      <h2>Settings</h2>
-      <div class="tabs">
+      <div class="modal-header">
+        <h3>Settings</h3>
+        <button id="settings-close" class="icon-btn">✕</button>
+      </div>
+      <div class="modal-tabs">
         <button class="tab-btn active" data-tab="general">General</button>
         <button class="tab-btn" data-tab="appearance">Appearance</button>
         <button class="tab-btn" data-tab="privacy">Privacy & Security</button>
       </div>
-      <div class="tab-content active" id="general">General settings go here.</div>
-      <div class="tab-content" id="appearance">Appearance settings go here.</div>
-      <div class="tab-content" id="privacy">Privacy & security settings go here.</div>
+      <div class="modal-body">
+        <div id="tab-general" class="tab-panel">General settings here.</div>
+        <div id="tab-appearance" class="tab-panel hidden">Appearance settings here.</div>
+        <div id="tab-privacy" class="tab-panel hidden">Privacy settings here.</div>
+      </div>
+      <div class="modal-footer">
+        <button id="settings-save" class="btn">Save</button>
+        <button id="settings-cancel" class="btn hollow">Cancel</button>
+      </div>
     </div>
   </div>
 
