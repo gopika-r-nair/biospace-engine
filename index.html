@@ -1,258 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BioSpace EXBIO Portal</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://kit.fontawesome.com/yourkit.js" crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EXBIO Portal — BioSpace Dashboard</title>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-yH0b7..." crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+<style>
+:root{
+  --bg:#0f1724; --panel:#0b1220; --muted:#9aa5b1; --accent:#58a6ff;
+  --card:#0d1620; --glass: rgba(255,255,255,0.03); --radius:12px; --gap:14px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+body{background:linear-gradient(180deg,var(--bg),#05060a);color:#dbe6ef;font-size:15px}
+.app-container{display:flex;min-height:100vh;}
+.sidebar{width:260px;background:linear-gradient(180deg,#071025 0%, #071427 100%);padding:20px;border-right:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:18px;}
+.logo{display:flex;align-items:center;gap:12px;padding-bottom:6px}
+.logo-icon{font-size:22px}
+.logo-text{font-weight:700;font-size:18px}
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav-link, .nav-sublink{display:block;padding:10px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-weight:600;}
+.nav-link:hover,.nav-sublink:hover{background:rgba(255,255,255,0.02);color:#fff}
+.nav-link.active,.nav-sublink.active{background:linear-gradient(90deg,var(--accent),#2db0ff);color:#051226;box-shadow:0 6px 18px rgba(46,144,255,0.06)}
+.nav-group .dropdown{display:none;flex-direction:column;margin-left:6px;padding-left:6px;border-left:1px dashed rgba(255,255,255,0.02)}
+.dropdown a{padding:8px 14px}
+.caret{float:right;opacity:.7}
+.sidebar-footer{margin-top:auto;display:flex;justify-content:center}
+#chat-toggle{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);padding:10px;border-radius:10px;cursor:pointer}
+.main-area{flex:1;display:flex;flex-direction:column}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:transparent;border-bottom:1px solid rgba(255,255,255,0.02)}
+.app-title{margin:0;color:var(--muted);font-weight:700}
+.icon-btn{background:transparent;border:none;color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
+.icon-btn:hover{background:rgba(255,255,255,0.02)}
+.user-info{display:flex;align-items:center;gap:8px;margin-right:12px}
+.user-icon{font-size:20px;color:var(--accent)}
+.btn{background:var(--accent);color:#051226;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+.btn.hollow{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+.small{padding:6px 10px;font-size:13px}
+.content{padding:28px;overflow:auto}
+.page{display:none}
+.page.active{display:block}
+.table-wrap{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);overflow:auto;margin-top:12px}
+.status{margin-top:10px;color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left;font-size:14px}
+th{background:rgba(255,255,255,0.02);font-weight:700;color:var(--muted)}
+.chatbot{position:fixed;left:18px;bottom:18px;width:360px;max-width:calc(100% - 40px);background:linear-gradient(180deg,#071627,#02121a);border-radius:12px;box-shadow:0 12px 40px rgba(2,8,23,0.6);display:flex;flex-direction:column;overflow:hidden;z-index:1100;transform:translateY(14px);opacity:0;pointer-events:none;transition:all .2s ease;}
+.chatbot.visible{transform:translateY(0);opacity:1;pointer-events:auto}
+.chat-header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.03);font-weight:700}
+.chat-body{padding:12px;max-height:320px;overflow:auto;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
+.chat-input{display:flex;padding:10px;border-top:1px solid rgba(255,255,255,0.03);gap:8px}
+.chat-input input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
+.modal.hidden{display:none}
+.modal{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center}
+.modal-backdrop{position:absolute;inset:0;background:rgba(4,6,12,0.6)}
+.modal-content{position:relative;background:linear-gradient(180deg,#071025,#071427);padding:18px;border-radius:12px;width:760px;max-width:95%;z-index:10}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.modal-tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab-btn{padding:8px 12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);cursor:pointer;color:var(--muted)}
+.tab-btn.active{background:var(--accent);color:#051226}
+.modal-body{background:rgba(255,255,255,0.01);padding:12px;border-radius:8px;min-height:120px}
+.tab-panel.hidden{display:none}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+@media (max-width:900px){.sidebar{display:none}.main-area{margin-left:0}.app-title{font-size:16px}.chatbot{width:92%}}
+</style>
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="logo">
-        <div class="logo-icon">🚀</div>
-        <div class="logo-text">BioSpace</div>
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-icon">🚀</div><div class="logo-text">BioSpace</div></div>
+    <nav class="nav">
+      <a href="#" class="nav-link" data-page="about">About Us</a>
+      <div class="nav-group">
+        <button class="nav-link dropdown-toggle" data-target="publications">Publications <span class="caret">▾</span></button>
+        <div class="dropdown" id="publications-dropdown">
+          <a href="#" class="nav-sublink" data-page="publications">Latest publications</a>
+          <a href="#" class="nav-sublink" data-page="submit-publication">Submit a new publication</a>
+        </div>
       </div>
-
-      <nav class="nav">
-        <a href="#" class="nav-link" data-page="announcements">Announcements</a>
-        <a href="#" class="nav-link" data-page="news">News</a>
-        <div class="nav-group">
-          <button class="nav-link dropdown-toggle" data-target="publications">Publications <span class="caret">▾</span></button>
-          <div class="dropdown" id="publications-dropdown">
-            <a href="#" class="nav-sublink" data-page="publications">Latest publications</a>
-            <a href="#" class="nav-sublink" data-page="submit-publication">Submit a publication</a>
-          </div>
+      <div class="nav-group">
+        <button class="nav-link dropdown-toggle" data-target="activities">Activities <span class="caret">▾</span></button>
+        <div class="dropdown" id="activities-dropdown">
+          <a href="#" class="nav-sublink" data-page="qa">Q/A</a>
+          <a href="#" class="nav-sublink" data-page="simulations">Simulations</a>
         </div>
-        <div class="nav-group">
-          <button class="nav-link dropdown-toggle" data-target="activities">Activities <span class="caret">▾</span></button>
-          <div class="dropdown" id="activities-dropdown">
-            <a href="#" class="nav-sublink" data-page="qa">Q/A</a>
-            <a href="#" class="nav-sublink" data-page="interactive">Interactive</a>
-          </div>
-        </div>
-        <a href="#" class="nav-link" data-page="library">Library</a>
-        <div class="nav-group">
-          <button class="nav-link dropdown-toggle" data-target="career">Career <span class="caret">▾</span></button>
-          <div class="dropdown" id="career-dropdown">
-            <a href="#" class="nav-sublink" data-page="life-at-nasa">Life at NASA</a>
-            <a href="#" class="nav-sublink" data-page="future-of-biospace">Future of Biospace</a>
-          </div>
-        </div>
-        <a href="#" class a="nav-link" data-page="about">About Us</a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <button id="chat-toggle" title="Open chatbot">❓</button>
       </div>
-    </aside>
-
-    <!-- Main area -->
-    <div class="main-area">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button id="sidebar-toggle" class="icon-btn"><i class="fa fa-bars"></i></button>
-          <h1 class="app-title">BioSpace Dashboard</h1>
+      <a href="#" class="nav-link" data-page="library">Library</a>
+      <div class="nav-group">
+        <button class="nav-link dropdown-toggle" data-target="career">Careers <span class="caret">▾</span></button>
+        <div class="dropdown" id="career-dropdown">
+          <a href="#" class="nav-sublink" data-page="life-at-nasa">Life at NASA</a>
+          <a href="#" class="nav-sublink" data-page="future-of-biospace">Future of Biospace</a>
         </div>
-        <div class="topbar-right">
-          <div class="user-info">
-            <i class="fa fa-user-circle user-icon"></i>
-            <span id="user-display">Not logged in</span>
-          </div>
-          <button id="login-btn" class="btn small">Login / Sign Up</button>
-          <button id="logout-btn" class="btn small hidden">Logout</button>
-          <button id="settings-btn" class="icon-btn" title="Settings"><i class="fa fa-cog"></i></button>
-        </div>
-      </header>
+      </div>
+      <a href="#" class="nav-link" data-page="news">News</a>
+    </nav>
+    <div class="sidebar-footer"><button id="chat-toggle" title="Open chatbot">❓</button></div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left"><button id="sidebar-toggle" class="icon-btn"><i class="fa fa-bars"></i></button><h1 class="app-title">BioSpace Dashboard</h1></div>
+      <div class="topbar-right">
+        <div class="user-info"><i class="fa fa-user-circle user-icon"></i><span class="username">Dr. A. Smith</span></div>
+        <button id="settings-btn" class="icon-btn" title="Settings"><i class="fa fa-cog"></i></button>
+        <button id="logout-btn" class="btn small">Logout</button>
+      </div>
+    </header>
+    <main id="main-content" class="content">
+      <section id="about-page" class="page active"><h2>About Us</h2><p>Welcome to the BioSpace EXBIO Portal — a curated dashboard for space biology publications, activities, and resources.</p></section>
+      <section id="publications-page" class="page">
+        <h2>Publications</h2>
+        <div id="publications-status" class="status"></div>
+        <div id="publications-data-table" class="table-wrap"></div>
+      </section>
+      <section id="submit-publication-page" class="page">
+        <h2>Submit a new publication</h2>
+        <form id="submit-publication-form">
+          <label>Title<input name="title" required /></label>
+          <label>Authors<input name="authors" /></label>
+          <label>Year<input name="year" type="number" /></label>
+          <label>Link<input name="link" /></label>
+          <button class="btn" type="submit">Submit</button>
+          <div id="submit-pub-msg" class="status"></div>
+        </form>
+      </section>
+      <section id="qa-page" class="page"><h2>Q/A</h2><p>Questions and answers about space biology experiments.</p></section>
+      <section id="simulations-page" class="page"><h2>Simulations</h2><p>Interactive simulations placeholder.</p></section>
+      <section id="library-page" class="page"><h2>Library</h2><ul>
+        <li><a href="#">NASA Open Science Data Repository (OSDR)</a></li>
+        <li><a href="#">NASA Space Life Sciences Library (NSLSL)</a></li>
+        <li><a href="#">NASA Task Book</a></li>
+      </ul></section>
+      <section id="life-at-nasa-page" class="page"><h2>Life at NASA</h2><p>Internships, research experiences, and life in space science research.</p></section>
+      <section id="future-of-biospace-page" class="page"><h2>Future of Biospace</h2><p>Future directions and opportunities in space biology.</p></section>
+      <section id="news-page" class="page"><h2>News</h2><p>Latest news and announcements.</p></section>
+    </main>
+  </div>
+</div>
 
-      <main id="main-content" class="content">
-        <!-- Announcements Page -->
-        <section id="announcements-page" class="page active">
-          <h2>Announcements</h2>
-          <ul class="announcement-list">
-            <li><strong>2025-10-01:</strong> New “OSDR Chats” series launched — interviews with space biology researchers. </li>
-            <li><strong>2025-09-20:</strong> Call for proposals: submit your space biology datasets to OSDR. </li>
-            <li><strong>2025-09-05:</strong> Maintenance scheduled for Task Book database on 2025-10-10. </li>
-          </ul>
-        </section>
+<div id="chatbot-widget" class="chatbot">
+  <div class="chat-header"><span>Bio Assistant</span><button id="chat-close" title="Close">✕</button></div>
+  <div id="chat-body" class="chat-body"><div class="chat-msg bot">Hi — ask me about publications or resources (demo only).</div></div>
+  <div class="chat-input"><input id="chat-input-field" placeholder="Type a question..." /><button id="chat-send">Send</button></div>
+</div>
 
-        <!-- News Page -->
-        <section id="news-page" class="page">
-          <h2>News</h2>
-          <div class="news-item">
-            <h3>NASA integrates OSDR as unified space biology repository</h3>
-            <p>NASA’s Open Science Data Repository enables access to omics, phenotypic, telemetry, bioimaging, and environmental data under a unified portal. :contentReference[oaicite:0]{index=0}</p>
-          </div>
-          <div class="news-item">
-            <h3>New paper celebrates decades of open science data at NASA</h3>
-            <p>The OSDR AWG community released a commemorative article on 30 years of open space life science data. :contentReference[oaicite:1]{index=1}</p>
-          </div>
-        </section>
-
-        <!-- Publications Page -->
-        <section id="publications-page" class="page">
-          <h2>Publications</h2>
-          <div id="publications-status" class="status">Loading publications...</div>
-          <div id="publications-data-table" class="table-wrap"></div>
-        </section>
-
-        <!-- Submit Publication Page -->
-        <section id="submit-publication-page" class="page">
-          <h2>Submit a Publication</h2>
-          <form id="submit-publication-form">
-            <label>Title:<input name="title" required /></label><br/>
-            <label>Authors:<input name="authors" /></label><br/>
-            <label>Year:<input name="year" type="number" /></label><br/>
-            <label>Link:<input name="link" /></label><br/>
-            <button class="btn" type="submit">Submit</button>
-            <div id="submit-pub-msg" class="status"></div>
-          </form>
-        </section>
-
-        <!-- Q/A Page -->
-        <section id="qa-page" class="page">
-          <h2>Q & A — Space Biology</h2>
-          <div class="qa-item">
-            <h4>Q: What is OSDR?</h4>
-            <p>A: The NASA Open Science Data Repository (OSDR) is a portal providing access to space biology datasets including ‘omics, telemetry, and imaging. :contentReference[oaicite:2]{index=2}</p>
-          </div>
-          <div class="qa-item">
-            <h4>Q: How can I join research working groups?</h4>
-            <p>A: You can join OSDR Analysis Working Groups which offer trainings in data analysis, AI, and bioinformatics. :contentReference[oaicite:3]{index=3}</p>
-          </div>
-          <div class="qa-item">
-            <h4>Q: What is the NASA Task Book?</h4>
-            <p>A: It’s a database of NASA-funded research projects in biosciences, physical sciences, and human research. :contentReference[oaicite:4]{index=4}</p>
-          </div>
-        </section>
-
-        <!-- Interactive Page -->
-        <section id="interactive-page" class="page">
-          <h2>Interactive Demo</h2>
-          <p>Try this interactive experiment selector:</p>
-          <label>Pick experiment theme:
-            <select id="exp-theme">
-              <option value="">-- select --</option>
-              <option value="microgravity">Microgravity effects</option>
-              <option value="radiation">Radiation biology</option>
-              <option value="plant">Plant growth in space</option>
-            </select>
-          </label>
-          <div id="exp-display" class="interactive-display">
-            <p>Select a theme above to see experiment ideas.</p>
-          </div>
-        </section>
-
-        <!-- Library Page -->
-        <section id="library-page" class="page">
-          <h2>NASA Space Biology Resources</h2>
-          <div class="resource-card">
-            <h3>NASA Open Science Data Repository (OSDR)</h3>
-            <p>
-              The NASA OSDR enables access to biological, telemetry, imaging, and environmental datasets from spacecraft and space biology missions. :contentReference[oaicite:5]{index=5}
-            </p>
-            <div class="placeholder">
-              [Placeholder: dataset summaries or API integration]
-            </div>
-          </div>
-          <div class="resource-card">
-            <h3>NASA Space Life Sciences Library (NSLSL)</h3>
-            <p>
-              The NSLSL consolidates global space life sciences literature and resources for biological systems in space. :contentReference[oaicite:6]{index=6}
-            </p>
-            <div class="placeholder">
-              [Placeholder: literature links or search widget]
-            </div>
-          </div>
-          <div class="resource-card">
-            <h3>NASA Task Book</h3>
-            <p>
-              The NASA Task Book provides project descriptions, annual progress, reports, and publications of NASA-funded research in space biology and human research. :contentReference[oaicite:7]{index=7}
-            </p>
-            <div class="placeholder">
-              [Placeholder: project listing or search interface]
-            </div>
-          </div>
-        </section>
-
-        <!-- Life at NASA Page -->
-        <section id="life-at-nasa-page" class="page">
-          <h2>Life at NASA</h2>
-          <p>Here are some aspects of working with NASA in space biology and human research:</p>
-          <ul>
-            <li>Opportunity to work on cutting-edge experiments aboard the ISS</li>
-            <li>Collaborations across global research institutions and universities</li>
-            <li>Access to unique datasets and mission telemetry</li>
-            <li>Participation in high-impact publications and translational science</li>
-          </ul>
-        </section>
-
-        <!-- Future of Biospace Page -->
-        <section id="future-of-biospace-page" class="page">
-          <h2>Future of BioSpace / Space Biology</h2>
-          <p>The future directions and challenges in space biology include:</p>
-          <ul>
-            <li>Multi-omics integration: combining genomics, proteomics, and metabolomics data</li>
-            <li>Machine learning and AI for pattern discovery in biological responses to space</li>
-            <li>Advancing human health in deep space missions (Moon, Mars)</li>
-            <li>Bioregenerative life support and closed-loop biosystems</li>
-            <li>Open science policies and community-driven resource sharing</li>
-          </ul>
-        </section>
-
-        <!-- About Page -->
-        <section id="about-page" class="page">
-          <h2>About Us</h2>
-          <p>
-            BioSpace EXBIO Portal is a unified dashboard for exploring NASA’s space biology resources: datasets, publications, project metadata, and interactive tools. We aim to lower the barrier to entry and foster collaboration.  
-          </p>
-        </section>
-      </main>
+<div id="settings-modal" class="modal hidden">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header"><h3>Settings</h3><button id="settings-close" class="icon-btn">✕</button></div>
+    <div class="modal-tabs">
+      <button class="tab-btn active" data-tab="general">General</button>
+      <button class="tab-btn" data-tab="appearance">Appearance</button>
+      <button class="tab-btn" data-tab="privacy">Privacy & Security</button>
+    </div>
+    <div class="modal-body">
+      <div id="tab-general" class="tab-panel"><label>Display name<input id="setting-username"/></label></div>
+      <div id="tab-appearance" class="tab-panel hidden"><label>Theme<select id="setting-theme"><option value="dark">Dark</option><option value="light">Light</option></select></label></div>
+      <div id="tab-privacy" class="tab-panel hidden"><label><input type="checkbox" id="setting-analytics"/> Enable analytics (demo)</label></div>
+    </div>
+    <div class="modal-footer">
+      <button id="settings-save" class="btn">Save</button>
+      <button id="settings-cancel" class="btn hollow">Cancel</button>
     </div>
   </div>
+</div>
 
-  <!-- Chatbot -->
-  <div id="chatbot-container" class="hidden">
-    <div class="chat-header">
-      Chatbot <button id="chat-close">✖</button>
-    </div>
-    <div id="chat-body" class="chat-body">
-      <div class="chat-msg bot">Hi — ask me about space biology topics (demo).</div>
-    </div>
-    <div class="chat-input">
-      <input id="chat-input-field" placeholder="Type a question..." />
-      <button id="chat-send">Send</button>
-    </div>
-  </div>
-  <button id="chatbot-toggle">❓</button>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const links=document.querySelectorAll('[data-page]'),pages=document.querySelectorAll('.page');
+  function showPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id+'-page'));document.querySelectorAll('.nav-link,.nav-sublink').forEach(n=>n.classList.toggle('active',n.dataset.page===id));if(id==='publications') loadPublications();}
+  links.forEach(l=>{l.addEventListener('click',e=>{e.preventDefault();showPage(l.dataset.page)})});
+  document.querySelectorAll('.dropdown-toggle').forEach(btn=>{btn.addEventListener('click',()=>{const dd=document.getElementById(btn.dataset.target+'-dropdown');if(dd)dd.style.display=dd.style.display==='flex'?'none':'flex';});});
+  document.getElementById('sidebar-toggle')?.addEventListener('click',()=>document.querySelector('.sidebar').classList.toggle('collapsed'));
+  const chatToggle=document.getElementById('chat-toggle'),chatbot=document.getElementById('chatbot-widget'),chatClose=document.getElementById('chat-close'),chatSend=document.getElementById('chat-send'),chatInput=document.getElementById('chat-input-field');
+  chatToggle.addEventListener('click',()=>chatbot.classList.toggle('visible'));
+  chatClose.addEventListener('click',()=>chatbot.classList.remove('visible'));
+  chatSend.addEventListener('click',sendChat);
+  chatInput.addEventListener('keypress',e=>{if(e.key==='Enter')sendChat();});
+  function sendChat(){const txt=chatInput.value.trim();if(!txt)return;appendChat('user',txt);chatInput.value='';setTimeout(()=>appendChat('bot','Demo assistant: I can help locate publications. Try searching "microgravity yeast 2015" or open the Publications page.'),600);}
+  function appendChat(who,text){const body=document.getElementById('chat-body');const div=document.createElement('div');div.className='chat-msg '+(who==='bot'?'bot':'user');div.textContent=text;body.appendChild(div);body.scrollTop=body.scrollHeight;}
+  const settingsBtn=document.getElementById('settings-btn'),settingsModal=document.getElementById('settings-modal'),settingsClose=document.getElementById('settings-close'),settingsCancel=document.getElementById('settings-cancel');
+  settingsBtn.addEventListener('click',()=>settingsModal.classList.remove('hidden'));
+  settingsClose.addEventListener('click',()=>settingsModal.classList.add('hidden'));
+  settingsCancel.addEventListener('click',()=>settingsModal.classList.add('hidden'));
+  document.getElementById('settings-save').addEventListener('click',()=>{
+    const name=document.getElementById('setting-username').value||'Dr. A. Smith',theme=document.getElementById('setting-theme').value,analytics=document.getElementById('setting-analytics').checked;
+    localStorage.setItem('exbio-username',name);localStorage.setItem('exbio-theme',theme);localStorage.setItem('exbio-analytics',analytics);
+    alert('Settings saved (demo).');settingsModal.classList.add('hidden');document.querySelector('.username').textContent=name;
+  });
+  document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const tab=btn.dataset.tab;document.querySelectorAll('.tab-panel').forEach(panel=>panel.classList.toggle('hidden',panel.id!=='tab-'+tab));}));
+  (function(){const name=localStorage.getItem('exbio-username');if(name)document.querySelector('.username').textContent=name;const theme=localStorage.getItem('exbio-theme');if(theme==='light')document.documentElement.style.setProperty('--bg','#f5f7fb');})();
+  document.getElementById('submit-publication-form').addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(e.target);const title=fd.get('title');document.getElementById('submit-pub-msg').textContent=`Received: "${title}" (demo — not saved).`;e.target.reset();});
 
-  <!-- Settings Modal -->
-  <div id="settings-modal" class="modal hidden">
-    <div class="modal-backdrop"></div>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Settings</h3>
-        <button id="settings-close" class="icon-btn">✕</button>
-      </div>
-      <div class="modal-tabs">
-        <button class="tab-btn active" data-tab="general">General</button>
-        <button class="tab-btn" data-tab="appearance">Appearance</button>
-        <button class="tab-btn" data-tab="privacy">Privacy & Security</button>
-      </div>
-      <div class="modal-body">
-        <div id="tab-general" class="tab-panel">General settings here.</div>
-        <div id="tab-appearance" class="tab-panel hidden">Appearance settings here.</div>
-        <div id="tab-privacy" class="tab-panel hidden">Privacy settings here.</div>
-      </div>
-      <div class="modal-footer">
-        <button id="settings-save" class="btn">Save</button>
-        <button id="settings-cancel" class="btn hollow">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+  // Placeholder Publications
+  const publications=[
+    {Title:'Effects of Microgravity on Yeast Growth',Authors:'J. Doe, A. Smith',Year:'2015',Link:'https://www.nasa.gov/yeast2015'},
+    {Title:'Spaceflight-Induced Changes in Plant Gene Expression',Authors:'L. Chen',Year:'2018',Link:'https://www.nasa.gov/plants2018'},
+    {Title:'Human Muscle Atrophy in Microgravity',Authors:'M. Brown',Year:'2020',Link:'https://www.nasa.gov/muscle2020'}
+  ];
+  const pubStatus=document.getElementById('publications-status'),pubTableWrap=document.getElementById('publications-data-table');
+  function loadPublications(){pubStatus.textContent=`Loaded ${publications.length} records.`;renderPublications(publications);}
+  function renderPublications(rows){pubTableWrap.innerHTML='';if(!rows.length){pubTableWrap.innerHTML='<div class="status">No publications to show.</div>';return;}const cols=Object.keys(rows[0]);const table=document.createElement('table');const thead=document.createElement('thead');const thr=document.createElement('tr');cols.forEach(c=>{const th=document.createElement('th');th.textContent=c;thr.appendChild(th);});thead.appendChild(thr);table.appendChild(thead);const tbody=document.createElement('tbody');rows.forEach(r=>{const tr=document.createElement('tr');cols.forEach(c=>{const td=document.createElement('td');let val=r[c]||'';if(val.startsWith('http')){const a=document.createElement('a');a.href=val;a.target='_blank';a.rel='noopener';a.textContent=val.length>60?val.slice(0,60)+'…':val;td.appendChild(a);}else td.textContent=val;tr.appendChild(td);});tbody.appendChild(tr);});table.appendChild(tbody);pubTableWrap.appendChild(table);}
+  showPage('about');
+});
+</script>
 </body>
 </html>
