@@ -1,5 +1,5 @@
-// **IMPORTANT: REPLACE THIS WITH THE RAW URL OF YOUR CSV FILE ON GITHUB!**
-const CSV_URL = 'https://raw.githubusercontent.com/YourUsername/YourRepo/main/publications_pmc.csv'; 
+// **CORRECTED CSV URL from your GitHub repository**
+const CSV_URL = 'https://raw.githubusercontent.com/gopika-n-nair/biospace-engine/main/publications_pmc.csv'; 
 
 // Global variables
 let allPublications = []; 
@@ -19,35 +19,27 @@ let currentUserType = 'None';
 // Core Application Functions
 // ---------------------------------
 
-/**
- * Utility function to switch the active page/section.
- */
 function navigateTo(pageId) {
     if (pageId === 'user-selection-page') {
-        // We only allow navigation to the user selection page on logout/initial load
+        document.getElementById('user-selection-page').style.display = 'flex';
         document.getElementById('user-selection-page').classList.add('active');
         document.getElementById('main-application').style.display = 'none';
         return;
     }
 
-    // Hide all pages
     document.querySelectorAll('.portal-page').forEach(page => {
         page.classList.remove('active');
     });
 
-    // Show the target page
     const targetPage = document.getElementById(pageId);
     if (targetPage) {
         targetPage.classList.add('active');
         if (pageId === 'publications-page') {
-            loadPublicationsData();
+            loadPublicationsData(); // Load data specifically for this page
         }
     }
 }
 
-/**
- * Initializes the navigation handlers.
- */
 function setupNavigation() {
     // Nav links and back buttons
     document.querySelectorAll('[data-page]').forEach(link => {
@@ -58,8 +50,19 @@ function setupNavigation() {
         });
     });
 
-    // User Type Selection Handlers
-    document.querySelectorAll('.user-type-button').forEach(button => {
+    // Tag filter handlers 
+    document.querySelectorAll('.tag-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            currentTag = e.target.getAttribute('data-tag');
+            document.querySelectorAll('.tag-button').forEach(btn => btn.classList.remove('active-tag'));
+            e.target.classList.add('active-tag');
+            filterPublications();
+        });
+    });
+}
+
+function setupUserSelectionHandlers() {
+     document.querySelectorAll('.user-type-button').forEach(button => {
         button.addEventListener('click', (e) => {
             const userType = e.currentTarget.getAttribute('data-type');
             handleUserSelection(userType);
@@ -71,38 +74,35 @@ function setupNavigation() {
 // User Selection & Graph Functions
 // ---------------------------------
 
-/**
- * Handles the user's initial selection, updates the graph, and loads the main app.
- */
 function handleUserSelection(type) {
     currentUserType = type;
     
     // 1. Update persistent user type display
     document.getElementById('current-user-type').textContent = `User Profile: ${type}`;
     
-    // 2. Hide the selection page and show the main application
+    // 2. Hide selection page and show main application
     document.getElementById('user-selection-page').classList.remove('active');
     document.getElementById('user-selection-page').style.display = 'none';
     document.getElementById('main-application').style.display = 'block';
 
     // 3. Update the graph data (simulate one more user of the chosen type)
-    USER_TYPES[type].count += 1;
+    if (USER_TYPES[type]) {
+        USER_TYPES[type].count += 1;
+    }
     renderUserTypeGraph();
 
-    // 4. Navigate to the main portal page
+    // 4. Navigate to the main portal page (Home)
     navigateTo('home-page');
 }
 
-/**
- * Renders the stacked bar graph of user type distribution.
- */
 function renderUserTypeGraph() {
     const graphContainer = document.getElementById('user-type-graph');
+    if (!graphContainer) return;
+
     graphContainer.innerHTML = '';
     
     const totalUsers = Object.values(USER_TYPES).reduce((sum, user) => sum + user.count, 0);
 
-    // Create a segment for each user type
     for (const type in USER_TYPES) {
         const user = USER_TYPES[type];
         const percentage = (user.count / totalUsers) * 100;
@@ -111,8 +111,6 @@ function renderUserTypeGraph() {
         segment.classList.add('graph-segment');
         segment.style.width = `${percentage}%`;
         segment.style.backgroundColor = user.color;
-        
-        // Add a tooltip for details
         segment.title = `${type}: ${user.count} users (${percentage.toFixed(1)}%)`;
         
         graphContainer.appendChild(segment);
@@ -124,9 +122,6 @@ function renderUserTypeGraph() {
 // Chatbot Functions
 // ---------------------------------
 
-/**
- * Toggles the visibility of the chat window.
- */
 function toggleChat(show) {
     const chatWindow = document.getElementById('chat-window');
     const chatIcon = document.getElementById('chat-icon');
@@ -140,9 +135,6 @@ function toggleChat(show) {
     }
 }
 
-/**
- * Sends a message from the user (either typed or chosen option).
- */
 function sendMessage(message) {
     const chatBody = document.getElementById('chat-body');
     const userMessage = document.createElement('div');
@@ -150,34 +142,29 @@ function sendMessage(message) {
     userMessage.textContent = message;
     chatBody.appendChild(userMessage);
 
-    // Scroll to bottom
-    chatBody.scrollTop = chatBody.scrollHeight;
+    chatBody.scrollTop = chatBody.scrollHeight; // Scroll to bottom
 
-    // Simulate bot response (placeholder logic)
+    // Simulate bot response
     setTimeout(() => {
-        let botResponse = 'I\'m still learning! Thank you for your question.';
+        let botResponse = `I see you are logged in as a **${currentUserType}**. I'm currently summarizing that: ${message}`;
         
         if (message.toLowerCase().includes('latest publication')) {
-            botResponse = 'The latest placeholder publication added is "Microgravity Impact on Martian Plant Growth" (2025). Check the Publications tab for more!';
+            botResponse = 'The latest publication is loading from your CSV data. Check the Publications tab for real-time updates!';
         } else if (message.toLowerCase().includes('submit')) {
-            botResponse = 'To submit a publication, please navigate to the Publications tab and click the "Submit a new publication" link.';
+            botResponse = 'To submit a publication, please navigate to the Publications tab and click the "Submit a new publication" link. ';
         } else if (message.toLowerCase().includes('challenge')) {
             botResponse = 'The EXBIO Portal is built for the NASA Space Apps Challenge 2025: "Build a Space Biology Knowledge Engine".';
         }
 
         const botMsg = document.createElement('div');
         botMsg.classList.add('chat-message', 'bot');
-        botMsg.textContent = botResponse;
+        botMsg.innerHTML = botResponse; 
         chatBody.appendChild(botMsg);
         
-        // Scroll to bottom
-        chatBody.scrollTop = chatBody.scrollHeight;
+        chatBody.scrollTop = chatBody.scrollHeight; // Scroll to bottom
     }, 800);
 }
 
-/**
- * Handles the 'Send' button or Enter key for the chat input.
- */
 function handleChatInput(e) {
     if (e.key === 'Enter') {
         const input = document.getElementById('chat-input');
@@ -189,161 +176,153 @@ function handleChatInput(e) {
     }
 }
 
-/**
- * Allows chat options to be sent as messages.
- */
-function sendChatOption(message) {
-    // Remove the chat options after one is chosen (to keep the chat clean)
-    document.querySelectorAll('.chat-options').forEach(opt => opt.remove());
-    sendMessage(message);
-}
-// Attach the chat option sender globally
-window.sendChatOption = sendChatOption;
-window.toggleChat = toggleChat;
-window.handleChatInput = handleChatInput;
-
-
-// ---------------------------------
-// Publications Functions (Same as previous revision)
-// ---------------------------------
-
-/**
- * Simple CSV parser: converts a CSV string into an array of objects.
- */
-function parseCSV(csvText) {
-    const lines = csvText.split('\n').filter(line => line.trim() !== '');
-    if (lines.length === 0) return [];
-    
-    // Simple header parsing - assumes no commas in headers for simplicity
-    const headers = lines[0].split(',').map(header => header.trim());
-    const data = [];
-
-    for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
-        
-        if (values.length === headers.length) {
-            const row = {};
-            headers.forEach((header, index) => {
-                row[header] = values[index].replace(/"/g, '').trim();
-            });
-            data.push(row);
-        }
-    }
-    return data;
+function sendChatOption(option) {
+    sendMessage(option);
 }
 
-/**
- * Fetches the CSV file from GitHub and stores the data.
- */
-async function loadPublicationsData() {
-    if (allPublications.length > 0) {
-        filterPublications(); 
-        return;
-    }
-    
-    const dashboard = document.getElementById('publications-dashboard');
-    dashboard.innerHTML = '<p>Fetching data from GitHub...</p>';
-    
+// ---------------------------------
+// Publications Data Handling
+// ---------------------------------
+
+async function fetchPublications() {
     try {
         const response = await fetch(CSV_URL);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const csvText = await response.text();
-        
-        allPublications = parseCSV(csvText);
-        filterPublications(); 
-
+        return parseCSV(csvText);
     } catch (error) {
-        console.error("Error loading CSV file:", error);
-        dashboard.innerHTML = `<p style="color:red;">Error loading publications. Check the CSV URL and format. (${error.message})</p>`;
+        console.error("Could not fetch or parse publications data:", error);
+        document.getElementById('publications-dashboard').innerHTML = 
+            `<p style="color: red;">Error loading publications from GitHub. Please check the network console for details. Showing **placeholder data** instead.</p>`;
+        return getPlaceholderPublications();
     }
 }
 
-/**
- * Renders the publications array into the dynamic dashboard (cards).
- */
-function renderPublications(publications) {
+function parseCSV(csvText) {
+    // This regex handles standard CSV parsing, including commas inside quoted fields.
+    const lines = csvText.trim().split('\n');
+    if (lines.length === 0) return [];
+    
+    // Simple header extraction
+    const headers = lines[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(h => h.trim().replace(/"/g, '').toLowerCase().replace(/ /g, '_'));
+    const data = [];
+
+    for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/"/g, '')); 
+        if (values.length === headers.length) {
+            let item = {};
+            headers.forEach((header, index) => {
+                item[header] = values[index];
+            });
+            data.push(item);
+        }
+    }
+    return data;
+}
+
+function getPlaceholderPublications() {
+    return [
+        {
+            title: "AI-Driven Plant Stress Detection in Microgravity",
+            summary: "Uses machine learning to analyze spectral data for early detection of plant stress factors during space missions.",
+            authors: "Dr. A. Smith, J. Lee",
+            tags: "Artificial Intelligence & Machine Learning, Flora & Fauna",
+            link: "http://example.com/pub1"
+        },
+        {
+            title: "Optimizing Data Management for Bioscience Experiments on ISS",
+            summary: "A new standardized format for storing and transmitting biological data to improve access and analysis by global teams.",
+            authors: "R. Kaur, S. Chen",
+            tags: "Data Management, Software",
+            link: "http://example.com/pub2"
+        },
+        {
+            title: "Educational Outreach: Bringing Space Biology to K-12",
+            summary: "Curriculum development and interactive tools for students to learn about the effects of space on living systems.",
+            authors: "M. Johnson",
+            tags: "Education, Writing & Communications",
+            link: "http://example.com/pub3"
+        }
+    ];
+}
+
+
+function loadPublicationsData() {
+    if (allPublications.length === 0) {
+        fetchPublications().then(data => {
+            allPublications = data;
+            filterPublications();
+        });
+    } else {
+        filterPublications();
+    }
+}
+
+function filterPublications() {
     const dashboard = document.getElementById('publications-dashboard');
-    dashboard.innerHTML = ''; 
+    const searchInput = document.getElementById('search-publications').value.toLowerCase();
+
+    const filtered = allPublications.filter(pub => {
+        // 1. Tag Filter
+        // Note: The 'tags' field must exist in your CSV for this to work.
+        const pubTags = pub.tags ? pub.tags : ''; 
+        const tagMatch = currentTag === 'all' || pubTags.includes(currentTag);
+        
+        // 2. Search Filter (Title, Summary, Authors)
+        const searchMatch = !searchInput || 
+            (pub.title && pub.title.toLowerCase().includes(searchInput)) ||
+            (pub.summary && pub.summary.toLowerCase().includes(searchInput)) ||
+            (pub.authors && pub.authors.toLowerCase().includes(searchInput));
+
+        return tagMatch && searchMatch;
+    });
+
+    displayPublications(filtered, dashboard);
+}
+
+function displayPublications(publications, container) {
+    container.innerHTML = ''; 
 
     if (publications.length === 0) {
-        dashboard.innerHTML = '<p>No publications found matching the criteria.</p>';
+        container.innerHTML = '<p>No publications found matching your criteria. Try adjusting the search or filters.</p>';
         return;
     }
 
     publications.forEach(pub => {
-        const title = pub.Title || 'Untitled Publication';
-        const link = pub.Link || '#';
-        const author = pub.Author || 'Unknown Author';
-        const summary = pub['Placeholder Summary (AI Output Simulation)'] || 'AI Summary Pending...';
-        const subjects = pub.Subjects || 'No Subjects';
-
         const card = document.createElement('div');
         card.classList.add('publication-card');
-        
+
         card.innerHTML = `
-            <h3>${title}</h3>
-            <p class="author">${author} (${pub.Year || 'N/A'})</p>
-            <div class="summary">
-                **AI Summary:** ${summary}
-            </div>
-            <p class="tags">Subjects: ${subjects}</p>
-            <a href="${link}" target="_blank">Read Full Publication →</a>
+            <h3>${pub.title || 'No Title'}</h3>
+            <p class="author">${pub.authors || 'Unknown Author'}</p>
+            <p class="summary">${pub.summary || 'No summary available.'}</p>
+            <p class="tags">Tags: ${pub.tags || 'General'}</p>
+            <a href="${pub.link || '#'}" target="_blank">View Details (Link)</a>
         `;
-        dashboard.appendChild(card);
+        container.appendChild(card);
     });
 }
 
-/**
- * Filters the publications based on search query and active subject tag.
- */
-function filterPublications() {
-    const query = document.getElementById('search-publications').value.toLowerCase();
-    
-    if (allPublications.length === 0) {
-        loadPublicationsData(); 
-        return; 
-    }
-    
-    const filtered = allPublications.filter(pub => {
-        const searchMatch = (
-            (pub.Title || '').toLowerCase().includes(query) ||
-            (pub.Author || '').toLowerCase().includes(query) ||
-            (pub['Placeholder Summary (AI Output Simulation)'] || '').toLowerCase().includes(query)
-        );
 
-        const tagMatch = currentTag === 'all' || (pub.Subjects && pub.Subjects.includes(currentTag));
-        
-        return searchMatch && tagMatch;
-    });
+// ---------------------------------
+// Initialization
+// ---------------------------------
 
-    renderPublications(filtered);
-}
-
-/**
- * Handles clicks on the subject tag buttons.
- */
-function handleTagClick(e) {
-    const newTag = e.currentTarget.getAttribute('data-tag');
-    currentTag = newTag;
-
-    document.querySelectorAll('.tag-button').forEach(btn => {
-        btn.classList.remove('active-tag');
-    });
-    e.currentTarget.classList.add('active-tag');
-
-    filterPublications();
-}
-// Attach the functions globally
-window.filterPublications = filterPublications;
 document.addEventListener('DOMContentLoaded', () => {
-    // Setup Subject Tag handlers
-    document.querySelectorAll('.tag-button').forEach(tagButton => {
-        tagButton.addEventListener('click', handleTagClick);
-    });
-
+    // 1. Initial Setup
+    setupUserSelectionHandlers();
     setupNavigation();
-    renderUserTypeGraph(); // Draw the initial graph
-    // The application starts on the user-selection-page, which then calls handleUserSelection
+    renderUserTypeGraph(); 
+    
+    // 2. Ensure only the selection screen is visible initially
+    navigateTo('user-selection-page');
+
+    // 3. Pre-load data in the background (will display when the Publications tab is clicked)
+    if (allPublications.length === 0) {
+        fetchPublications().then(data => {
+            allPublications = data;
+        });
+    }
 });
