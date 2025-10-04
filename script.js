@@ -1,200 +1,349 @@
-const views = document.querySelectorAll('.view');
-const header = document.getElementById('universal-header');
-const footer = document.getElementById('app-footer');
-let history = []; // To store navigation history
+// **IMPORTANT: REPLACE THIS WITH THE RAW URL OF YOUR CSV FILE ON GITHUB!**
+const CSV_URL = 'https://raw.githubusercontent.com/YourUsername/YourRepo/main/publications_pmc.csv'; 
 
-// --- CHATBOT ELEMENTS ---
-const chatbotModal = document.getElementById('chatbot-modal');
-const chatbotButton = document.getElementById('chatbot-button');
-const closeChatbotButton = document.getElementById('close-chatbot');
-const userInput = document.getElementById('user-input');
-const sendMessageButton = document.getElementById('send-message');
-const chatbotMessages = document.getElementById('chatbot-messages');
-// Note: We'll select the AI card button inside DOMContentLoaded
+// Global variables
+let allPublications = []; 
+let currentTag = 'all'; 
 
-// --- Helper Functions ---
-function handlePlaceholderClick(featureName) {
-    alert(`This feature (${featureName}) is a design placeholder and is not functional.`);
+// User data for the graph (placeholder data)
+const USER_TYPES = {
+    'Scientist': { label: 'Sci', color: '#ffc107', count: 120 },
+    'Manager': { label: 'Mngr', color: '#17a2b8', count: 80 },
+    'Mission Architect': { label: 'Arch', color: '#dc3545', count: 50 },
+    'Visitor': { label: 'Visit', color: '#28a745', count: 150 }
+};
+let currentUserType = 'None'; 
+
+
+// ---------------------------------
+// Core Application Functions
+// ---------------------------------
+
+/**
+ * Utility function to switch the active page/section.
+ */
+function navigateTo(pageId) {
+    if (pageId === 'user-selection-page') {
+        // We only allow navigation to the user selection page on logout/initial load
+        document.getElementById('user-selection-page').classList.add('active');
+        document.getElementById('main-application').style.display = 'none';
+        return;
+    }
+
+    // Hide all pages
+    document.querySelectorAll('.portal-page').forEach(page => {
+        page.classList.remove('active');
+    });
+
+    // Show the target page
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.classList.add('active');
+        if (pageId === 'publications-page') {
+            loadPublicationsData();
+        }
+    }
 }
 
-// --- Navigation Functions ---
-function navigateTo(targetId) {
-    // 1. Deactivate all views
-    views.forEach(view => {
-        view.classList.remove('active');
+/**
+ * Initializes the navigation handlers.
+ */
+function setupNavigation() {
+    // Nav links and back buttons
+    document.querySelectorAll('[data-page]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetPageId = e.currentTarget.getAttribute('data-page');
+            navigateTo(targetPageId);
+        });
     });
+
+    // User Type Selection Handlers
+    document.querySelectorAll('.user-type-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const userType = e.currentTarget.getAttribute('data-type');
+            handleUserSelection(userType);
+        });
+    });
+}
+
+// ---------------------------------
+// User Selection & Graph Functions
+// ---------------------------------
+
+/**
+ * Handles the user's initial selection, updates the graph, and loads the main app.
+ */
+function handleUserSelection(type) {
+    currentUserType = type;
     
-    // 2. Activate the target view
-    const targetView = document.getElementById(targetId);
-    if (targetView) {
-        targetView.classList.add('active');
+    // 1. Update persistent user type display
+    document.getElementById('current-user-type').textContent = `User Profile: ${type}`;
+    
+    // 2. Hide the selection page and show the main application
+    document.getElementById('user-selection-page').classList.remove('active');
+    document.getElementById('user-selection-page').style.display = 'none';
+    document.getElementById('main-application').style.display = 'block';
+
+    // 3. Update the graph data (simulate one more user of the chosen type)
+    USER_TYPES[type].count += 1;
+    renderUserTypeGraph();
+
+    // 4. Navigate to the main portal page
+    navigateTo('home-page');
+}
+
+/**
+ * Renders the stacked bar graph of user type distribution.
+ */
+function renderUserTypeGraph() {
+    const graphContainer = document.getElementById('user-type-graph');
+    graphContainer.innerHTML = '';
+    
+    const totalUsers = Object.values(USER_TYPES).reduce((sum, user) => sum + user.count, 0);
+
+    // Create a segment for each user type
+    for (const type in USER_TYPES) {
+        const user = USER_TYPES[type];
+        const percentage = (user.count / totalUsers) * 100;
         
-        // 3. Update visibility of header/footer
-        if (targetId === 'view-user-select') {
-            header.classList.add('hidden');
-            footer.classList.add('hidden');
-            history = []; // Clear history on returning to select screen
-        } else {
-            header.classList.remove('hidden');
-            footer.classList.remove('hidden');
-            
-            // 4. Update history (only push if it's a new page)
-            if (history[history.length - 1] !== targetId) {
-                history.push(targetId);
-            }
+        const segment = document.createElement('div');
+        segment.classList.add('graph-segment');
+        segment.style.width = `${percentage}%`;
+        segment.style.backgroundColor = user.color;
+        
+        // Add a tooltip for details
+        segment.title = `${type}: ${user.count} users (${percentage.toFixed(1)}%)`;
+        
+        graphContainer.appendChild(segment);
+    }
+}
+
+
+// ---------------------------------
+// Chatbot Functions
+// ---------------------------------
+
+/**
+ * Toggles the visibility of the chat window.
+ */
+function toggleChat(show) {
+    const chatWindow = document.getElementById('chat-window');
+    const chatIcon = document.getElementById('chat-icon');
+    
+    if (show) {
+        chatWindow.style.display = 'flex';
+        chatIcon.style.display = 'none';
+    } else {
+        chatWindow.style.display = 'none';
+        chatIcon.style.display = 'flex';
+    }
+}
+
+/**
+ * Sends a message from the user (either typed or chosen option).
+ */
+function sendMessage(message) {
+    const chatBody = document.getElementById('chat-body');
+    const userMessage = document.createElement('div');
+    userMessage.classList.add('chat-message', 'user');
+    userMessage.textContent = message;
+    chatBody.appendChild(userMessage);
+
+    // Scroll to bottom
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    // Simulate bot response (placeholder logic)
+    setTimeout(() => {
+        let botResponse = 'I\'m still learning! Thank you for your question.';
+        
+        if (message.toLowerCase().includes('latest publication')) {
+            botResponse = 'The latest placeholder publication added is "Microgravity Impact on Martian Plant Growth" (2025). Check the Publications tab for more!';
+        } else if (message.toLowerCase().includes('submit')) {
+            botResponse = 'To submit a publication, please navigate to the Publications tab and click the "Submit a new publication" link.';
+        } else if (message.toLowerCase().includes('challenge')) {
+            botResponse = 'The EXBIO Portal is built for the NASA Space Apps Challenge 2025: "Build a Space Biology Knowledge Engine".';
         }
 
-        // 5. Update active class on main navigation links
-        document.querySelectorAll('.main-nav a').forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('data-target') === targetId) {
-                link.classList.add('active');
-            }
-        });
+        const botMsg = document.createElement('div');
+        botMsg.classList.add('chat-message', 'bot');
+        botMsg.textContent = botResponse;
+        chatBody.appendChild(botMsg);
         
-        window.scrollTo(0, 0); // Scroll to top of the new page
-    }
-}
-
-function goBack() {
-    if (history.length > 1) {
-        history.pop(); // Remove current view
-        const previousViewId = history[history.length - 1];
-        // Navigate to the previous view
-        navigateTo(previousViewId);
-        // Correct history: navigateTo adds the previousViewId back, so we keep the length correct
-        history.pop();
-        history.push(previousViewId);
-    } else {
-        // Fallback to dashboard or user select
-        navigateTo('view-user-select');
-    }
-}
-
-// --- Chatbot Functions ---
-
-function toggleChatbot() {
-    chatbotModal.classList.toggle('hidden');
-    // Scroll to bottom on open and focus input
-    if (!chatbotModal.classList.contains('hidden')) {
-        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-        userInput.focus();
-    }
-}
-
-function createMessageElement(message, isOutgoing) {
-    const msgElement = document.createElement('div');
-    msgElement.classList.add('message', isOutgoing ? 'outgoing' : 'incoming');
-    msgElement.textContent = message;
-    return msgElement;
-}
-
-function getBotResponse(userMessage) {
-    const msg = userMessage.toLowerCase().trim();
-
-    // Rule-based responses for key portal features
-    if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) {
-        return "Hello! I'm your EXBIO Portal Assistant. I can help you navigate. Try asking about 'Publications', 'Activities', or 'Careers'.";
-    } else if (msg.includes('publications') || msg.includes('pub')) {
-        return "The Publications Directory provides a list of research papers. You can search by title or DOI and find links to external resources like the NASA Task Book.";
-    } else if (msg.includes('activities') || msg.includes('workshop') || msg.includes('campaign')) {
-        return "The Activities page details upcoming workshops (like data analysis workshops) and field campaigns (analog missions). Check there for application deadlines!";
-    } else if (msg.includes('manager') || msg.includes('architect') || msg.includes('mission')) {
-        return "As a Mission Architect, you can access specialized resources via the Library and use our Interactives to run simulations on bio-systems.";
-    } else if (msg.includes('career') || msg.includes('job') || msg.includes('qualifications')) {
-        return "The Career section outlines potential employers (NASA, ESA, Private Aerospace) and required qualifications in space biology and bioengineering.";
-    } else if (msg.includes('library') || msg.includes('books')) {
-        return "The Library organizes resources into Books, Journals, and Past Papers. It also links to the NASA Space Life Sciences Library (NSLSL).";
-    } else if (msg.includes('osdr') || msg.includes('data')) {
-        return "The NASA Open Science Data Repository (OSDR) is where you find raw space biology data. Links are available on the Dashboard and Publications pages.";
-    } else if (msg.includes('thanks') || msg.includes('thank you')) {
-        return "You're very welcome! Safe travels in the EXBIO Portal.";
-    } else {
-        return "I'm sorry, I currently only have pre-programmed answers for key portal topics like 'Publications', 'Activities', or 'Library'.";
-    }
-}
-
-function handleSendMessage() {
-    const userMessage = userInput.value.trim();
-    if (userMessage === "") return;
-
-    // 1. Display user message
-    chatbotMessages.appendChild(createMessageElement(userMessage, true));
-    userInput.value = '';
-    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-
-    // 2. Simulate bot typing/thinking delay
-    const thinkingMessage = createMessageElement("Thinking...", false);
-    chatbotMessages.appendChild(thinkingMessage);
-    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-
-    // 3. Get and display bot response after delay
-    setTimeout(() => {
-        const botResponse = getBotResponse(userMessage);
-        thinkingMessage.textContent = botResponse;
-        // Scroll again after content is loaded
-        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        // Scroll to bottom
+        chatBody.scrollTop = chatBody.scrollHeight;
     }, 800);
 }
 
-// --- Event Listeners ---
-document.addEventListener('DOMContentLoaded', () => {
-    // Initial view setup
-    navigateTo('view-user-select');
-
-    // Navigation setup
-    document.getElementById('back-button').addEventListener('click', goBack);
-    document.querySelectorAll('.main-nav .nav-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            navigateTo(link.getAttribute('data-target'));
-        });
-    });
-
-    // User Type Selection Listener (Crucial for initial flow)
-    document.querySelectorAll('.user-type-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            const targetId = card.getAttribute('data-target');
-            if (targetId) {
-                // Navigate to the dashboard after selecting user type
-                navigateTo(targetId); 
-            }
-        });
-    });
-    
-    // --- Chatbot Event Listeners ---
-    
-    // Add the initial welcome message to the chatbot
-    const initialMessage = "Welcome! I can help you navigate the EXBIO Portal. Ask me about 'Publications', 'Activities', or 'Careers'.";
-    chatbotMessages.appendChild(createMessageElement(initialMessage, false));
-
-    // Floating button and close button toggle the modal
-    chatbotButton.addEventListener('click', toggleChatbot);
-    closeChatbotButton.addEventListener('click', toggleChatbot);
-    
-    // Send button triggers the chat handlers
-    sendMessageButton.addEventListener('click', handleSendMessage);
-    
-    // Allow 'Enter' key to send message
-    userInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            handleSendMessage();
-            e.preventDefault(); // Prevent new line in input field
+/**
+ * Handles the 'Send' button or Enter key for the chat input.
+ */
+function handleChatInput(e) {
+    if (e.key === 'Enter') {
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+        if (message) {
+            sendMessage(message);
+            input.value = '';
         }
-    });
-    
-    // Link the AI help card button to open the chatbot modal
-    const aiHelpCardButton = document.querySelector('.ai-help-card .primary-button');
-    if (aiHelpCardButton) {
-        aiHelpCardButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (chatbotModal.classList.contains('hidden')) {
-                toggleChatbot();
-            }
-        });
     }
-});
+}
 
-// Expose handlePlaceholderClick globally for use in HTML onclick attributes
-window.handlePlaceholderClick = handlePlaceholderClick;
-window.toggleChatbot = toggleChatbot; // Expose toggleChatbot for the AI card button
+/**
+ * Allows chat options to be sent as messages.
+ */
+function sendChatOption(message) {
+    // Remove the chat options after one is chosen (to keep the chat clean)
+    document.querySelectorAll('.chat-options').forEach(opt => opt.remove());
+    sendMessage(message);
+}
+// Attach the chat option sender globally
+window.sendChatOption = sendChatOption;
+window.toggleChat = toggleChat;
+window.handleChatInput = handleChatInput;
+
+
+// ---------------------------------
+// Publications Functions (Same as previous revision)
+// ---------------------------------
+
+/**
+ * Simple CSV parser: converts a CSV string into an array of objects.
+ */
+function parseCSV(csvText) {
+    const lines = csvText.split('\n').filter(line => line.trim() !== '');
+    if (lines.length === 0) return [];
+    
+    // Simple header parsing - assumes no commas in headers for simplicity
+    const headers = lines[0].split(',').map(header => header.trim());
+    const data = [];
+
+    for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
+        
+        if (values.length === headers.length) {
+            const row = {};
+            headers.forEach((header, index) => {
+                row[header] = values[index].replace(/"/g, '').trim();
+            });
+            data.push(row);
+        }
+    }
+    return data;
+}
+
+/**
+ * Fetches the CSV file from GitHub and stores the data.
+ */
+async function loadPublicationsData() {
+    if (allPublications.length > 0) {
+        filterPublications(); 
+        return;
+    }
+    
+    const dashboard = document.getElementById('publications-dashboard');
+    dashboard.innerHTML = '<p>Fetching data from GitHub...</p>';
+    
+    try {
+        const response = await fetch(CSV_URL);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const csvText = await response.text();
+        
+        allPublications = parseCSV(csvText);
+        filterPublications(); 
+
+    } catch (error) {
+        console.error("Error loading CSV file:", error);
+        dashboard.innerHTML = `<p style="color:red;">Error loading publications. Check the CSV URL and format. (${error.message})</p>`;
+    }
+}
+
+/**
+ * Renders the publications array into the dynamic dashboard (cards).
+ */
+function renderPublications(publications) {
+    const dashboard = document.getElementById('publications-dashboard');
+    dashboard.innerHTML = ''; 
+
+    if (publications.length === 0) {
+        dashboard.innerHTML = '<p>No publications found matching the criteria.</p>';
+        return;
+    }
+
+    publications.forEach(pub => {
+        const title = pub.Title || 'Untitled Publication';
+        const link = pub.Link || '#';
+        const author = pub.Author || 'Unknown Author';
+        const summary = pub['Placeholder Summary (AI Output Simulation)'] || 'AI Summary Pending...';
+        const subjects = pub.Subjects || 'No Subjects';
+
+        const card = document.createElement('div');
+        card.classList.add('publication-card');
+        
+        card.innerHTML = `
+            <h3>${title}</h3>
+            <p class="author">${author} (${pub.Year || 'N/A'})</p>
+            <div class="summary">
+                **AI Summary:** ${summary}
+            </div>
+            <p class="tags">Subjects: ${subjects}</p>
+            <a href="${link}" target="_blank">Read Full Publication →</a>
+        `;
+        dashboard.appendChild(card);
+    });
+}
+
+/**
+ * Filters the publications based on search query and active subject tag.
+ */
+function filterPublications() {
+    const query = document.getElementById('search-publications').value.toLowerCase();
+    
+    if (allPublications.length === 0) {
+        loadPublicationsData(); 
+        return; 
+    }
+    
+    const filtered = allPublications.filter(pub => {
+        const searchMatch = (
+            (pub.Title || '').toLowerCase().includes(query) ||
+            (pub.Author || '').toLowerCase().includes(query) ||
+            (pub['Placeholder Summary (AI Output Simulation)'] || '').toLowerCase().includes(query)
+        );
+
+        const tagMatch = currentTag === 'all' || (pub.Subjects && pub.Subjects.includes(currentTag));
+        
+        return searchMatch && tagMatch;
+    });
+
+    renderPublications(filtered);
+}
+
+/**
+ * Handles clicks on the subject tag buttons.
+ */
+function handleTagClick(e) {
+    const newTag = e.currentTarget.getAttribute('data-tag');
+    currentTag = newTag;
+
+    document.querySelectorAll('.tag-button').forEach(btn => {
+        btn.classList.remove('active-tag');
+    });
+    e.currentTarget.classList.add('active-tag');
+
+    filterPublications();
+}
+// Attach the functions globally
+window.filterPublications = filterPublications;
+document.addEventListener('DOMContentLoaded', () => {
+    // Setup Subject Tag handlers
+    document.querySelectorAll('.tag-button').forEach(tagButton => {
+        tagButton.addEventListener('click', handleTagClick);
+    });
+
+    setupNavigation();
+    renderUserTypeGraph(); // Draw the initial graph
+    // The application starts on the user-selection-page, which then calls handleUserSelection
+});
