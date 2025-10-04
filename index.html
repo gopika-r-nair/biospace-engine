@@ -5,28 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EXBIO Portal</title>
     <link rel="stylesheet" href="styles.css">
-    </head>
+</head>
 <body>
 
     <section id="user-selection-page" class="portal-page active">
         <div class="user-select-container">
-            <h1>Welcome to EXBIO Portal</h1>
-            <h2>Please select your user type to continue:</h2>
+            <h1>Welcome to The EXBIO portal</h1>
+            <h2>Please select your user type:</h2>
             
             <div class="user-type-grid">
-                <button class="user-type-button" data-type="Scientist">
-                    🔬 Scientist (Conduct research & analyze data)
-                </button>
-                <button class="user-type-button" data-type="Manager">
-                    💼 Manager (Oversve projects & teams)
-                </button>
-                <button class="user-type-button" data-type="Mission Architect">
-                    🚀 Mission Architect (Design & build systems)
-                </button>
-                <button class="user-type-button" data-type="Visitor">
-                    👤 Visitor (Explore public content)
-                </button>
+                <div class="user-type-card" data-type="Scientist">
+                    <span class="icon">🔬</span>
+                    <h3 class="title">Scientist</h3>
+                    <p class="description">Conduct research & analyze data</p>
+                </div>
+                <div class="user-type-card" data-type="Manager">
+                    <span class="icon">⚙️</span>
+                    <h3 class="title">Manager</h3>
+                    <p class="description">Oversve projects & teams</p>
+                </div>
+                <div class="user-type-card" data-type="Mission Architect">
+                    <span class="icon">🚀</span>
+                    <h3 class="title">Mission Architect</h3>
+                    <p class="description">Design & build systems</p>
+                </div>
+                <div class="user-type-card" data-type="Visitor">
+                    <span class="icon">👤</span>
+                    <h3 class="title">Visitor</h3>
+                    <p class="description">Explore public content</p>
+                </div>
             </div>
+            <button id="continue-btn" disabled>Continue</button>
             <p style="margin-top: 20px;">Don't see your type? Contact Support.</p>
         </div>
     </section>
@@ -55,7 +64,7 @@
                 
                 <div class="user-profile-bar">
                     <span class="settings-icon" onclick="alert('Settings menu opened!')" title="Settings">⚙️</span>
-                    <span id="current-user-type">User Profile: None</span>
+                    <span id="current-user-type">Profile: None</span>
                     <button onclick="alert('Login functionality coming soon!')">Login</button>
                 </div>
             </div>
@@ -117,138 +126,15 @@
                 </div>
             </section>
 
-            <section id="about-page" class="portal-page">
-                <button class="back-tab" data-page="home-page">← back</button>
-                <h2>About Us</h2>
-                <div class="page-content-grid">
-                    <div class="description">
-                        <p>Some description.</p>
-                        <p>Major success in biospace studies, collaborating across government and private sectors to advance human and planetary exploration.</p>
-                        <p>Our goal is to centralize space biology knowledge for researchers, managers, and mission planners alike.</p>
-                    </div>
-                    <div class="image-placeholder">
-                        <p>Some Images</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="activity-page" class="portal-page">
-                <button class="back-tab" data-page="home-page">← back</button>
-                <h2>Activities</h2>
-                <div class="page-content-grid">
-                    <div class="description">
-                        <p>Important! Some description about our activities.</p>
-                        <p>Explore current analog missions, upcoming flight experiments, and ground-based research campaigns.</p>
-                        <a href="#" data-page="interactives-page" class="sub-link">Go to Interactives →</a>
-                    </div>
-                    <div class="image-placeholder">
-                        <p>Some Images</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="interactives-page" class="portal-page">
-                <button class="back-tab" data-page="activity-page">← back to Activities</button>
-                <h2>Interactives</h2>
-                <div class="description">
-                    <p>Some description about interactive tools and games.</p>
-                    <ul>
-                        <li><a href="#game1">Game 1 (Click to Game 1)</a>: Microgravity Simulator</li>
-                        <li><a href="#game2">Game 2 (Click to Game 2)</a>: Radiation Dose Calculator</li>
-                        <li>Dynamic Data Visualizer</li>
-                    </ul>
-                </div>
-            </section>
-            
-            <section id="news-page" class="portal-page">
-                <button class="back-tab" data-page="home-page">← back</button>
-                <h2>News</h2>
-                <div class="news-list">
-                    <h3>Trending Research:</h3>
-                    <ul>
-                        <li>Latest breakthroughs in long-duration human spaceflight.</li>
-                        <li>Update on Artemis Gateway biology experiments.</li>
-                    </ul>
-                    <h3>Events/Others:</h3>
-                    <ul>
-                        <li>Space Apps 2025 Wrap-up.</li>
-                        <li>Upcoming scientific conferences.</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="career-page" class="portal-page">
-                <button class="back-tab" data-page="home-page">← back</button>
-                <h2>Career</h2>
-                <div class="page-content-grid">
-                    <div class="description">
-                        <p>Some description about careers in space biology.</p>
-                        <p>Access job listings, internship opportunities, and mentorship programs.</p>
-                        <a href="#" data-page="life-at-nasa-page" class="sub-link">View Life at NASA →</a>
-                        <a href="#" data-page="future-of-biospace-page" class="sub-link">Future of Biospace Studies →</a>
-                    </div>
-                    <div class="image-placeholder">
-                        <p>Power mode: Qualified</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="life-at-nasa-page" class="portal-page">
-                <button class="back-tab" data-page="career-page">← back to Career</button>
-                <h2>Life at NASA</h2>
-                <div class="page-content-grid">
-                    <div class="description">
-                        <p>Experience shared by NASA workers.</p>
-                        <ul>
-                            <li>Video: Day in the Life of a Space Biologist.</li>
-                            <li>Q&A Transcript with ISS Crew.</li>
-                        </ul>
-                    </div>
-                    <div class="image-placeholder">
-                        <p>Some Images</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="future-of-biospace-page" class="portal-page">
-                <button class="back-tab" data-page="career-page">← back to Career</button>
-                <h2>Future of Biospace Studies</h2>
-                <div class="page-content-grid">
-                    <div class="description">
-                        <p>Scope in field? Research roadmaps and next-decade goals.</p>
-                        <p>Focus areas: AI-driven discovery, closed-loop life support, and Martian plant systems.</p>
-                    </div>
-                    <div class="image-placeholder">
-                        <p>Some Images</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="library-page" class="portal-page">
-                <button class="back-tab" data-page="home-page">← back</button>
-                <h2>Library</h2>
-                <div class="library-options">
-                    <button class="library-btn">Live Weight</button>
-                    <button class="library-btn">Curt Version</button>
-                    <button class="library-btn">Library</button>
-                </div>
-                <p style="margin-top: 20px;">Digital resources, technical documents, and archive access.</p>
-            </section>
-
-            <section id="submit-publication-page" class="portal-page">
-                <button class="back-tab" data-page="publications-page">← back</button>
-                <h2>Publication Submission</h2>
-                <form class="submission-form">
-                    <label>Define your idea:</label>
-                    <textarea rows="5" placeholder="Summary of your research..."></textarea>
-                    <label>Highlight if any:</label>
-                    <input type="text" placeholder="Keywords, fields of study, or NASA Challenge relevance">
-                    <label>Personal Details / Contact:</label>
-                    <input type="text" placeholder="Your name and email">
-                    <button type="submit">Submit</button>
-                    <p style="text-align: right; margin-top: 10px;"><a href="#" onclick="alert('Help documentation opened!')">Click for help</a></p>
-                </form>
-            </section>
+            <section id="about-page" class="portal-page"><button class="back-tab" data-page="home-page">← back</button><h2>About Us</h2><div class="page-content-grid"><div class="description"><p>Major success in biospace studies, collaborating across government and private sectors to advance human and planetary exploration.</p><p>Our goal is to centralize space biology knowledge for researchers, managers, and mission planners alike.</p></div><div class="image-placeholder"><p>Some Images</p></div></div></section>
+            <section id="activity-page" class="portal-page"><button class="back-tab" data-page="home-page">← back</button><h2>Activities</h2><div class="page-content-grid"><div class="description"><p>Important! Some description about our activities.</p><p>Explore current analog missions, upcoming flight experiments, and ground-based research campaigns.</p><a href="#" data-page="interactives-page" class="sub-link">Go to Interactives →</a></div><div class="image-placeholder"><p>Some Images</p></div></div></section>
+            <section id="interactives-page" class="portal-page"><button class="back-tab" data-page="activity-page">← back to Activities</button><h2>Interactives</h2><div class="description"><p>Some description about interactive tools and games.</p><ul><li><a href="#game1">Game 1 (Click to Game 1)</a>: Microgravity Simulator</li><li><a href="#game2">Game 2 (Click to Game 2)</a>: Radiation Dose Calculator</li><li>Dynamic Data Visualizer</li></ul></div></section>
+            <section id="news-page" class="portal-page"><button class="back-tab" data-page="home-page">← back</button><h2>News</h2><div class="news-list"><h3>Trending Research:</h3><ul><li>Latest breakthroughs in long-duration human spaceflight.</li><li>Update on Artemis Gateway biology experiments.</li></ul><h3>Events/Others:</h3><ul><li>Space Apps 2025 Wrap-up.</li><li>Upcoming scientific conferences.</li></ul></div></section>
+            <section id="career-page" class="portal-page"><button class="back-tab" data-page="home-page">← back</button><h2>Career</h2><div class="page-content-grid"><div class="description"><p>Some description about careers in space biology.</p><p>Access job listings, internship opportunities, and mentorship programs.</p><a href="#" data-page="life-at-nasa-page" class="sub-link">View Life at NASA →</a><a href="#" data-page="future-of-biospace-page" class="sub-link">Future of Biospace Studies →</a></div><div class="image-placeholder"><p>Power mode: Qualified</p></div></div></section>
+            <section id="life-at-nasa-page" class="portal-page"><button class="back-tab" data-page="career-page">← back to Career</button><h2>Life at NASA</h2><div class="page-content-grid"><div class="description"><p>Experience shared by NASA workers.</p><ul><li>Video: Day in the Life of a Space Biologist.</li><li>Q&A Transcript with ISS Crew.</li></ul></div><div class="image-placeholder"><p>Some Images</p></div></div></section>
+            <section id="future-of-biospace-page" class="portal-page"><button class="back-tab" data-page="career-page">← back to Career</button><h2>Future of Biospace Studies</h2><div class="page-content-grid"><div class="description"><p>Scope in field? Research roadmaps and next-decade goals.</p><p>Focus areas: AI-driven discovery, closed-loop life support, and Martian plant systems.</p></div><div class="image-placeholder"><p>Some Images</p></div></div></section>
+            <section id="library-page" class="portal-page"><button class="back-tab" data-page="home-page">← back</button><h2>Library</h2><div class="library-options"><button class="library-btn">Live Weight</button><button class="library-btn">Curt Version</button><button class="library-btn">Library</button></div><p style="margin-top: 20px;">Digital resources, technical documents, and archive access.</p></section>
+            <section id="submit-publication-page" class="portal-page"><button class="back-tab" data-page="publications-page">← back</button><h2>Publication Submission</h2><form class="submission-form"><label>Define your idea:</label><textarea rows="5" placeholder="Summary of your research..."></textarea><label>Highlight if any:</label><input type="text" placeholder="Keywords, fields of study, or NASA Challenge relevance"><label>Personal Details / Contact:</label><input type="text" placeholder="Your name and email"><button type="submit">Submit</button><p style="text-align: right; margin-top: 10px;"><a href="#" onclick="alert('Help documentation opened!')">Click for help</a></p></form></section>
 
         </main>
 
