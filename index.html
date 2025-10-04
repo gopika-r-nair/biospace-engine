@@ -4,262 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EXBIO Portal</title>
-    <link rel="stylesheet" href="styles.css"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
 
-    <div class="portal-container">
-        <header class="portal-header">
-            <h1 class="portal-title">EXBIO Portal</h1>
-            <div class="user-info">
-                <i class="fas fa-user-circle user-icon"></i>
-                <span class="user-role">Role: Scientist</span>
-                <span class="user-name">User: Dr. A. Smith</span>
-            </div>
-            <div class="header-actions">
-                <button class="settings-btn"><i class="fas fa-cog"></i> Settings</button>
-                <button class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-            </div>
-        </header>
-
-        <div class="portal-main">
-
-            <nav class="sidebar">
-                <ul class="nav-list">
-                    <li class="nav-item" data-section="about-us"><a href="#"><i class="fas fa-info-circle"></i> About Us</a></li>
-                    <li class="nav-item active" data-section="publications"><a href="#"><i class="fas fa-book"></i> Publications</a></li>
-                    <li class="nav-item" data-section="news"><a href="#"><i class="fas fa-newspaper"></i> News</a></li>
+    <div class="main-container">
+        <aside class="sidebar">
+            <div class="logo">EXBIO Portal</div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="#" class="nav-item" data-page="about-us">About Us</a></li>
+                    <li><a href="#" class="nav-item" data-page="news">News</a></li>
                     
-                    <li class="nav-item has-dropdown" data-section="activities">
-                        <a href="#"><i class="fas fa-running"></i> Activities <i class="fas fa-chevron-down dropdown-icon"></i></a>
-                        <ul class="sub-menu">
-                            <li data-section="interactivities"><a href="#">Interactivities</a></li>
-                            <li data-section="events"><a href="#">Events</a></li>
+                    <li class="dropdown-parent">
+                        <a href="#" class="nav-item" data-page="publications">Publications</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" class="nav-sub-item" data-page="pub-announcements">Announcements</a></li>
+                            <li><a href="#" class="nav-sub-item" data-page="pub-submit">Submit a New Publication</a></li>
                         </ul>
                     </li>
 
-                    <li class="nav-item has-dropdown" data-section="career">
-                        <a href="#"><i class="fas fa-briefcase"></i> Career <i class="fas fa-chevron-down dropdown-icon"></i></a>
-                        <ul class="sub-menu">
-                            <li data-section="life-at-nasa"><a href="#">Life at NASA</a></li>
-                            <li data-section="future-studies"><a href="#">Future Studies</a></li>
+                    <li class="dropdown-parent">
+                        <a href="#" class="nav-item" data-page="activities">Activities</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" class="nav-sub-item" data-page="act-qa">Question and Answer section</a></li>
+                            <li><a href="#" class="nav-sub-item" data-page="act-interactives">Interactives</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item" data-section="library"><a href="#"><i class="fas fa-book-reader"></i> Library</a></li>
+
+                    <li class="dropdown-parent">
+                        <a href="#" class="nav-item" data-page="career">Career</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" class="nav-sub-item" data-page="car-nasa">Life at NASA</a></li>
+                            <li><a href="#" class="nav-sub-item" data-page="car-future">Future of Biospace Studies</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="#" class="nav-item" data-page="library">Library</a></li>
                 </ul>
-
-                <button class="chatbot-trigger-btn" id="chatbot-trigger">
-                    <i class="fas fa-question"></i>
-                </button>
-
-                <div class="chatbot-popup hidden" id="chatbot-popup">
-                    <div class="chatbot-header">EXBIO-AI Chatbot</div>
-                    <div class="chatbot-body">
-                        <p>Hello! How can I assist with the portal today?</p>
-                        <p>You ask me about:</p>
-                        <ol>
-                            <li>Publications</li>
-                            <li>Portal Features</li>
-                            <li>Get Help</li>
-                        </ol>
-                    </div>
-                    <div class="chatbot-input">
-                        <input type="text" placeholder="Type your question...">
-                        <button><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
             </nav>
+        </aside>
 
-            <main class="content-area">
-                
-                <section id="about-us-section" class="content-section hidden">
-                    <h2 class="content-title">About Us</h2>
-                    <p class="content-intro">If alite ae portal toin that anlorating pait a he Hrtual arseld on toi reske the dapat thou Yot Im ar uarlefts on shenoid kourp sihdueten uly doliy. **(Some description about page)**</p>
+        <div class="content-area">
+            <header class="header">
+                <div class="user-info">
+                    <i class="fa-solid fa-user-circle user-icon"></i>
+                    <span class="user-text">User: Dr. A. Smith</span>
+                    <button id="settings-btn" class="header-btn" title="Settings">⚙️</button>
+                    <button id="logout-btn" class="header-btn">Logout</button>
+                </div>
+            </header>
 
-                    <div class="content-grid">
-                        <div class="main-content-section">
-                            <h3>Major Studies in Biospace Research</h3>
-                            <ul class="research-list">
-                                <li><i class="fas fa-check-circle check-icon"></i> Publication Library</li>
-                                <li><i class="fas fa-check-circle check-icon"></i> Submit a new application</li>
-                            </ul>
-                            <span class="role-tip">role-tip</span>
-                        </div>
-                        <div class="image-container">
-                            <p>About Us - Biospace Laboratory</p>
-                            <img src="https://picsum.photos/id/1015/400/250" alt="Biospace Laboratory Image">
-                        </div>
-                    </div>
-                </section>
-
-                <section id="publications-section" class="content-section active">
-                    <h2 class="content-title">Publications</h2>
-                    <p class="content-intro">Explore our latest research and publications. **(Details in .CSV file)**</p>
-
-                    <div class="publication-table">
-                        <div class="table-header">
-                            <span>Research Title</span>
-                            <span>Link</span>
-                            <span>Click to get CSV</span>
-                        </div>
-                        <div class="table-row">
-                            <span>A Study on Galactic Dust Composition</span>
-                            <span><a href="#" target="_blank">View PDF</a></span>
-                            <span><button class="download-btn"><i class="fas fa-download"></i></button></span>
-                        </div>
-                        <div class="table-row">
-                            <span>Impact of Microgravity on Plant Growth</span>
-                            <span><a href="#" target="_blank">View PDF</a></span>
-                            <span><button class="download-btn"><i class="fas fa-download"></i></button></span>
-                        </div>
-                    </div>
-
-                    <div class="main-content-section" style="margin-top: 30px;">
-                        <h3>Submit a New Publication</h3>
-                        <p>Define your title, abstract, and any relevant personal details/contact.</p>
-                        <form class="publication-form">
-                            <input type="text" placeholder="Publication Title" required>
-                            <textarea placeholder="Abstract / Description" rows="5" required></textarea>
-                            <input type="email" placeholder="Contact Email (Optional)">
-                            <button type="submit" class="submit-pub-btn">Submit</button>
-                            <a href="#" class="help-link">Click for help</a>
-                        </form>
-                    </div>
-                </section>
-
-                <section id="news-section" class="content-section hidden">
-                    <h2 class="content-title">News & Announcements</h2>
-                    <p class="content-intro">Stay updated with the latest happenings at EXBIO. **(Including News, Research, Events, Others)**</p>
-
-                    <div class="news-feed">
-                        <div class="news-item">
-                            <h3>Groundbreaking Discovery in Exoplanet Research</h3>
-                            <p class="news-date">October 26, 2023</p>
-                            <img src="https://picsum.photos/id/237/300/180" alt="Exoplanet image" class="news-image">
-                            <a href="#" class="read-more">Read More</a>
-                        </div>
-                        <div class="news-item">
-                            <h3>New Partnership for AI in Biospace</h3>
-                            <p class="news-date">October 20, 2023</p>
-                            <img src="https://picsum.photos/id/250/300/180" alt="AI partnership image" class="news-image">
-                            <a href="#" class="read-more">Read More</a>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="activities-section" class="content-section hidden">
-                    <h2 class="content-title">Activities</h2>
-                    <p class="content-intro">Engage with our various interactive programs and events. **(Important some description)**</p>
-
-                    <div class="content-grid">
-                        <div class="main-content-section">
-                            <h3>Upcoming Events</h3>
-                            <ul>
-                                <li><i class="fas fa-calendar-alt"></i> Virtual Seminar: "Future of Space Medicine" - Nov 15th</li>
-                                <li><i class="fas fa-calendar-alt"></i> Workshop: "Data Visualization in Biospace" - Dec 2nd</li>
-                                <li><i class="fas fa-calendar-alt"></i> Annual Conference: "Biospace Innovations 2024" - Jan 20-22nd</li>
-                            </ul>
-                        </div>
-                        <div class="image-container">
-                            <p>Activities/Events Image</p>
-                            <img src="https://picsum.photos/id/1005/400/250" alt="Activities Image">
-                        </div>
-                    </div>
-                </section>
-                
-                <section id="interactivities-section" class="content-section hidden">
-                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn" data-parent="activities"></i> Interactivities</h2>
-                    <p class="content-intro">Participate in our educational games and simulations. **(Some description)**</p>
-                    <div class="interactivities-list">
-                        <div class="interactivity-item">
-                            <h4>Game 1: Asteroid Miner</h4>
-                            <p>Explore an asteroid field, mine resources, and learn about space geology.</p>
-                            <button class="interactivity-btn">Click to Game 1</button>
-                        </div>
-                        <div class="interactivity-item">
-                            <h4>Game 2: Mars Colony Builder</h4>
-                            <p>Design and manage your own sustainable colony on Mars.</p>
-                            <button class="interactivity-btn">Click to Game 2</button>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="career-section" class="content-section hidden">
-                    <h2 class="content-title">Career Opportunities</h2>
-                    <p class="content-intro">Join our team and contribute to cutting-edge biospace research. **(Some description)**</p>
-
-                    <div class="content-grid">
-                        <div class="main-content-section">
-                            <h3>Current Openings</h3>
-                            <ul>
-                                <li><i class="fas fa-user-tie"></i> Research Scientist - Astrobiology</li>
-                                <li><i class="fas fa-user-tie"></i> Data Analyst - Biospace Genomics</li>
-                                <li><i class="fas fa-user-tie"></i> Software Engineer - Simulation Systems</li>
-                            </ul>
-                            <button class="careers-btn">View All Openings</button>
-                        </div>
-                        <div class="image-container">
-                            <p>Careers Image</p>
-                            <img src="https://picsum.photos/id/1020/400/250" alt="Career Image">
-                        </div>
-                    </div>
-                </section>
-
-                <section id="life-at-nasa-section" class="content-section hidden">
-                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn" data-parent="career"></i> Life at NASA</h2>
-                    <p class="content-intro">Experience shared by NASA workers. **(Some images)**</p>
-                    <div class="content-grid">
-                        <div class="main-content-section">
-                            <p>Read inspiring stories and insights from individuals working at NASA, detailing their daily challenges, breakthroughs, and passion for space exploration.</p>
-                            <p>Learn about different roles, projects, and the culture that drives innovation.</p>
-                        </div>
-                        <div class="image-container">
-                            <p>NASA Astronaut Image</p>
-                            <img src="https://picsum.photos/id/97/400/250" alt="NASA Image">
-                        </div>
-                    </div>
-                </section>
-
-                <section id="future-studies-section" class="content-section hidden">
-                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn" data-parent="career"></i> Future of Biospace Studies</h2>
-                    <p class="content-intro">Explore the evolving landscape and scope in the field. **(About scope in field)**</p>
-                    <div class="content-grid">
-                        <div class="main-content-section">
-                            <h3>Key Areas of Growth:</h3>
-                            <ul>
-                                <li><i class="fas fa-microscope"></i> Astrobiology and Exoplanet Habitability</li>
-                                <li><i class="fas fa-dna"></i> Space Genomics and Epigenetics</li>
-                            </ul>
-                        </div>
-                        <div class="image-container">
-                            <p>Futuristic Biospace Image</p>
-                            <img src="https://picsum.photos/id/90/400/250" alt="Future Studies Image">
-                        </div>
-                    </div>
-                </section>
-
-                <section id="library-section" class="content-section hidden">
-                    <h2 class="content-title">Library</h2>
-                    <p class="content-intro">Access our extensive collection of digital resources. **(Different versions)**</p>
-
-                    <div class="main-content-section">
-                        <h3>Resource Categories</h3>
-                        <ul class="library-categories">
-                            <li><i class="fas fa-book-open"></i> E-books & Journals</li>
-                            <li><i class="fas fa-video"></i> Video Lectures</li>
-                            <li><i class="fas fa-file-alt"></i> Research Papers</li>
-                            <li><i class="fas fa-database"></i> Datasets</li>
-                        </ul>
-                        <button class="library-btn">Browse All Resources</button>
-                    </div>
-                </section>
-
-            </main>
-
+            <main id="main-content" class="main-content">
+                </main>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <button id="chatbot-toggle" class="chatbot-toggle" title="Chatbot">❓</button>
+
+    <div id="chatbot-window" class="chatbot-window" style="display: none;">
+        <div class="chatbot-header">
+            EXBIO-AI Chatbot
+        </div>
+        <div class="chatbot-body">
+            <p>Hello! How can I assist with the portal today? You ask me about: 1. Publications 2. Activities/Features 3. Get Help</p>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" placeholder="Type your message...">
+            <button>Send</button>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Settings</h2>
+            <div class="settings-nav">
+                <a href="#" data-setting-tab="general" class="active">General</a>
+                <a href="#" data-setting-tab="appearance">Appearance</a>
+                <a href="#" data-setting-tab="privacy">Privacy & Security</a>
+            </div>
+            <div class="settings-tabs">
+                <div id="general-settings" class="setting-tab active">
+                    <h3>General Settings</h3>
+                    <p>Manage start-up options and default portal behavior.</p>
+                    <label><input type="checkbox" checked> Save my current session on exit</label>
+                    <label><input type="checkbox"> Enable dark mode by default</label>
+                </div>
+                <div id="appearance-settings" class="setting-tab">
+                    <h3>Appearance</h3>
+                    <p>Customize the look and feel of your EXBIO Portal interface.</p>
+                    <label>Font Size: <select><option>Medium</option><option>Large</option></select></label>
+                    <label>Theme: <select><option>Default Blue</option><option>High Contrast</option></select></label>
+                </div>
+                <div id="privacy-settings" class="setting-tab">
+                    <h3>Privacy & Security</h3>
+                    <p>Control data sharing and security features within the portal.</p>
+                    <label><input type="checkbox" checked> Enable two-factor authentication</label>
+                    <label><input type="checkbox"> Clear history on logout</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
 </body>
 </html>
