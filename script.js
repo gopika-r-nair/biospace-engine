@@ -1,420 +1,313 @@
-// **CSV URL from your GitHub repository**
-const CSV_URL = 'https://raw.githubusercontent.com/gopika-n-nair/biospace-engine/main/publications_pmc.csv';
+// --- 1. DATA AND INITIAL SETUP ---
 
-// Global State (Equivalent to Streamlit's st.session_state)
-let appState = {
-    userRole: null,
-    currentPage: 'about-page',
-    pubsSubsection: 'Search Publications',
-    careerSubsection: 'Life at NASA',
-    activitiesSubsection: 'Quiz',
-    chatHistory: [{ role: "bot", content: "Hello! I'm your NASA Space Life Sciences chatbot. How can I help you today?" }],
-    allPublications: [],
-    projects: [
-        { title: "Microgravity Effects on Cells", desc: "This project investigates the fundamental changes in cell structure and function in a microgravity environment, with potential applications for biomedical research on Earth.", year: 2022, impact: "Biomedical research & drug development" },
-        { title: "Radiation Impact on Tissue", desc: "A long-term study to understand how cosmic radiation affects human tissue, aiming to develop better radiation shielding and protective measures for astronauts on long-duration missions.", year: 2023, impact: "Health research for deep space missions" },
-        { title: "Plant Growth Experiments on ISS", desc: "Microgravity affects plant biology in unique ways. This experiment explores how plants adapt to their environment, which is crucial for developing future food systems in space.", year: 2021, impact: "Sustainable agriculture & life support systems" }
-    ]
-};
+let allPublications = [];
+let currentRole = null;
+const PUBLICATIONS_CSV_URL = 'publications_pmc.csv'; // Assumes the file is in the same directory
 
-// ---------------------------------
-// 1. Core Navigation and Setup
-// ---------------------------------
+// Dummy Data to simulate the content of publications_pmc.csv
+// NOTE: For the live submission, you MUST have the actual CSV file.
+// The structure is critical for the code to work correctly.
+const DUMMY_CSV_DATA = `ID,Title,Abstract Summary,Year,PMC_Link
+1,Effects of Microgravity on Human Bone Density,A study analyzing the impact of long-duration spaceflight on bone loss in astronauts. Findings inform countermeasure development.,2022,https://example.com/pub/1
+2,Radiation Shielding for Lunar Habitats,Research into new composite materials for shielding against cosmic radiation in deep space missions.,2023,https://example.com/pub/2
+3,Plant Growth in Closed-Loop Life Support Systems,Investigating optimal nutrient delivery for crops grown on the ISS to support bioregenerative life support.,2021,https://example.com/pub/3
+4,Psychological Effects of Isolation on Crew,Longitudinal study of crew behavioral health during simulated Mars missions to identify risk factors.,2024,https://example.com/pub/4
+5,Microbial Ecology of the International Space Station,Mapping the diversity of fungal and bacterial communities on ISS surfaces and their potential impact on hardware and crew health.,2023,https://example.com/pub/5
+6,Automated Health Monitoring for Deep Space,Development of AI-driven systems to diagnose and treat common illnesses without Earth support.,2024,https://example.com/pub/6
+7,Metabolic Changes During Long-Duration Spaceflight,A comprehensive analysis of astronaut metabolism and its implications for nutrition planning beyond LEO.,2022,https://example.com/pub/7
+8,Advanced Water Recycling Technologies for Space,Testing next-generation water recovery systems for highly efficient closed-loop environmental control.,2021,https://example.com/pub/8
+9,Bone Density Loss in Long-Term Missions,A follow-up study confirming initial findings on bone density. Crucial data for mission architects.,2024,https://example.com/pub/9
+10,Impact of Space Radiation on Gene Expression,Study on how different types of space radiation affect gene expression patterns in human cells.,2023,https://example.com/pub/10
+`;
 
-function navigateTo(pageId) {
-    if (pageId === appState.currentPage) return;
 
-    // 1. Hide all pages
-    document.querySelectorAll('.portal-page').forEach(page => {
-        page.classList.remove('active');
-    });
+// Function to parse the CSV data (simplified for this hackathon context)
+function parseCSV(csvText) {
+    const lines = csvText.trim().split('\n');
+    const headers = lines[0].split(',');
+    const data = [];
 
-    // 2. Show the target page
-    const targetPage = document.getElementById(pageId);
-    if (targetPage) {
-        targetPage.classList.add('active');
-        appState.currentPage = pageId;
-    }
-    
-    // 3. Update active tab style
-    document.querySelectorAll('.main-nav-tabs a').forEach(a => a.classList.remove('active-tab'));
-    document.querySelector(`.main-nav-tabs a[data-page="${pageId}"]`).classList.add('active-tab');
-    
-    // 4. Load specific content if needed
-    if (pageId === 'publications-page') {
-        renderPublicationsSubView(appState.pubsSubsection);
-    } else if (pageId === 'activities-page') {
-        renderActivitiesSubView(appState.activitiesSubsection);
-    } else if (pageId === 'career-page') {
-        renderCareerSubView(appState.careerSubsection);
-    }
-}
-
-function setupNavigation() {
-    // Tab navigation links
-    document.querySelectorAll('.main-nav-tabs a').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            navigateTo(e.currentTarget.getAttribute('data-page'));
-        });
-    });
-
-    // Sub-navigation buttons (Publications)
-    document.querySelectorAll('.pub-sub-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const sub = e.target.getAttribute('data-sub');
-            appState.pubsSubsection = sub;
-            renderPublicationsSubView(sub);
-        });
-    });
-
-    // Sub-navigation buttons (Activities)
-    document.querySelectorAll('.activity-sub-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const sub = e.target.getAttribute('data-sub');
-            appState.activitiesSubsection = sub;
-            renderActivitiesSubView(sub);
-        });
-    });
-
-    // Sub-navigation buttons (Career)
-    document.querySelectorAll('.career-sub-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const sub = e.target.getAttribute('data-sub');
-            appState.careerSubsection = sub;
-            renderCareerSubView(sub);
-        });
-    });
-}
-
-function setupProjectsPage() {
-    const list = document.getElementById('projects-list');
-    list.innerHTML = '';
-    appState.projects.forEach(p => {
-        const div = document.createElement('div');
-        div.innerHTML = `
-            <p><strong>${p.title} (${p.year})</strong></p>
-            <p>${p.desc}</p>
-            <p><strong>Impact:</strong> ${p.impact}</p>
-            <hr>
-        `;
-        list.appendChild(div);
-    });
-}
-
-// ---------------------------------
-// 2. User Selection Logic
-// ---------------------------------
-
-function handleUserSelection(type) {
-    appState.userRole = type;
-    
-    // Update header
-    document.getElementById('current-user-type').textContent = `Role: ${type}`;
-    document.getElementById('welcome-message').textContent = `Welcome, ${type}!`;
-    
-    // Transition to main dashboard
-    document.getElementById('user-selection-page').style.display = 'none';
-    document.getElementById('main-application').style.display = 'block';
-
-    navigateTo('about-page');
-}
-
-function setupUserSelectionHandlers() {
-    const continueBtn = document.getElementById('continue-btn');
-     
-    document.querySelectorAll('.user-type-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            document.querySelectorAll('.user-type-card').forEach(c => c.classList.remove('selected'));
-            e.currentTarget.classList.add('selected');
-            selectedUserType = e.currentTarget.getAttribute('data-type');
-            continueBtn.disabled = false;
-        });
-    });
-    
-    continueBtn.addEventListener('click', () => {
-        if (selectedUserType) {
-            handleUserSelection(selectedUserType);
-        }
-    });
-
-    // Start with only selection screen active
-    document.getElementById('main-application').style.display = 'none';
-    document.getElementById('user-selection-page').classList.add('active');
-}
-
-// ---------------------------------
-// 3. Publications Tab (Data Handling & Rendering)
-// ---------------------------------
-
-async function loadPublications() {
-    if (appState.allPublications.length > 0) return;
-
-    try {
-        const response = await fetch(CSV_URL);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
-        const csvText = await response.text();
-        const lines = csvText.trim().split('\n');
-        if (lines.length <= 1) return;
-
-        // Custom parser to handle quotes and commas, matching Streamlit logic
-        const headers = lines[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(h => h.trim().replace(/"/g, '').toLowerCase().replace(/ /g, '_'));
-        appState.allPublications = lines.slice(1).map(line => {
-            const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/"/g, ''));
-            let item = {};
-            headers.forEach((header, index) => {
-                item[header] = values[index];
-            });
-            return item;
-        });
-
-        // Initial render after data load
-        filterPublications(); 
-        renderLatestPublications();
-    } catch (error) {
-        console.error("Could not fetch or parse publications data:", error);
-        document.getElementById('publications-dashboard').innerHTML = '<p style="color: red;">Error loading publications from GitHub. Data display is limited.</p>';
-    }
-}
-
-function filterPublications() {
-    const dashboard = document.getElementById('publications-dashboard');
-    const searchInput = document.getElementById('pub-search-input').value.toLowerCase();
-    
-    if (appState.allPublications.length === 0) {
-        dashboard.innerHTML = '<p>Data not available or still loading...</p>';
-        return;
-    }
-
-    const filtered = appState.allPublications.filter(pub => {
-        const title = pub.title ? pub.title.toLowerCase() : '';
-        const summary = pub.summary ? pub.summary.toLowerCase() : '';
-        const authors = pub.authors ? pub.authors.toLowerCase() : '';
-
-        return !searchInput || 
-               title.includes(searchInput) ||
-               summary.includes(searchInput) ||
-               authors.includes(searchInput);
-    });
-
-    displayPublicationsTable(filtered, dashboard);
-}
-
-function renderLatestPublications() {
-    const dashboard = document.getElementById('latest-publications-list');
-
-    if (appState.allPublications.length === 0) {
-        dashboard.innerHTML = '<p>Data not available or still loading...</p>';
-        return;
-    }
-    
-    // Simple sort by title for a basic "latest" effect since year column is inconsistent
-    const latest = [...appState.allPublications].sort((a, b) => (b.title || '').localeCompare(a.title || '')).slice(0, 20);
-
-    displayPublicationsTable(latest, dashboard);
-}
-
-function displayPublicationsTable(publications, container) {
-    if (publications.length === 0) {
-        container.innerHTML = '<p>No publications found matching your criteria.</p>';
-        return;
-    }
-
-    // Build the HTML table
-    let html = '<table><thead><tr><th>Title</th><th>Authors</th><th>Link</th></tr></thead><tbody>';
-    publications.forEach(pub => {
-        const title = pub.title || 'No Title';
-        const authors = pub.authors || 'Unknown';
-        const link = pub.link || pub.doi || '#';
-        
-        html += `
-            <tr>
-                <td>${title}</td>
-                <td>${authors}</td>
-                <td><a href="${link}" target="_blank">View</a></td>
-            </tr>
-        `;
-    });
-    html += '</tbody></table>';
-    container.innerHTML = html;
-}
-
-function renderPublicationsSubView(sub) {
-    // Set active button style
-    document.querySelectorAll('.pub-sub-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`.pub-sub-btn[data-sub="${sub}"]`).classList.add('active');
-
-    // Show active sub-view content
-    document.querySelectorAll('#pubs-content .sub-view').forEach(view => view.classList.remove('active'));
-    
-    if (sub === 'Search Publications') {
-        document.getElementById('pubs-search-view').classList.add('active');
-        filterPublications(); // Reload the data
-    } else if (sub === 'Latest Publications') {
-        document.getElementById('pubs-latest-view').classList.add('active');
-        renderLatestPublications(); // Reload the data
-    } else if (sub === 'Submit a Publication') {
-        document.getElementById('pubs-submit-view').classList.add('active');
-    }
-}
-
-// ---------------------------------
-// 4. Activities Tab (Quiz Logic)
-// ---------------------------------
-
-function setupQuiz() {
-    document.getElementById('quiz-submit-btn').addEventListener('click', () => {
-        const selected = document.querySelector('input[name="quiz1"]:checked');
-        const feedback = document.getElementById('quiz-feedback');
-        feedback.style.color = 'white';
-
-        if (selected) {
-            if (selected.value === "Bones lose density") {
-                feedback.textContent = "Correct! Bones need gravity to maintain their density, so they weaken in space.";
-                feedback.style.backgroundColor = '#4CAF50';
-                feedback.style.padding = '5px';
-            } else {
-                feedback.textContent = "That's not it. Give it another try!";
-                feedback.style.backgroundColor = '#d9534f';
-                feedback.style.padding = '5px';
+    for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',');
+        if (values.length === headers.length) {
+            let row = {};
+            for (let j = 0; j < headers.length; j++) {
+                // Trim the values and headers
+                row[headers[j].trim()] = values[j].trim();
             }
+            data.push(row);
+        }
+    }
+    return data;
+}
+
+// Fetch the data from the CSV file
+async function loadPublications() {
+    try {
+        const response = await fetch(PUBLICATIONS_CSV_URL);
+        if (!response.ok) {
+            console.warn(`Could not fetch actual data from ${PUBLICATIONS_CSV_URL}. Using dummy data.`);
+            allPublications = parseCSV(DUMMY_CSV_DATA);
         } else {
-            feedback.textContent = "Please select an answer.";
-            feedback.style.backgroundColor = 'transparent';
+            const csvText = await response.text();
+            allPublications = parseCSV(csvText);
+        }
+    } catch (error) {
+        console.error("Error loading data:", error);
+        allPublications = parseCSV(DUMMY_CSV_DATA);
+    }
+    
+    // Final processing after data is loaded/set
+    renderPublications(allPublications);
+    populateYearFilter();
+    updateRowCount(allPublications.length);
+    enableChatInput();
+}
+
+
+// --- 2. PUBLICATIONS TAB LOGIC ---
+
+function renderPublications(publications) {
+    const tbody = document.querySelector('#publications-table tbody');
+    tbody.innerHTML = ''; // Clear existing rows
+
+    publications.forEach(pub => {
+        const row = tbody.insertRow();
+        row.insertCell().textContent = pub.ID;
+        row.insertCell().textContent = pub.Title;
+        row.insertCell().textContent = pub['Abstract Summary'].substring(0, 100) + '...'; // Truncate summary
+        row.insertCell().textContent = pub.Year;
+        
+        const linkCell = row.insertCell();
+        const link = document.createElement('a');
+        link.href = pub.PMC_Link;
+        link.target = '_blank';
+        link.textContent = 'View';
+        linkCell.appendChild(link);
+    });
+    updateRowCount(publications.length);
+}
+
+function populateYearFilter() {
+    const yearFilter = document.getElementById('year-filter');
+    const years = [...new Set(allPublications.map(pub => pub.Year))].sort((a, b) => b - a);
+    
+    years.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearFilter.appendChild(option);
+    });
+}
+
+function handleSearchAndFilter() {
+    const searchTerm = document.getElementById('publication-search').value.toLowerCase();
+    const selectedYear = document.getElementById('year-filter').value;
+
+    const filtered = allPublications.filter(pub => {
+        const matchesSearch = searchTerm === '' ||
+            pub.Title.toLowerCase().includes(searchTerm) ||
+            pub['Abstract Summary'].toLowerCase().includes(searchTerm);
+        
+        const matchesYear = selectedYear === '' || pub.Year === selectedYear;
+
+        return matchesSearch && matchesYear;
+    });
+
+    renderPublications(filtered);
+}
+
+function updateRowCount(count) {
+    document.getElementById('row-count').textContent = `Showing ${count} of ${allPublications.length} publications.`;
+}
+
+
+// --- 3. CHATBOT LOGIC (SIMULATED AI) ---
+
+function enableChatInput() {
+    document.getElementById('chat-input').disabled = false;
+    document.getElementById('send-chat-btn').disabled = false;
+}
+
+function addMessage(text, type, linkData = null) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.textContent = text;
+    
+    if (linkData) {
+        const link = document.createElement('a');
+        link.href = linkData.url;
+        link.target = '_blank';
+        link.className = 'chat-link';
+        link.textContent = `Source: ${linkData.title} (ID: ${linkData.id})`;
+        messageDiv.appendChild(link);
+    }
+
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to latest
+}
+
+function respondToChat(message) {
+    const msg = message.toLowerCase();
+    let responseText = "I found this relevant data, but please refine your question for a specific answer.";
+    let link = null;
+    
+    // Keyword-based search simulation using the real, loaded data
+    const keywords = msg.split(' ');
+    let bestMatch = null;
+    let maxMatches = 0;
+
+    allPublications.forEach(pub => {
+        let matchCount = 0;
+        const pubText = (pub.Title + ' ' + pub['Abstract Summary']).toLowerCase();
+        keywords.forEach(keyword => {
+            if (keyword.length > 3 && pubText.includes(keyword)) {
+                matchCount++;
+            }
+        });
+
+        if (matchCount > maxMatches) {
+            maxMatches = matchCount;
+            bestMatch = pub;
+        }
+    });
+
+    if (bestMatch && maxMatches > 0) {
+        // Direct answer simulation based on keywords
+        if (msg.includes('bone') || msg.includes('microgravity')) {
+            responseText = `Based on current research, long-term microgravity is known to cause bone density loss in astronauts. Countermeasures are under development. See the linked research for details.`;
+        } else if (msg.includes('radiation') || msg.includes('shielding')) {
+            responseText = `Protecting crews from space radiation is critical. Research focuses on advanced shielding materials for habitats and spacecraft. The following publication explores this area.`;
+        } else if (msg.includes('plant') || msg.includes('food')) {
+             responseText = `To support long-duration missions, NASA is researching closed-loop systems for growing food in space. Find out more about resource cycling here.`;
+        } else {
+            responseText = `I found a highly relevant publication for your query based on keywords. The central theme of this research is: "${bestMatch.Title}".`;
+        }
+        
+        link = {
+            title: bestMatch.Title.substring(0, 50) + '...',
+            url: bestMatch.PMC_Link,
+            id: bestMatch.ID
+        };
+    } else if (msg.includes('hello') || msg.includes('hi')) {
+        responseText = "Hello! I am ready to help you navigate Space Biology research. Try asking about 'radiation shielding' or 'bone density loss'.";
+    }
+
+    setTimeout(() => {
+        addMessage(responseText, 'system', link);
+    }, 800);
+}
+
+
+// --- 4. ROLE SELECTION AND UI MANAGEMENT ---
+
+function showRoleModal() {
+    document.getElementById('role-selector-modal').style.display = 'block';
+}
+
+function hideRoleModal() {
+    document.getElementById('role-selector-modal').style.display = 'none';
+}
+
+function setRole(role) {
+    currentRole = role;
+    document.getElementById('user-role-display').textContent = `Role: ${role}`;
+    hideRoleModal();
+    updateRoleSpecificContent();
+}
+
+function updateRoleSpecificContent() {
+    // 1. Manage Role Tip Visibility
+    document.querySelectorAll('.role-tip').forEach(tip => {
+        const roles = tip.dataset.roleTarget.split(',');
+        if (roles.includes(currentRole)) {
+            tip.style.display = 'block';
+        } else {
+            tip.style.display = 'none';
+        }
+    });
+
+    // 2. Manage Specific Career Content
+    const careerCards = document.querySelectorAll('.career-card');
+    careerCards.forEach(card => {
+        // Example logic: Mission Architect is more relevant for Manager/Architect roles
+        if (card.querySelector('h3').textContent.includes('Mission Architect') && (currentRole === 'Manager' || currentRole === 'Architect')) {
+            card.style.borderLeftColor = 'yellow'; // Highlight relevant card
+        } else {
+             card.style.borderLeftColor = 'var(--color-accent)';
         }
     });
 }
 
-function renderActivitiesSubView(sub) {
-    document.querySelectorAll('.activity-sub-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`.activity-sub-btn[data-sub="${sub}"]`).classList.add('active');
 
-    document.querySelectorAll('#activities-content .sub-view').forEach(view => view.classList.remove('active'));
-    
-    if (sub === 'Quiz') {
-        document.getElementById('activity-quiz-view').classList.add('active');
-    } else if (sub === 'Future Activities') {
-        document.getElementById('activity-future-view').classList.add('active');
-    }
-}
-
-// ---------------------------------
-// 5. Career Tab
-// ---------------------------------
-
-function renderCareerSubView(sub) {
-    document.querySelectorAll('.career-sub-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`.career-sub-btn[data-sub="${sub}"]`).classList.add('active');
-
-    document.querySelectorAll('#career-content .sub-view').forEach(view => view.classList.remove('active'));
-    
-    if (sub === 'Life at NASA') {
-        document.getElementById('career-life-view').classList.add('active');
-    } else if (sub === 'Career Scopes') {
-        document.getElementById('career-scopes-view').classList.add('active');
-    } else if (sub === 'Q&A') {
-        document.getElementById('career-qna-view').classList.add('active');
-    }
-}
-
-// ---------------------------------
-// 6. Chatbot Logic
-// ---------------------------------
-
-function chatbotAnswer(question) {
-    const q = question.toLowerCase();
-    let ans = "I can provide information on key topics in space biology. Try asking about **long-term stays**, **plants**, or **radiation** in space.";
-    let refs = [];
-
-    // Search logic to mimic the Python script's chatbot_answer
-    const findReferences = (keywords) => {
-        if (appState.allPublications.length === 0) return [];
-        const relevant = appState.allPublications.filter(pub => {
-            const title = pub.title ? pub.title.toLowerCase() : '';
-            return keywords.some(k => title.includes(k));
-        }).slice(0, 2); 
-        return relevant.map(r => ({ title: r.title || "No Title", link: r.link || r.doi || '' }));
-    };
-
-    if (q.includes("stay longer") || q.includes("long stay") || q.includes("longer in space")) {
-        ans = "Staying for extended periods in space can lead to **bone demineralization** and **muscle atrophy** due to the lack of gravity. Astronauts also face increased risk from **radiation exposure** and changes to their cardiovascular system.";
-        refs = findReferences(["bone density", "muscle atrophy", "radiation", "long duration"]);
-    } else if (q.includes("plant") || q.includes("growth")) {
-        ans = "In microgravity, plants adapt differently, affecting photosynthesis, root orientation, and growth patterns.";
-        refs = findReferences(["plant growth", "microgravity", "agriculture"]);
-    } else if (q.includes("radiation")) {
-        ans = "Cosmic and solar radiation can damage DNA and cells, increasing the long-term health risks for astronauts, including an elevated risk of cancer.";
-        refs = findReferences(["radiation", "cosmic rays", "dna damage"]);
-    }
-
-    let fullResponse = ans;
-    if (refs.length > 0) {
-        fullResponse += "\n\n**Related Publications:**";
-        refs.forEach(r => {
-            fullResponse += r.link ? `\n- [${r.title}](${r.link})` : `\n- ${r.title}`;
-        });
-    }
-
-    return fullResponse;
-}
-
-function handleChatInput(e) {
-    if (e.key === 'Enter') {
-        const input = document.getElementById('chat-input');
-        const prompt = input.value.trim();
-        if (prompt) {
-            // Add user message to history
-            const userMsg = document.createElement('div');
-            userMsg.classList.add('chat-message', 'user');
-            userMsg.textContent = prompt;
-            document.getElementById('chat-history').appendChild(userMsg);
-            appState.chatHistory.push({ role: "user", content: prompt });
-
-            input.value = '';
-
-            // Scroll to bottom
-            const history = document.getElementById('chat-history');
-            history.scrollTop = history.scrollHeight;
-
-            // Get bot response and simulate delay
-            setTimeout(() => {
-                const responseText = chatbotAnswer(prompt);
-                const botMsg = document.createElement('div');
-                botMsg.classList.add('chat-message', 'bot');
-                // Use a basic markdown-to-HTML conversion for bold/links
-                botMsg.innerHTML = responseText
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') 
-                    .replace(/\n/g, '<br>');
-
-                document.getElementById('chat-history').appendChild(botMsg);
-                appState.chatHistory.push({ role: "bot", content: responseText });
-
-                history.scrollTop = history.scrollHeight;
-            }, 800);
-        }
-    }
-}
-
-
-// ---------------------------------
-// 7. Initialization
-// ---------------------------------
+// --- 5. EVENT LISTENERS AND INITIALIZATION ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Load publications data (in the background)
-    loadPublications();
+    // A. Initial Data Load
+    loadPublications(); 
     
-    // 2. Set up initial user selection screen
-    setupUserSelectionHandlers();
-    
-    // 3. Set up all navigation
-    setupNavigation();
-    
-    // 4. Set up non-data content
-    setupProjectsPage();
-    setupQuiz();
+    // B. Show Role Selection on start
+    showRoleModal(); 
 
-    // The user must select a role before the main dashboard is shown.
-    // The handleUserSelection function transitions to the main dashboard.
+    // C. Role Selector Event Listeners
+    document.querySelectorAll('.role-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            setRole(e.target.dataset.role);
+        });
+    });
+    document.getElementById('change-role-btn').addEventListener('click', showRoleModal);
+
+
+    // D. Tab Switching
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            e.target.classList.add('active');
+            document.getElementById(e.target.dataset.tab).classList.add('active');
+        });
+    });
+
+    // E. Publications Search and Filter
+    document.getElementById('publication-search').addEventListener('input', handleSearchAndFilter);
+    document.getElementById('year-filter').addEventListener('change', handleSearchAndFilter);
+
+    // F. Chatbot Input
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-chat-btn');
+    
+    const handleChat = () => {
+        const message = chatInput.value.trim();
+        if (message === "") return;
+        addMessage(message, 'user');
+        respondToChat(message);
+        chatInput.value = '';
+    };
+
+    sendBtn.addEventListener('click', handleChat);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleChat();
+    });
+
+    // G. Quiz Activity
+    document.querySelector('.check-answer-btn').addEventListener('click', (e) => {
+        const correct = e.target.dataset.correct;
+        const selected = document.querySelector('input[name="q1"]:checked');
+        const feedback = document.querySelector('.quiz-feedback');
+        
+        if (selected) {
+            if (selected.value === correct) {
+                feedback.textContent = 'Correct! Bone density loss is a major challenge.';
+                feedback.className = 'quiz-feedback feedback-correct';
+            } else {
+                feedback.textContent = 'Incorrect. The primary effect is bone density loss.';
+                feedback.className = 'quiz-feedback feedback-wrong';
+            }
+        } else {
+            feedback.textContent = 'Please select an answer.';
+            feedback.className = 'quiz-feedback feedback-wrong';
+        }
+    });
 });
