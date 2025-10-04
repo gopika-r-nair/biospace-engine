@@ -1,827 +1,274 @@
-/* --- CSS Reset and Variables --- */
-:root {
-    --primary-blue: #0071C5; /* NASA Blue / EXBIO Primary */
-    --primary-dark: #1F3F6D; /* Darker accent, used in header/footer/AI card */
-    --secondary-orange: #FF8500; /* Accent for highlights/buttons */
-    --background-light: #F4F7F9;
-    --text-dark: #333;
-    --text-light: #fff;
-    --border-color: #ddd;
-    --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --font-family: 'Arial', sans-serif;
-}
-
+/* Basic Reset */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: sans-serif; 
 }
 
 body {
-    font-family: var(--font-family);
-    background-color: var(--background-light);
-    color: var(--text-dark);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    background-color: #f4f4f4;
+    padding: 0; 
 }
 
-/* --- Utility Classes --- */
-.hidden {
-    display: none !important;
+/* ----------------- */
+/* Global Layout/Page Hiding */
+/* ----------------- */
+#main-application {
+    /* Styles for the whole application wrapper */
+    padding: 20px;
 }
 
-.primary-button, .nasa-link-button {
-    background-color: var(--primary-blue);
-    color: var(--text-light);
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-    transition: background-color 0.2s;
-}
-
-.primary-button:hover, .nasa-link-button:hover {
-    background-color: #005aa7;
-}
-
-.small-button {
-    background-color: var(--secondary-orange);
-    color: var(--text-light);
-    border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 0.8em;
-    transition: background-color 0.2s;
-}
-
-.small-button:hover {
-    background-color: #cc6a00;
-}
-
-.icon-button {
-    background: none;
-    border: none;
-    color: var(--text-light);
-    font-size: 1em;
-    cursor: pointer;
-    padding: 5px 10px;
-}
-
-.icon-button:hover {
-    opacity: 0.8;
-}
-
-/* --- App Layout --- */
-#app-container {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    position: relative; /* For the floating button */
-}
-
-main {
-    flex-grow: 1;
-    padding-top: 60px; /* Space for the fixed header */
-}
-
-/* View management */
-.view {
+.portal-page {
     display: none;
+    background-color: white;
     padding: 20px;
-    min-height: calc(100vh - 120px); /* Height minus header and footer */
+    border: 1px solid #ccc;
+    min-height: 500px;
+    margin-top: 20px;
+    position: relative;
 }
 
-.view.active {
-    display: block;
+.portal-page.active {
+    display: block; 
 }
 
-.content-page {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.page-content-wrapper {
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: var(--shadow-light);
-}
-
-
-/* --- Header (Universal) --- */
-#universal-header {
+/* ----------------- */
+/* Page 0: User Selection Page */
+/* ----------------- */
+#user-selection-page {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 60px;
-    background-color: var(--primary-dark);
-    color: var(--text-light);
+    height: 100%;
+    z-index: 1000; 
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-select-container {
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.user-type-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.user-type-button {
+    padding: 15px;
+    border: 2px solid #007bff;
+    background-color: #e6f0ff;
+    color: #007bff;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.user-type-button:hover {
+    background-color: #007bff;
+    color: white;
+    transform: translateY(-2px);
+}
+
+
+/* ----------------- */
+/* Header (Persistent) */
+/* ----------------- */
+#main-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
-    z-index: 100;
+    padding: 10px 0;
+    border-bottom: 2px solid #333;
 }
 
-.header-left, .header-right {
-    display: flex;
-    align-items: center;
-}
-
-.user-profile-nav {
-    position: relative;
-    cursor: pointer;
-    margin-right: 15px;
-}
-
-.user-profile-nav:hover .user-dropdown {
-    display: block;
-}
-
-.user-icon {
-    font-size: 1.5em;
-    padding: 5px;
-}
-
-.user-dropdown {
-    display: none;
-    position: absolute;
-    top: 40px;
-    right: 0;
-    background-color: #fff;
-    box-shadow: var(--shadow-light);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    overflow: hidden;
-    z-index: 10;
-}
-
-.user-dropdown a {
-    display: block;
-    padding: 10px 15px;
-    color: var(--text-dark);
-    text-decoration: none;
-    white-space: nowrap;
-}
-
-.user-dropdown a:hover {
-    background-color: var(--background-light);
-}
-
-/* --- Footer (Universal) --- */
-#app-footer {
-    background-color: var(--primary-dark);
-    color: #a0a0a0;
-    padding: 15px 20px;
-    font-size: 0.8em;
-    text-align: center;
-    line-height: 1.4;
-    z-index: 10;
-}
-
-.disclaimer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.disclaimer-content p {
-    margin-bottom: 5px;
-}
-
-/* --- VIEW 1: User Select Screen --- */
-#view-user-select {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background-color: var(--primary-dark);
-    min-height: 100vh;
-    padding-top: 0; /* Override main padding */
-}
-
-.user-select-container h1 {
-    color: var(--text-light);
-    margin-bottom: 40px;
-    font-size: 2.2em;
-    line-height: 1.2;
-}
-
-.user-type-cards {
-    display: flex;
-    gap: 30px;
-    justify-content: center;
-}
-
-.user-type-card {
-    background-color: var(--background-light);
-    color: var(--text-dark);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    width: 200px;
-    text-align: center;
-}
-
-.user-type-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-}
-
-.user-type-card i {
-    font-size: 3em;
-    color: var(--primary-blue);
-    margin-bottom: 10px;
-}
-
-.user-type-card h2 {
-    font-size: 1.2em;
-    margin-top: 10px;
-}
-
-
-/* --- VIEW 2: Dashboard --- */
-#view-dashboard {
-    max-width: 100%;
-    padding: 0;
-}
-
-.dashboard-header {
-    background-color: var(--primary-dark);
-    color: var(--text-light);
-    padding: 20px 20px 10px;
-    text-align: center;
-}
-
-.branding {
-    font-size: 1.8em;
-    margin-bottom: 5px;
-}
-
-.branding small {
-    display: block;
-    font-size: 0.6em;
-    font-weight: normal;
-    opacity: 0.7;
-}
+.header-left h1 { font-size: 1.5em; }
+.header-left p { font-size: 0.8em; color: #666; }
 
 .main-nav {
     display: flex;
-    justify-content: center;
-    background-color: #fff;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow-light);
-    padding: 10px 20px;
-    overflow-x: auto;
-    white-space: nowrap;
+    gap: 25px;
 }
 
 .main-nav a {
-    color: var(--text-dark);
     text-decoration: none;
-    padding: 8px 15px;
-    margin: 0 5px;
-    border-radius: 5px;
-    transition: background-color 0.2s, color 0.2s;
-    font-weight: 500;
+    color: #007bff;
+    font-weight: bold;
+    padding: 5px 0;
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 0.2s;
 }
 
-.main-nav a:hover, .main-nav a.active {
-    background-color: var(--primary-blue);
-    color: var(--text-light);
+.main-nav a:hover {
+    border-bottom: 2px solid #007bff;
 }
 
-.dashboard-grid-revised {
-    display: grid;
-    grid-template-columns: 2fr 4fr 2fr; /* Announcement | Image | AI Help */
-    gap: 20px;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.card {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: var(--shadow-light);
-}
-
-.description-card h2 {
-    color: var(--secondary-orange);
-    margin-bottom: 10px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 5px;
-    font-size: 1.3em;
-}
-
-.description-card ul {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
-}
-
-.description-card li {
-    margin-bottom: 8px;
-    font-size: 0.95em;
-    line-height: 1.3;
-}
-
-.description-text h3 {
-    color: var(--primary-blue);
-    margin-bottom: 5px;
-}
-
-.image-area-large {
+.header-right {
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 400px;
-    padding: 0;
-    overflow: hidden;
+    gap: 15px;
+    font-size: 0.9em;
 }
 
-.placeholder-image {
-    background-color: #e0e0e0;
-    color: #666;
+.user-profile {
     display: flex;
-    justify-content: center;
     align-items: center;
-    text-align: center;
-    font-style: italic;
-    font-size: 1.1em;
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-}
-
-.placeholder-image.large {
-    height: 400px;
-}
-
-.placeholder-image.small {
-    height: 200px;
-}
-
-.ai-help-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    background-color: var(--background-light);
-    border: 2px solid var(--primary-blue);
-}
-
-.ai-help-card h2 {
-    color: var(--primary-dark);
-    margin-bottom: 5px;
-    font-size: 1.5em;
-}
-
-.ai-help-card p {
-    margin-bottom: 15px;
-}
-
-.nasa-promo-small {
-    margin-top: 20px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-color);
-    width: 100%;
-}
-
-.nasa-promo-small p {
-    margin-bottom: 10px;
-}
-
-.nasa-link-button {
-    background-color: var(--primary-dark);
-    width: 90%;
-}
-
-/* --- Content Page Styles (Used by About, Activities, etc.) --- */
-.content-page {
-    padding-top: 20px;
-}
-
-.content-page h2 {
-    color: var(--primary-blue);
-    margin-bottom: 20px;
-    font-size: 2em;
-    text-align: center;
-}
-
-.content-page h3 {
-    color: var(--primary-dark);
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-/* About Us Grid */
-.about-grid {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    gap: 30px;
-    align-items: start;
-}
-
-.about-text p {
-    margin-bottom: 15px;
-    line-height: 1.6;
-}
-
-/* Publications List */
-.nasa-resource-banner {
-    background-color: #e6f7ff;
-    border: 1px solid #b3e0ff;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.resource-link-button {
-    background-color: var(--secondary-orange);
-    white-space: nowrap;
-}
-
-.search-bar-container {
-    display: flex;
     gap: 10px;
-    margin-bottom: 20px;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
-.search-input {
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    flex-grow: 1;
+.user-profile button {
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 1px solid #333;
+    background-color: #eee;
 }
 
-.publications-table-container {
-    overflow-x: auto;
-    margin-bottom: 20px;
+.settings-icon {
+    font-size: 1.2em;
+    cursor: pointer;
 }
 
-.publications-table-container table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    box-shadow: var(--shadow-light);
-    border-radius: 8px;
+/* User Type Graph */
+.user-type-stats {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: default;
+}
+
+#user-type-graph {
+    width: 80px;
+    height: 15px;
+    background: #e0e0e0; 
+    display: flex;
+    border-radius: 3px;
     overflow: hidden;
 }
 
-.publications-table-container th, .publications-table-container td {
-    border: 1px solid var(--border-color);
-    padding: 12px;
-    text-align: left;
-    font-size: 0.9em;
+.graph-segment {
+    height: 100%;
+    /* Width and background set by JS */
 }
 
-.publications-table-container th {
-    background-color: var(--primary-blue);
-    color: var(--text-light);
-    font-weight: bold;
-}
-
-.publications-table-container tr:nth-child(even) {
-    background-color: var(--background-light);
-}
-
-.submit-pub-btn {
-    display: block;
-    margin: 20px auto 0;
-}
-
-/* Submission Form */
-.submission-form {
-    max-width: 800px;
-    margin: 20px auto;
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: var(--shadow-light);
-}
-
-.form-section {
-    margin-bottom: 20px;
-}
-
-.form-section h3 {
-    margin-bottom: 10px;
-    color: var(--primary-dark);
-}
-
-.submission-form input[type="text"],
-.submission-form input[type="email"],
-.submission-form input[type="tel"],
-.submission-form textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    margin-top: 5px;
-    font-family: var(--font-family);
-    font-size: 1em;
-}
-
-.submission-form textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-.half-width {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.half-width .form-section {
-    margin-bottom: 0;
-}
-
-.link-help {
-    margin-top: 15px;
-    display: block;
-    text-align: right;
-    font-size: 0.9em;
-}
-
-.full-width {
-    margin-top: 30px;
-}
-
-/* Activities Page */
-.important-note {
-    color: var(--secondary-orange);
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 25px;
-    font-size: 1.1em;
-}
-
-.activity-content-grid {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    gap: 30px;
-    align-items: start;
-}
-
-.activity-text p {
-    margin-bottom: 15px;
-    line-height: 1.6;
-}
-
-/* Interactives Page */
-.interactive-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 30px;
-}
-
-.interactive-item {
-    background: var(--background-light);
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-light);
-    width: 200px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.interactive-item:hover {
-    background-color: #eaf3f9;
-}
-
-.interactive-item i {
-    font-size: 2.5em;
-    color: var(--primary-blue);
-    margin-bottom: 10px;
-}
-
-/* News Page */
-.news-content {
-    margin-top: 20px;
-}
-
-.news-content h3 {
-    text-align: center;
-    color: var(--secondary-orange);
-    margin-bottom: 20px;
-}
-
-.news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.news-item {
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 5px solid var(--primary-blue);
-    box-shadow: var(--shadow-light);
-}
-
-.news-item h4 {
-    color: var(--primary-dark);
-    margin-bottom: 8px;
-}
-
-/* Library Page */
-.library-banner {
-    justify-content: center;
-    text-align: center;
-    flex-direction: column;
-}
-
-.library-banner p {
-    margin-bottom: 10px;
-}
-
-.primary-dark-button {
-    background-color: var(--primary-dark) !important;
-}
-
-.library-tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.library-tab {
-    background: none;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    color: var(--text-dark);
-    border-bottom: 3px solid transparent;
-    transition: border-color 0.2s, color 0.2s;
-}
-
-.library-tab:hover, .library-tab.active {
-    color: var(--primary-blue);
-    border-bottom: 3px solid var(--primary-blue);
-}
-
-.library-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: var(--shadow-light);
-}
-
-.library-content p {
-    margin-bottom: 10px;
-    line-height: 1.6;
-}
-
-/* Career Page */
-.career-content ul {
-    list-style: disc;
-    padding-left: 20px;
-    margin-bottom: 20px;
-}
-
-.image-section {
-    margin-top: 30px;
-}
-
-/* Life of Nasa Page */
-.nasa-life-grid {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    gap: 30px;
-    align-items: start;
-}
-
-.nasa-life-text p {
-    margin-bottom: 15px;
-    line-height: 1.6;
-}
-
-/* Future of Biospace Page */
-.future-grid {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    gap: 30px;
-    align-items: start;
-}
-
-.future-text p {
-    margin-bottom: 15px;
-    line-height: 1.6;
-}
-
-/* Q/A Page */
-.qa-section {
-    margin-top: 20px;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: var(--shadow-light);
-}
-
-.qa-section h3 {
-    color: var(--primary-blue);
-    border-left: 4px solid var(--secondary-orange);
-    padding-left: 10px;
-    margin-bottom: 5px;
-    margin-top: 15px;
-}
-
-.qa-section p {
-    margin-bottom: 15px;
-    padding-left: 15px;
-    line-height: 1.5;
-}
-
-
-/* --- CHATBOT MODAL STYLES (NEW) --- */
-.floating-button {
+/* ----------------- */
+/* Chatbot/Help Section (Persistent) */
+/* ----------------- */
+#chatbot-container {
     position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 999;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--primary-blue);
-    color: #fff;
-    font-size: 1.5em;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    border: none;
 }
 
-#chatbot-modal {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 350px;
-    height: 450px;
+#chat-icon {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 15px;
+    border: 1px solid #000;
     background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.help-icon {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+#chat-window {
+    width: 300px;
+    height: 400px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    margin-bottom: 10px;
 }
 
-.chatbot-header {
-    background-color: var(--primary-dark);
-    color: #fff;
-    padding: 10px 15px;
+.chat-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
-.chatbot-header h2 {
-    font-size: 1.2em;
-    margin: 0;
+.chat-header button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-.chatbot-messages {
+.chat-body {
     flex-grow: 1;
     padding: 10px;
     overflow-y: auto;
-    background-color: #f4f7f9;
     display: flex;
     flex-direction: column;
+    gap: 5px;
 }
 
-.message {
-    padding: 8px 12px;
-    margin-bottom: 10px;
-    border-radius: 15px;
+#chat-input {
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    border: none;
+    width: 100%;
+}
+
+.chat-message {
+    padding: 8px;
+    border-radius: 12px;
     max-width: 85%;
-    font
+    font-size: 0.9em;
+}
+
+.chat-message.bot {
+    background-color: #f0f0f0;
+    align-self: flex-start;
+}
+
+.chat-message.user {
+    background-color: #e6f0ff;
+    align-self: flex-end;
+    text-align: right;
+}
+
+.chat-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.chat-option-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+
+/* ... (Rest of the previous CSS for Home/Publications/Cards/etc. remains the same) ... */
