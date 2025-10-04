@@ -4,6 +4,7 @@ const CSV_URL = 'https://raw.githubusercontent.com/gopika-n-nair/biospace-engine
 // Global variables
 let allPublications = []; 
 let currentTag = 'all'; 
+let selectedUserType = null; // Variable to track the selected user card
 
 // User data for the graph (placeholder data)
 const USER_TYPES = {
@@ -35,7 +36,7 @@ function navigateTo(pageId) {
     if (targetPage) {
         targetPage.classList.add('active');
         if (pageId === 'publications-page') {
-            loadPublicationsData(); // Load data specifically for this page
+            loadPublicationsData(); 
         }
     }
 }
@@ -62,13 +63,31 @@ function setupNavigation() {
 }
 
 function setupUserSelectionHandlers() {
-     document.querySelectorAll('.user-type-button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const userType = e.currentTarget.getAttribute('data-type');
-            handleUserSelection(userType);
+     const continueBtn = document.getElementById('continue-btn');
+     
+     // 1. Handle card clicks (selection logic)
+     document.querySelectorAll('.user-type-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            // Remove 'selected' class from all cards
+            document.querySelectorAll('.user-type-card').forEach(c => c.classList.remove('selected'));
+            
+            // Add 'selected' class to the clicked card
+            e.currentTarget.classList.add('selected');
+            
+            // Set the selected type and enable the continue button
+            selectedUserType = e.currentTarget.getAttribute('data-type');
+            continueBtn.disabled = false;
         });
     });
+    
+    // 2. Handle continue button click (transition logic)
+    continueBtn.addEventListener('click', () => {
+        if (selectedUserType) {
+            handleUserSelection(selectedUserType);
+        }
+    });
 }
+
 
 // ---------------------------------
 // User Selection & Graph Functions
@@ -77,21 +96,17 @@ function setupUserSelectionHandlers() {
 function handleUserSelection(type) {
     currentUserType = type;
     
-    // 1. Update persistent user type display
-    document.getElementById('current-user-type').textContent = `User Profile: ${type}`;
+    document.getElementById('current-user-type').textContent = `Profile: ${type}`;
     
-    // 2. Hide selection page and show main application
     document.getElementById('user-selection-page').classList.remove('active');
     document.getElementById('user-selection-page').style.display = 'none';
     document.getElementById('main-application').style.display = 'block';
 
-    // 3. Update the graph data (simulate one more user of the chosen type)
     if (USER_TYPES[type]) {
         USER_TYPES[type].count += 1;
     }
     renderUserTypeGraph();
 
-    // 4. Navigate to the main portal page (Home)
     navigateTo('home-page');
 }
 
@@ -142,9 +157,8 @@ function sendMessage(message) {
     userMessage.textContent = message;
     chatBody.appendChild(userMessage);
 
-    chatBody.scrollTop = chatBody.scrollHeight; // Scroll to bottom
+    chatBody.scrollTop = chatBody.scrollHeight; 
 
-    // Simulate bot response
     setTimeout(() => {
         let botResponse = `I see you are logged in as a **${currentUserType}**. I'm currently summarizing that: ${message}`;
         
@@ -161,7 +175,7 @@ function sendMessage(message) {
         botMsg.innerHTML = botResponse; 
         chatBody.appendChild(botMsg);
         
-        chatBody.scrollTop = chatBody.scrollHeight; // Scroll to bottom
+        chatBody.scrollTop = chatBody.scrollHeight; 
     }, 800);
 }
 
@@ -195,13 +209,12 @@ async function fetchPublications() {
     } catch (error) {
         console.error("Could not fetch or parse publications data:", error);
         document.getElementById('publications-dashboard').innerHTML = 
-            `<p style="color: red;">Error loading publications from GitHub. Please check the network console for details. Showing **placeholder data** instead.</p>`;
+            `<p style="color: red;">Error loading publications from GitHub. Showing **placeholder data** instead.</p>`;
         return getPlaceholderPublications();
     }
 }
 
 function parseCSV(csvText) {
-    // This regex handles standard CSV parsing, including commas inside quoted fields.
     const lines = csvText.trim().split('\n');
     if (lines.length === 0) return [];
     
@@ -224,30 +237,11 @@ function parseCSV(csvText) {
 
 function getPlaceholderPublications() {
     return [
-        {
-            title: "AI-Driven Plant Stress Detection in Microgravity",
-            summary: "Uses machine learning to analyze spectral data for early detection of plant stress factors during space missions.",
-            authors: "Dr. A. Smith, J. Lee",
-            tags: "Artificial Intelligence & Machine Learning, Flora & Fauna",
-            link: "http://example.com/pub1"
-        },
-        {
-            title: "Optimizing Data Management for Bioscience Experiments on ISS",
-            summary: "A new standardized format for storing and transmitting biological data to improve access and analysis by global teams.",
-            authors: "R. Kaur, S. Chen",
-            tags: "Data Management, Software",
-            link: "http://example.com/pub2"
-        },
-        {
-            title: "Educational Outreach: Bringing Space Biology to K-12",
-            summary: "Curriculum development and interactive tools for students to learn about the effects of space on living systems.",
-            authors: "M. Johnson",
-            tags: "Education, Writing & Communications",
-            link: "http://example.com/pub3"
-        }
+        { title: "AI-Driven Plant Stress Detection in Microgravity", summary: "Machine learning for plant stress detection.", authors: "Dr. A. Smith, J. Lee", tags: "Artificial Intelligence & Machine Learning, Flora & Fauna", link: "#" },
+        { title: "Optimizing Data Management for Bioscience Experiments on ISS", summary: "New standardized format for biological data.", authors: "R. Kaur, S. Chen", tags: "Data Management, Software", link: "#" },
+        { title: "Educational Outreach: Bringing Space Biology to K-12", summary: "Curriculum development and interactive tools for students.", authors: "M. Johnson", tags: "Education, Writing & Communications", link: "#" }
     ];
 }
-
 
 function loadPublicationsData() {
     if (allPublications.length === 0) {
@@ -265,12 +259,9 @@ function filterPublications() {
     const searchInput = document.getElementById('search-publications').value.toLowerCase();
 
     const filtered = allPublications.filter(pub => {
-        // 1. Tag Filter
-        // Note: The 'tags' field must exist in your CSV for this to work.
         const pubTags = pub.tags ? pub.tags : ''; 
         const tagMatch = currentTag === 'all' || pubTags.includes(currentTag);
         
-        // 2. Search Filter (Title, Summary, Authors)
         const searchMatch = !searchInput || 
             (pub.title && pub.title.toLowerCase().includes(searchInput)) ||
             (pub.summary && pub.summary.toLowerCase().includes(searchInput)) ||
@@ -312,14 +303,14 @@ function displayPublications(publications, container) {
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initial Setup
-    setupUserSelectionHandlers();
+    setupUserSelectionHandlers(); 
     setupNavigation();
     renderUserTypeGraph(); 
     
     // 2. Ensure only the selection screen is visible initially
     navigateTo('user-selection-page');
 
-    // 3. Pre-load data in the background (will display when the Publications tab is clicked)
+    // 3. Pre-load data in the background 
     if (allPublications.length === 0) {
         fetchPublications().then(data => {
             allPublications = data;
