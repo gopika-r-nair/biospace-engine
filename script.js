@@ -1,319 +1,420 @@
-// **CORRECTED CSV URL from your GitHub repository**
-const CSV_URL = 'https://raw.githubusercontent.com/gopika-n-nair/biospace-engine/main/publications_pmc.csv'; 
+// **CSV URL from your GitHub repository**
+const CSV_URL = 'https://raw.githubusercontent.com/gopika-n-nair/biospace-engine/main/publications_pmc.csv';
 
-// Global variables
-let allPublications = []; 
-let currentTag = 'all'; 
-let selectedUserType = null; // Variable to track the selected user card
-
-// User data for the graph (placeholder data)
-const USER_TYPES = {
-    'Scientist': { label: 'Sci', color: '#ffc107', count: 120 },
-    'Manager': { label: 'Mngr', color: '#17a2b8', count: 80 },
-    'Mission Architect': { label: 'Arch', color: '#dc3545', count: 50 },
-    'Visitor': { label: 'Visit', color: '#28a745', count: 150 }
+// Global State (Equivalent to Streamlit's st.session_state)
+let appState = {
+    userRole: null,
+    currentPage: 'about-page',
+    pubsSubsection: 'Search Publications',
+    careerSubsection: 'Life at NASA',
+    activitiesSubsection: 'Quiz',
+    chatHistory: [{ role: "bot", content: "Hello! I'm your NASA Space Life Sciences chatbot. How can I help you today?" }],
+    allPublications: [],
+    projects: [
+        { title: "Microgravity Effects on Cells", desc: "This project investigates the fundamental changes in cell structure and function in a microgravity environment, with potential applications for biomedical research on Earth.", year: 2022, impact: "Biomedical research & drug development" },
+        { title: "Radiation Impact on Tissue", desc: "A long-term study to understand how cosmic radiation affects human tissue, aiming to develop better radiation shielding and protective measures for astronauts on long-duration missions.", year: 2023, impact: "Health research for deep space missions" },
+        { title: "Plant Growth Experiments on ISS", desc: "Microgravity affects plant biology in unique ways. This experiment explores how plants adapt to their environment, which is crucial for developing future food systems in space.", year: 2021, impact: "Sustainable agriculture & life support systems" }
+    ]
 };
-let currentUserType = 'None'; 
-
 
 // ---------------------------------
-// Core Application Functions
+// 1. Core Navigation and Setup
 // ---------------------------------
 
 function navigateTo(pageId) {
-    if (pageId === 'user-selection-page') {
-        document.getElementById('user-selection-page').style.display = 'flex';
-        document.getElementById('user-selection-page').classList.add('active');
-        document.getElementById('main-application').style.display = 'none';
-        return;
-    }
+    if (pageId === appState.currentPage) return;
 
+    // 1. Hide all pages
     document.querySelectorAll('.portal-page').forEach(page => {
         page.classList.remove('active');
     });
 
+    // 2. Show the target page
     const targetPage = document.getElementById(pageId);
     if (targetPage) {
         targetPage.classList.add('active');
-        if (pageId === 'publications-page') {
-            loadPublicationsData(); 
-        }
+        appState.currentPage = pageId;
+    }
+    
+    // 3. Update active tab style
+    document.querySelectorAll('.main-nav-tabs a').forEach(a => a.classList.remove('active-tab'));
+    document.querySelector(`.main-nav-tabs a[data-page="${pageId}"]`).classList.add('active-tab');
+    
+    // 4. Load specific content if needed
+    if (pageId === 'publications-page') {
+        renderPublicationsSubView(appState.pubsSubsection);
+    } else if (pageId === 'activities-page') {
+        renderActivitiesSubView(appState.activitiesSubsection);
+    } else if (pageId === 'career-page') {
+        renderCareerSubView(appState.careerSubsection);
     }
 }
 
 function setupNavigation() {
-    // Nav links and back buttons
-    document.querySelectorAll('[data-page]').forEach(link => {
+    // Tab navigation links
+    document.querySelectorAll('.main-nav-tabs a').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            const targetPageId = e.currentTarget.getAttribute('data-page');
-            navigateTo(targetPageId);
+            navigateTo(e.currentTarget.getAttribute('data-page'));
         });
     });
 
-    // Tag filter handlers 
-    document.querySelectorAll('.tag-button').forEach(button => {
+    // Sub-navigation buttons (Publications)
+    document.querySelectorAll('.pub-sub-btn').forEach(button => {
         button.addEventListener('click', (e) => {
-            currentTag = e.target.getAttribute('data-tag');
-            document.querySelectorAll('.tag-button').forEach(btn => btn.classList.remove('active-tag'));
-            e.target.classList.add('active-tag');
-            filterPublications();
+            const sub = e.target.getAttribute('data-sub');
+            appState.pubsSubsection = sub;
+            renderPublicationsSubView(sub);
+        });
+    });
+
+    // Sub-navigation buttons (Activities)
+    document.querySelectorAll('.activity-sub-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const sub = e.target.getAttribute('data-sub');
+            appState.activitiesSubsection = sub;
+            renderActivitiesSubView(sub);
+        });
+    });
+
+    // Sub-navigation buttons (Career)
+    document.querySelectorAll('.career-sub-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const sub = e.target.getAttribute('data-sub');
+            appState.careerSubsection = sub;
+            renderCareerSubView(sub);
         });
     });
 }
 
+function setupProjectsPage() {
+    const list = document.getElementById('projects-list');
+    list.innerHTML = '';
+    appState.projects.forEach(p => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <p><strong>${p.title} (${p.year})</strong></p>
+            <p>${p.desc}</p>
+            <p><strong>Impact:</strong> ${p.impact}</p>
+            <hr>
+        `;
+        list.appendChild(div);
+    });
+}
+
+// ---------------------------------
+// 2. User Selection Logic
+// ---------------------------------
+
+function handleUserSelection(type) {
+    appState.userRole = type;
+    
+    // Update header
+    document.getElementById('current-user-type').textContent = `Role: ${type}`;
+    document.getElementById('welcome-message').textContent = `Welcome, ${type}!`;
+    
+    // Transition to main dashboard
+    document.getElementById('user-selection-page').style.display = 'none';
+    document.getElementById('main-application').style.display = 'block';
+
+    navigateTo('about-page');
+}
+
 function setupUserSelectionHandlers() {
-     const continueBtn = document.getElementById('continue-btn');
+    const continueBtn = document.getElementById('continue-btn');
      
-     // 1. Handle card clicks (selection logic)
-     document.querySelectorAll('.user-type-card').forEach(card => {
+    document.querySelectorAll('.user-type-card').forEach(card => {
         card.addEventListener('click', (e) => {
-            // Remove 'selected' class from all cards
             document.querySelectorAll('.user-type-card').forEach(c => c.classList.remove('selected'));
-            
-            // Add 'selected' class to the clicked card
             e.currentTarget.classList.add('selected');
-            
-            // Set the selected type and enable the continue button
             selectedUserType = e.currentTarget.getAttribute('data-type');
             continueBtn.disabled = false;
         });
     });
     
-    // 2. Handle continue button click (transition logic)
     continueBtn.addEventListener('click', () => {
         if (selectedUserType) {
             handleUserSelection(selectedUserType);
         }
     });
-}
 
-
-// ---------------------------------
-// User Selection & Graph Functions
-// ---------------------------------
-
-function handleUserSelection(type) {
-    currentUserType = type;
-    
-    document.getElementById('current-user-type').textContent = `Profile: ${type}`;
-    
-    document.getElementById('user-selection-page').classList.remove('active');
-    document.getElementById('user-selection-page').style.display = 'none';
-    document.getElementById('main-application').style.display = 'block';
-
-    if (USER_TYPES[type]) {
-        USER_TYPES[type].count += 1;
-    }
-    renderUserTypeGraph();
-
-    navigateTo('home-page');
-}
-
-function renderUserTypeGraph() {
-    const graphContainer = document.getElementById('user-type-graph');
-    if (!graphContainer) return;
-
-    graphContainer.innerHTML = '';
-    
-    const totalUsers = Object.values(USER_TYPES).reduce((sum, user) => sum + user.count, 0);
-
-    for (const type in USER_TYPES) {
-        const user = USER_TYPES[type];
-        const percentage = (user.count / totalUsers) * 100;
-        
-        const segment = document.createElement('div');
-        segment.classList.add('graph-segment');
-        segment.style.width = `${percentage}%`;
-        segment.style.backgroundColor = user.color;
-        segment.title = `${type}: ${user.count} users (${percentage.toFixed(1)}%)`;
-        
-        graphContainer.appendChild(segment);
-    }
-}
-
-
-// ---------------------------------
-// Chatbot Functions
-// ---------------------------------
-
-function toggleChat(show) {
-    const chatWindow = document.getElementById('chat-window');
-    const chatIcon = document.getElementById('chat-icon');
-    
-    if (show) {
-        chatWindow.style.display = 'flex';
-        chatIcon.style.display = 'none';
-    } else {
-        chatWindow.style.display = 'none';
-        chatIcon.style.display = 'flex';
-    }
-}
-
-function sendMessage(message) {
-    const chatBody = document.getElementById('chat-body');
-    const userMessage = document.createElement('div');
-    userMessage.classList.add('chat-message', 'user');
-    userMessage.textContent = message;
-    chatBody.appendChild(userMessage);
-
-    chatBody.scrollTop = chatBody.scrollHeight; 
-
-    setTimeout(() => {
-        let botResponse = `I see you are logged in as a **${currentUserType}**. I'm currently summarizing that: ${message}`;
-        
-        if (message.toLowerCase().includes('latest publication')) {
-            botResponse = 'The latest publication is loading from your CSV data. Check the Publications tab for real-time updates!';
-        } else if (message.toLowerCase().includes('submit')) {
-            botResponse = 'To submit a publication, please navigate to the Publications tab and click the "Submit a new publication" link. ';
-        } else if (message.toLowerCase().includes('challenge')) {
-            botResponse = 'The EXBIO Portal is built for the NASA Space Apps Challenge 2025: "Build a Space Biology Knowledge Engine".';
-        }
-
-        const botMsg = document.createElement('div');
-        botMsg.classList.add('chat-message', 'bot');
-        botMsg.innerHTML = botResponse; 
-        chatBody.appendChild(botMsg);
-        
-        chatBody.scrollTop = chatBody.scrollHeight; 
-    }, 800);
-}
-
-function handleChatInput(e) {
-    if (e.key === 'Enter') {
-        const input = document.getElementById('chat-input');
-        const message = input.value.trim();
-        if (message) {
-            sendMessage(message);
-            input.value = '';
-        }
-    }
-}
-
-function sendChatOption(option) {
-    sendMessage(option);
+    // Start with only selection screen active
+    document.getElementById('main-application').style.display = 'none';
+    document.getElementById('user-selection-page').classList.add('active');
 }
 
 // ---------------------------------
-// Publications Data Handling
+// 3. Publications Tab (Data Handling & Rendering)
 // ---------------------------------
 
-async function fetchPublications() {
+async function loadPublications() {
+    if (appState.allPublications.length > 0) return;
+
     try {
         const response = await fetch(CSV_URL);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
         const csvText = await response.text();
-        return parseCSV(csvText);
-    } catch (error) {
-        console.error("Could not fetch or parse publications data:", error);
-        document.getElementById('publications-dashboard').innerHTML = 
-            `<p style="color: red;">Error loading publications from GitHub. Showing **placeholder data** instead.</p>`;
-        return getPlaceholderPublications();
-    }
-}
+        const lines = csvText.trim().split('\n');
+        if (lines.length <= 1) return;
 
-function parseCSV(csvText) {
-    const lines = csvText.trim().split('\n');
-    if (lines.length === 0) return [];
-    
-    // Simple header extraction
-    const headers = lines[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(h => h.trim().replace(/"/g, '').toLowerCase().replace(/ /g, '_'));
-    const data = [];
-
-    for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/"/g, '')); 
-        if (values.length === headers.length) {
+        // Custom parser to handle quotes and commas, matching Streamlit logic
+        const headers = lines[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(h => h.trim().replace(/"/g, '').toLowerCase().replace(/ /g, '_'));
+        appState.allPublications = lines.slice(1).map(line => {
+            const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/"/g, ''));
             let item = {};
             headers.forEach((header, index) => {
                 item[header] = values[index];
             });
-            data.push(item);
-        }
-    }
-    return data;
-}
-
-function getPlaceholderPublications() {
-    return [
-        { title: "AI-Driven Plant Stress Detection in Microgravity", summary: "Machine learning for plant stress detection.", authors: "Dr. A. Smith, J. Lee", tags: "Artificial Intelligence & Machine Learning, Flora & Fauna", link: "#" },
-        { title: "Optimizing Data Management for Bioscience Experiments on ISS", summary: "New standardized format for biological data.", authors: "R. Kaur, S. Chen", tags: "Data Management, Software", link: "#" },
-        { title: "Educational Outreach: Bringing Space Biology to K-12", summary: "Curriculum development and interactive tools for students.", authors: "M. Johnson", tags: "Education, Writing & Communications", link: "#" }
-    ];
-}
-
-function loadPublicationsData() {
-    if (allPublications.length === 0) {
-        fetchPublications().then(data => {
-            allPublications = data;
-            filterPublications();
+            return item;
         });
-    } else {
-        filterPublications();
+
+        // Initial render after data load
+        filterPublications(); 
+        renderLatestPublications();
+    } catch (error) {
+        console.error("Could not fetch or parse publications data:", error);
+        document.getElementById('publications-dashboard').innerHTML = '<p style="color: red;">Error loading publications from GitHub. Data display is limited.</p>';
     }
 }
 
 function filterPublications() {
     const dashboard = document.getElementById('publications-dashboard');
-    const searchInput = document.getElementById('search-publications').value.toLowerCase();
-
-    const filtered = allPublications.filter(pub => {
-        const pubTags = pub.tags ? pub.tags : ''; 
-        const tagMatch = currentTag === 'all' || pubTags.includes(currentTag);
-        
-        const searchMatch = !searchInput || 
-            (pub.title && pub.title.toLowerCase().includes(searchInput)) ||
-            (pub.summary && pub.summary.toLowerCase().includes(searchInput)) ||
-            (pub.authors && pub.authors.toLowerCase().includes(searchInput));
-
-        return tagMatch && searchMatch;
-    });
-
-    displayPublications(filtered, dashboard);
-}
-
-function displayPublications(publications, container) {
-    container.innerHTML = ''; 
-
-    if (publications.length === 0) {
-        container.innerHTML = '<p>No publications found matching your criteria. Try adjusting the search or filters.</p>';
+    const searchInput = document.getElementById('pub-search-input').value.toLowerCase();
+    
+    if (appState.allPublications.length === 0) {
+        dashboard.innerHTML = '<p>Data not available or still loading...</p>';
         return;
     }
 
-    publications.forEach(pub => {
-        const card = document.createElement('div');
-        card.classList.add('publication-card');
+    const filtered = appState.allPublications.filter(pub => {
+        const title = pub.title ? pub.title.toLowerCase() : '';
+        const summary = pub.summary ? pub.summary.toLowerCase() : '';
+        const authors = pub.authors ? pub.authors.toLowerCase() : '';
 
-        card.innerHTML = `
-            <h3>${pub.title || 'No Title'}</h3>
-            <p class="author">${pub.authors || 'Unknown Author'}</p>
-            <p class="summary">${pub.summary || 'No summary available.'}</p>
-            <p class="tags">Tags: ${pub.tags || 'General'}</p>
-            <a href="${pub.link || '#'}" target="_blank">View Details (Link)</a>
-        `;
-        container.appendChild(card);
+        return !searchInput || 
+               title.includes(searchInput) ||
+               summary.includes(searchInput) ||
+               authors.includes(searchInput);
     });
+
+    displayPublicationsTable(filtered, dashboard);
+}
+
+function renderLatestPublications() {
+    const dashboard = document.getElementById('latest-publications-list');
+
+    if (appState.allPublications.length === 0) {
+        dashboard.innerHTML = '<p>Data not available or still loading...</p>';
+        return;
+    }
+    
+    // Simple sort by title for a basic "latest" effect since year column is inconsistent
+    const latest = [...appState.allPublications].sort((a, b) => (b.title || '').localeCompare(a.title || '')).slice(0, 20);
+
+    displayPublicationsTable(latest, dashboard);
+}
+
+function displayPublicationsTable(publications, container) {
+    if (publications.length === 0) {
+        container.innerHTML = '<p>No publications found matching your criteria.</p>';
+        return;
+    }
+
+    // Build the HTML table
+    let html = '<table><thead><tr><th>Title</th><th>Authors</th><th>Link</th></tr></thead><tbody>';
+    publications.forEach(pub => {
+        const title = pub.title || 'No Title';
+        const authors = pub.authors || 'Unknown';
+        const link = pub.link || pub.doi || '#';
+        
+        html += `
+            <tr>
+                <td>${title}</td>
+                <td>${authors}</td>
+                <td><a href="${link}" target="_blank">View</a></td>
+            </tr>
+        `;
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function renderPublicationsSubView(sub) {
+    // Set active button style
+    document.querySelectorAll('.pub-sub-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.pub-sub-btn[data-sub="${sub}"]`).classList.add('active');
+
+    // Show active sub-view content
+    document.querySelectorAll('#pubs-content .sub-view').forEach(view => view.classList.remove('active'));
+    
+    if (sub === 'Search Publications') {
+        document.getElementById('pubs-search-view').classList.add('active');
+        filterPublications(); // Reload the data
+    } else if (sub === 'Latest Publications') {
+        document.getElementById('pubs-latest-view').classList.add('active');
+        renderLatestPublications(); // Reload the data
+    } else if (sub === 'Submit a Publication') {
+        document.getElementById('pubs-submit-view').classList.add('active');
+    }
+}
+
+// ---------------------------------
+// 4. Activities Tab (Quiz Logic)
+// ---------------------------------
+
+function setupQuiz() {
+    document.getElementById('quiz-submit-btn').addEventListener('click', () => {
+        const selected = document.querySelector('input[name="quiz1"]:checked');
+        const feedback = document.getElementById('quiz-feedback');
+        feedback.style.color = 'white';
+
+        if (selected) {
+            if (selected.value === "Bones lose density") {
+                feedback.textContent = "Correct! Bones need gravity to maintain their density, so they weaken in space.";
+                feedback.style.backgroundColor = '#4CAF50';
+                feedback.style.padding = '5px';
+            } else {
+                feedback.textContent = "That's not it. Give it another try!";
+                feedback.style.backgroundColor = '#d9534f';
+                feedback.style.padding = '5px';
+            }
+        } else {
+            feedback.textContent = "Please select an answer.";
+            feedback.style.backgroundColor = 'transparent';
+        }
+    });
+}
+
+function renderActivitiesSubView(sub) {
+    document.querySelectorAll('.activity-sub-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.activity-sub-btn[data-sub="${sub}"]`).classList.add('active');
+
+    document.querySelectorAll('#activities-content .sub-view').forEach(view => view.classList.remove('active'));
+    
+    if (sub === 'Quiz') {
+        document.getElementById('activity-quiz-view').classList.add('active');
+    } else if (sub === 'Future Activities') {
+        document.getElementById('activity-future-view').classList.add('active');
+    }
+}
+
+// ---------------------------------
+// 5. Career Tab
+// ---------------------------------
+
+function renderCareerSubView(sub) {
+    document.querySelectorAll('.career-sub-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.career-sub-btn[data-sub="${sub}"]`).classList.add('active');
+
+    document.querySelectorAll('#career-content .sub-view').forEach(view => view.classList.remove('active'));
+    
+    if (sub === 'Life at NASA') {
+        document.getElementById('career-life-view').classList.add('active');
+    } else if (sub === 'Career Scopes') {
+        document.getElementById('career-scopes-view').classList.add('active');
+    } else if (sub === 'Q&A') {
+        document.getElementById('career-qna-view').classList.add('active');
+    }
+}
+
+// ---------------------------------
+// 6. Chatbot Logic
+// ---------------------------------
+
+function chatbotAnswer(question) {
+    const q = question.toLowerCase();
+    let ans = "I can provide information on key topics in space biology. Try asking about **long-term stays**, **plants**, or **radiation** in space.";
+    let refs = [];
+
+    // Search logic to mimic the Python script's chatbot_answer
+    const findReferences = (keywords) => {
+        if (appState.allPublications.length === 0) return [];
+        const relevant = appState.allPublications.filter(pub => {
+            const title = pub.title ? pub.title.toLowerCase() : '';
+            return keywords.some(k => title.includes(k));
+        }).slice(0, 2); 
+        return relevant.map(r => ({ title: r.title || "No Title", link: r.link || r.doi || '' }));
+    };
+
+    if (q.includes("stay longer") || q.includes("long stay") || q.includes("longer in space")) {
+        ans = "Staying for extended periods in space can lead to **bone demineralization** and **muscle atrophy** due to the lack of gravity. Astronauts also face increased risk from **radiation exposure** and changes to their cardiovascular system.";
+        refs = findReferences(["bone density", "muscle atrophy", "radiation", "long duration"]);
+    } else if (q.includes("plant") || q.includes("growth")) {
+        ans = "In microgravity, plants adapt differently, affecting photosynthesis, root orientation, and growth patterns.";
+        refs = findReferences(["plant growth", "microgravity", "agriculture"]);
+    } else if (q.includes("radiation")) {
+        ans = "Cosmic and solar radiation can damage DNA and cells, increasing the long-term health risks for astronauts, including an elevated risk of cancer.";
+        refs = findReferences(["radiation", "cosmic rays", "dna damage"]);
+    }
+
+    let fullResponse = ans;
+    if (refs.length > 0) {
+        fullResponse += "\n\n**Related Publications:**";
+        refs.forEach(r => {
+            fullResponse += r.link ? `\n- [${r.title}](${r.link})` : `\n- ${r.title}`;
+        });
+    }
+
+    return fullResponse;
+}
+
+function handleChatInput(e) {
+    if (e.key === 'Enter') {
+        const input = document.getElementById('chat-input');
+        const prompt = input.value.trim();
+        if (prompt) {
+            // Add user message to history
+            const userMsg = document.createElement('div');
+            userMsg.classList.add('chat-message', 'user');
+            userMsg.textContent = prompt;
+            document.getElementById('chat-history').appendChild(userMsg);
+            appState.chatHistory.push({ role: "user", content: prompt });
+
+            input.value = '';
+
+            // Scroll to bottom
+            const history = document.getElementById('chat-history');
+            history.scrollTop = history.scrollHeight;
+
+            // Get bot response and simulate delay
+            setTimeout(() => {
+                const responseText = chatbotAnswer(prompt);
+                const botMsg = document.createElement('div');
+                botMsg.classList.add('chat-message', 'bot');
+                // Use a basic markdown-to-HTML conversion for bold/links
+                botMsg.innerHTML = responseText
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') 
+                    .replace(/\n/g, '<br>');
+
+                document.getElementById('chat-history').appendChild(botMsg);
+                appState.chatHistory.push({ role: "bot", content: responseText });
+
+                history.scrollTop = history.scrollHeight;
+            }, 800);
+        }
+    }
 }
 
 
 // ---------------------------------
-// Initialization
+// 7. Initialization
 // ---------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initial Setup
-    setupUserSelectionHandlers(); 
-    setupNavigation();
-    renderUserTypeGraph(); 
+    // 1. Load publications data (in the background)
+    loadPublications();
     
-    // 2. Ensure only the selection screen is visible initially
-    navigateTo('user-selection-page');
+    // 2. Set up initial user selection screen
+    setupUserSelectionHandlers();
+    
+    // 3. Set up all navigation
+    setupNavigation();
+    
+    // 4. Set up non-data content
+    setupProjectsPage();
+    setupQuiz();
 
-    // 3. Pre-load data in the background 
-    if (allPublications.length === 0) {
-        fetchPublications().then(data => {
-            allPublications = data;
-        });
-    }
+    // The user must select a role before the main dashboard is shown.
+    // The handleUserSelection function transitions to the main dashboard.
 });
