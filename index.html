@@ -1,172 +1,212 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXBIO Portal</title>
-    <link rel="stylesheet" href="css/style.css"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EXBIO Portal — BioSpace Dashboard</title>
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-yH0b7... (omit)" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">🚀</div>
+        <div class="logo-text">BioSpace</div>
+      </div>
 
-    <div class="portal-layout">
-        <aside class="sidebar">
-            <div class="logo">EXBIO Portal</div>
-            <nav class="nav-menu">
-                <ul>
-                    <li><a href="#" class="nav-item active" data-page="about-us">About Us</a></li>
-                    <li><a href="#" class="nav-item" data-page="news">News</a></li>
-                    
-                    <li class="dropdown-parent">
-                        <a href="#" class="nav-item" data-page="publications">Publications</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" class="nav-sub-item" data-page="pub-announcements">Announcements</a></li>
-                            <li><a href="#" class="nav-sub-item" data-page="pub-submit">Submit a New Publication</a></li>
-                        </ul>
-                    </li>
+      <nav class="nav">
+        <a href="#" class="nav-link" data-page="about">About Us</a>
 
-                    <li class="dropdown-parent">
-                        <a href="#" class="nav-item" data-page="activities">Activities</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" class="nav-sub-item" data-page="act-qa">Question and Answer section</a></li>
-                            <li><a href="#" class="nav-sub-item" data-page="act-interactives">Interactives</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="dropdown-parent">
-                        <a href="#" class="nav-item" data-page="career">Career</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" class="nav-sub-item" data-page="car-nasa">Life at NASA</a></li>
-                            <li><a href="#" class="nav-sub-item" data-page="car-future">Future of Biospace Studies</a></li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#" class="nav-item" data-page="library">Library</a></li>
-                </ul>
-            </nav>
-        </aside>
-
-        <div class="content-wrapper">
-            <header class="header">
-                <div class="header-right">
-                    <div class="user-profile">
-                        <i class="fas fa-user-circle user-icon"></i>
-                        <span class="user-name">User: Dr. A. Smith</span>
-                    </div>
-                    <button id="settings-btn" class="header-action-btn" title="Settings">⚙️</button>
-                    <button id="logout-btn" class="header-action-btn">Logout</button>
-                </div>
-            </header>
-
-            <main class="main-content-area">
-                
-                <div id="about-us-page" class="page-content active">
-                    <div class="page-header">
-                        <h1>About Us</h1>
-                        <p>If aitte ae portal fain that ankorating pait a he Hnual arseld on toi reske the dapat thou Yoat I'm ar uaflets on shenoid knurp sihduerten tly doity.</p>
-                    </div>
-                    <div class="page-body">
-                        <div class="page-text-content">
-                            <h2>Major Studies in Biospace Research</h2>
-                            <ul>
-                                <li><i class="fas fa-check-circle"></i> Publication Library</li>
-                                <li><i class="fas fa-check-circle"></i> Submit a new application</li>
-                            </ul>
-                            <p>Detailed information about ongoing research projects, past findings, and future initiatives in the field of biospace exploration. Our teams are dedicated to understanding life in extreme environments and ensuring human survival in space.</p>
-                            <p>Explore our vast collection of scientific papers and apply for research grants to contribute to our mission.</p>
-                        </div>
-                        <div class="page-image-placeholder">
-                            <img id="content-image" src="img/about-us.jpg" alt="About Us Section Image">
-                        </div>
-                    </div>
-                </div>
-
-                <div id="publications-page" class="page-content">
-                    <div class="page-header">
-                        <h1>Our Publications Library</h1>
-                        <p>Explore the comprehensive list of scientific papers and research articles from the EXBIO community, dynamically loaded from the PMC data stream on GitHub.</p>
-                    </div>
-                    <div id="publications-data-table">
-                        <p class="loading-message">Loading publication data...</p>
-                    </div>
-                </div>
-
-                <div id="news-page" class="page-content">
-                    <div class="page-header"><h1>Latest News</h1><p>Stay up-to-date with the latest discoveries and announcements.</p></div>
-                </div>
-                <div id="pub-announcements-page" class="page-content">
-                    <div class="page-header"><h1>Publications > Announcements</h1></div>
-                </div>
-                <div id="pub-submit-page" class="page-content">
-                    <div class="page-header"><h1>Publications > Submit a New Publication</h1></div>
-                </div>
-                <div id="act-qa-page" class="page-content">
-                    <div class="page-header"><h1>Activities > Question and Answer section</h1></div>
-                </div>
-                <div id="act-interactives-page" class="page-content">
-                    <div class="page-header"><h1>Activities > Interactives</h1></div>
-                </div>
-                <div id="car-nasa-page" class="page-content">
-                    <div class="page-header"><h1>Career > Life at NASA</h1></div>
-                </div>
-                <div id="car-future-page" class="page-content">
-                    <div class="page-header"><h1>Career > Future of Biospace Studies</h1></div>
-                </div>
-                <div id="library-page" class="page-content">
-                    <div class="page-header"><h1>Library</h1></div>
-                </div>
-
-            </main>
+        <div class="nav-group">
+          <button class="nav-link dropdown-toggle" data-target="publications">Publications <span class="caret">▾</span></button>
+          <div class="dropdown" id="publications-dropdown">
+            <a href="#" class="nav-sublink" data-page="publications">Latest publications</a>
+            <a href="#" class="nav-sublink" data-page="submit-publication">Submit a new publication</a>
+          </div>
         </div>
+
+        <div class="nav-group">
+          <button class="nav-link dropdown-toggle" data-target="activities">Activities <span class="caret">▾</span></button>
+          <div class="dropdown" id="activities-dropdown">
+            <a href="#" class="nav-sublink" data-page="qa">Q/A</a>
+            <a href="#" class="nav-sublink" data-page="simulations">Simulations</a>
+          </div>
+        </div>
+
+        <a href="#" class="nav-link" data-page="library">Library</a>
+
+        <div class="nav-group">
+          <button class="nav-link dropdown-toggle" data-target="career">Careers <span class="caret">▾</span></button>
+          <div class="dropdown" id="career-dropdown">
+            <a href="#" class="nav-sublink" data-page="life-at-nasa">Life at NASA</a>
+            <a href="#" class="nav-sublink" data-page="future-of-biospace">Future of Biospace</a>
+          </div>
+        </div>
+
+        <a href="#" class="nav-link" data-page="news">News</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="chat-toggle" title="Open chatbot">❓</button>
+      </div>
+    </aside>
+
+    <!-- Main area -->
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="sidebar-toggle" class="icon-btn"><i class="fa fa-bars"></i></button>
+          <h1 class="app-title">BioSpace Dashboard</h1>
+        </div>
+
+        <div class="topbar-right">
+          <div class="user-info">
+            <i class="fa fa-user-circle user-icon"></i>
+            <span class="username">Dr. A. Smith</span>
+          </div>
+          <button id="settings-btn" class="icon-btn" title="Settings"><i class="fa fa-cog"></i></button>
+          <button id="logout-btn" class="btn small">Logout</button>
+        </div>
+      </header>
+
+      <main id="main-content" class="content">
+        <!-- ABOUT -->
+        <section id="about-page" class="page active">
+          <h2>About Us</h2>
+          <p>Welcome to the BioSpace EXBIO Portal — a curated dashboard for space biology publications, activities, and resources.</p>
+        </section>
+
+        <!-- PUBLICATIONS -->
+        <section id="publications-page" class="page">
+          <h2>Publications</h2>
+          <p>Loading database of open-access space biology publications. Source: NASA dataset (public CSV).</p>
+
+          <div id="publications-controls" class="controls">
+            <input id="pub-search" placeholder="Search title/author..." />
+            <button id="pub-refresh" class="btn">Refresh</button>
+          </div>
+
+          <div id="publications-status" class="status"></div>
+          <div id="publications-data-table" class="table-wrap"></div>
+        </section>
+
+        <!-- Submit publication (simple placeholder form) -->
+        <section id="submit-publication-page" class="page">
+          <h2>Submit a new publication</h2>
+          <p>Use this form to submit a publication (demo/local only).</p>
+          <form id="submit-publication-form">
+            <label>Title<input name="title" required /></label>
+            <label>Authors<input name="authors" /></label>
+            <label>Year<input name="year" type="number" /></label>
+            <label>Link<input name="link" /></label>
+            <button class="btn" type="submit">Submit</button>
+            <div id="submit-pub-msg" class="status"></div>
+          </form>
+        </section>
+
+        <!-- Q/A -->
+        <section id="qa-page" class="page">
+          <h2>Q/A</h2>
+          <p>Questions and answers about space biology experiments.</p>
+        </section>
+
+        <!-- Simulations -->
+        <section id="simulations-page" class="page">
+          <h2>Simulations</h2>
+          <p>Interactive simulations placeholder.</p>
+        </section>
+
+        <!-- Library -->
+        <section id="library-page" class="page">
+          <h2>Library</h2>
+          <p>Library links and resources.</p>
+        </section>
+
+        <!-- Life at NASA -->
+        <section id="life-at-nasa-page" class="page">
+          <h2>Life at NASA</h2>
+          <p>Careers, internships, and life in space science research.</p>
+        </section>
+
+        <!-- Future of Biospace -->
+        <section id="future-of-biospace-page" class="page">
+          <h2>Future of Biospace</h2>
+          <p>Future directions and opportunities in space biology.</p>
+        </section>
+
+        <!-- News -->
+        <section id="news-page" class="page">
+          <h2>News</h2>
+          <p>Latest news and announcements.</p>
+        </section>
+      </main>
     </div>
+  </div>
 
-    <button id="chatbot-toggle" class="chatbot-toggle" title="Chatbot">❓</button>
-
-    <div id="chatbot-window" class="chatbot-window">
-        <div class="chatbot-header">
-            EXBIO-AI Chatbot
-        </div>
-        <div class="chatbot-body">
-            <p>Hello! How can I assist with the portal today? You ask me about: 1. Publications 2. Activities/Features 3. Get Help</p>
-        </div>
-        <div class="chatbot-footer">
-            <input type="text" placeholder="Type your message...">
-            <button>Send</button>
-        </div>
+  <!-- Chatbot widget (hidden by default) -->
+  <div id="chatbot-widget" class="chatbot">
+    <div class="chat-header">
+      <span>Bio Assistant</span>
+      <button id="chat-close" title="Close">✕</button>
     </div>
-
-    <div id="settings-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>Settings</h2>
-            <div class="settings-nav">
-                <a href="#" data-setting-tab="general" class="active">General</a>
-                <a href="#" data-setting-tab="appearance">Appearance</a>
-                <a href="#" data-setting-tab="privacy">Privacy & Security</a>
-            </div>
-            <div class="settings-tabs">
-                <div id="general-settings" class="setting-tab active">
-                    <h3>General Settings</h3>
-                    <p>Manage start-up options and default portal behavior.</p>
-                    <label><input type="checkbox" checked> Save my current session on exit</label>
-                    <label><input type="checkbox"> Enable dark mode by default</label>
-                </div>
-                <div id="appearance-settings" class="setting-tab">
-                    <h3>Appearance</h3>
-                    <p>Customize the look and feel of your EXBIO Portal interface.</p>
-                    <label>Font Size: <select><option>Medium</option><option>Large</option></select></label>
-                    <label>Theme: <select><option>Default Blue</option><option>High Contrast</option></select></label>
-                </div>
-                <div id="privacy-settings" class="setting-tab">
-                    <h3>Privacy & Security</h3>
-                    <p>Control data sharing and security features within the portal.</p>
-                    <label><input type="checkbox" checked> Enable two-factor authentication</label>
-                    <label><input type="checkbox"> Clear history on logout</label>
-                </div>
-            </div>
-        </div>
+    <div id="chat-body" class="chat-body">
+      <div class="chat-msg bot">Hi — ask me about publications or resources (demo only).</div>
     </div>
+    <div class="chat-input">
+      <input id="chat-input-field" placeholder="Type a question..." />
+      <button id="chat-send">Send</button>
+    </div>
+  </div>
 
-    <script src="js/script.js"></script>
+  <!-- Settings modal -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Settings</h3>
+        <button id="settings-close" class="icon-btn">✕</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="tab-btn active" data-tab="general">General</button>
+        <button class="tab-btn" data-tab="appearance">Appearance</button>
+        <button class="tab-btn" data-tab="privacy">Privacy & Security</button>
+      </div>
+
+      <div class="modal-body">
+        <div id="tab-general" class="tab-panel"> 
+          <h4>General</h4>
+          <label>Display name<input id="setting-username" /></label>
+        </div>
+
+        <div id="tab-appearance" class="tab-panel hidden">
+          <h4>Appearance</h4>
+          <label>Theme
+            <select id="setting-theme">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="tab-privacy" class="tab-panel hidden">
+          <h4>Privacy & Security</h4>
+          <label><input type="checkbox" id="setting-analytics" /> Enable analytics (demo)</label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="settings-save" class="btn">Save</button>
+        <button id="settings-cancel" class="btn hollow">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
