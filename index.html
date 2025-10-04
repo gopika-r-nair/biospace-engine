@@ -1,209 +1,142 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>EXBIO Portal — BioSpace Dashboard</title>
-
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-yH0b7... (omit)" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biospace Engine</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/yourkit.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="logo">
-        <div class="logo-icon">🚀</div>
-        <div class="logo-text">BioSpace</div>
+  <!-- Sidebar Navigation -->
+  <aside id="sidebar">
+    <h2>🚀 BioSpace</h2>
+    <nav>
+      <ul>
+        <li><a href="#" data-page="about">About Us</a></li>
+        <li><a href="#" data-page="news">News</a></li>
+        <li>
+          <a href="#" data-page="publications">Publications</a>
+        </li>
+        <li>
+          <a href="#" data-page="activities">Activities</a>
+        </li>
+        <li>
+          <a href="#" data-page="career">Career</a>
+        </li>
+        <li>
+          <a href="#" data-page="library">Library</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div id="main">
+    <!-- Header -->
+    <header id="header">
+      <span class="user-info"><i class="fas fa-user-circle"></i> User: Dr. A. Smith</span>
+      <div class="header-actions">
+        <button id="settings-btn">⚙️ Settings</button>
+        <button id="logout-btn">Logout</button>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <!-- About Page -->
+      <div id="about-page" class="page active">
+        <h1>About Us</h1>
+        <p>Welcome to the BioSpace Engine! This portal curates NASA bioscience data and resources to empower researchers, students, and enthusiasts.</p>
       </div>
 
-      <nav class="nav">
-        <a href="#" class="nav-link" data-page="about">About Us</a>
-
-        <div class="nav-group">
-          <button class="nav-link dropdown-toggle" data-target="publications">Publications <span class="caret">▾</span></button>
-          <div class="dropdown" id="publications-dropdown">
-            <a href="#" class="nav-sublink" data-page="publications">Latest publications</a>
-            <a href="#" class="nav-sublink" data-page="submit-publication">Submit a new publication</a>
-          </div>
-        </div>
-
-        <div class="nav-group">
-          <button class="nav-link dropdown-toggle" data-target="activities">Activities <span class="caret">▾</span></button>
-          <div class="dropdown" id="activities-dropdown">
-            <a href="#" class="nav-sublink" data-page="qa">Q/A</a>
-            <a href="#" class="nav-sublink" data-page="simulations">Simulations</a>
-          </div>
-        </div>
-
-        <a href="#" class="nav-link" data-page="library">Library</a>
-
-        <div class="nav-group">
-          <button class="nav-link dropdown-toggle" data-target="career">Careers <span class="caret">▾</span></button>
-          <div class="dropdown" id="career-dropdown">
-            <a href="#" class="nav-sublink" data-page="life-at-nasa">Life at NASA</a>
-            <a href="#" class="nav-sublink" data-page="future-of-biospace">Future of Biospace</a>
-          </div>
-        </div>
-
-        <a href="#" class="nav-link" data-page="news">News</a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <button id="chat-toggle" title="Open chatbot">❓</button>
+      <!-- News Page -->
+      <div id="news-page" class="page">
+        <h1>News</h1>
+        <p>Latest space biology and NASA mission updates will appear here.</p>
       </div>
-    </aside>
 
-    <!-- Main area -->
-    <div class="main-area">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button id="sidebar-toggle" class="icon-btn"><i class="fa fa-bars"></i></button>
-          <h1 class="app-title">BioSpace Dashboard</h1>
+      <!-- Publications Page -->
+      <div id="publications-page" class="page">
+        <h1>Publications</h1>
+        <div id="publications-data-table">Loading publications...</div>
+      </div>
+
+      <!-- Activities Page -->
+      <div id="activities-page" class="page">
+        <h1>Activities</h1>
+        <p>Interactive Q/A sessions, simulations, and community activities will be featured here.</p>
+      </div>
+
+      <!-- Career Page -->
+      <div id="career-page" class="page">
+        <h1>Career</h1>
+        <p>Explore opportunities like Life at NASA, Future of BioSpace, and internships.</p>
+      </div>
+
+      <!-- Library Page -->
+      <div id="library-page" class="page">
+        <h1>NASA Space Biology Resources</h1>
+        <p>Explore curated resources that support research in Space Biology and Human Exploration.</p>
+
+        <div class="resource-card">
+          <h2>NASA Open Science Data Repository (OSDR)</h2>
+          <p>
+            Provides access to data from over 500 biological experiments either performed in space or 
+            in support of space exploration.
+          </p>
+          <div class="placeholder">
+            [Placeholder for OSDR data integration – experiment summaries, datasets, or links]
+          </div>
         </div>
 
-        <div class="topbar-right">
-          <div class="user-info">
-            <i class="fa fa-user-circle user-icon"></i>
-            <span class="username">Dr. A. Smith</span>
+        <div class="resource-card">
+          <h2>NASA Space Life Sciences Library (NSLSL)</h2>
+          <p>
+            Consolidates global space life sciences literature into a single database 
+            to support research on the effects of the space environment on biological systems.
+          </p>
+          <div class="placeholder">
+            [Placeholder for NSLSL integration – literature listings or APIs]
           </div>
-          <button id="settings-btn" class="icon-btn" title="Settings"><i class="fa fa-cog"></i></button>
-          <button id="logout-btn" class="btn small">Logout</button>
         </div>
-      </header>
 
-      <main id="main-content" class="content">
-        <!-- ABOUT -->
-        <section id="about-page" class="page active">
-          <h2>About Us</h2>
-          <p>Welcome to the BioSpace EXBIO Portal — a curated dashboard for space biology publications, activities, and resources.</p>
-        </section>
-
-        <!-- PUBLICATIONS -->
-        <section id="publications-page" class="page">
-          <h2>Publications</h2>
-          <p>Loading database of open-access space biology publications. Source: NASA dataset (public CSV).</p>
-
-          <div id="publications-controls" class="controls">
-            <input id="pub-search" placeholder="Search title/author..." />
-            <button id="pub-refresh" class="btn">Refresh</button>
+        <div class="resource-card">
+          <h2>NASA Task Book</h2>
+          <p>
+            Online database of NASA-supported projects in Space Biology, Physical Sciences, 
+            and Human Research. Includes project descriptions, reports, and bibliographies.
+          </p>
+          <div class="placeholder">
+            [Placeholder for Task Book integration – project metadata or API calls]
           </div>
-
-          <div id="publications-status" class="status"></div>
-          <div id="publications-data-table" class="table-wrap"></div>
-        </section>
-
-        <!-- Submit publication (simple placeholder form) -->
-        <section id="submit-publication-page" class="page">
-          <h2>Submit a new publication</h2>
-          <p>Use this form to submit a publication (demo/local only).</p>
-          <form id="submit-publication-form">
-            <label>Title<input name="title" required /></label>
-            <label>Authors<input name="authors" /></label>
-            <label>Year<input name="year" type="number" /></label>
-            <label>Link<input name="link" /></label>
-            <button class="btn" type="submit">Submit</button>
-            <div id="submit-pub-msg" class="status"></div>
-          </form>
-        </section>
-
-        <!-- Q/A -->
-        <section id="qa-page" class="page">
-          <h2>Q/A</h2>
-          <p>Questions and answers about space biology experiments.</p>
-        </section>
-
-        <!-- Simulations -->
-        <section id="simulations-page" class="page">
-          <h2>Simulations</h2>
-          <p>Interactive simulations placeholder.</p>
-        </section>
-
-        <!-- Library -->
-        <section id="library-page" class="page">
-          <h2>Library</h2>
-          <p>Library links and resources.</p>
-        </section>
-
-        <!-- Life at NASA -->
-        <section id="life-at-nasa-page" class="page">
-          <h2>Life at NASA</h2>
-          <p>Careers, internships, and life in space science research.</p>
-        </section>
-
-        <!-- Future of Biospace -->
-        <section id="future-of-biospace-page" class="page">
-          <h2>Future of Biospace</h2>
-          <p>Future directions and opportunities in space biology.</p>
-        </section>
-
-        <!-- News -->
-        <section id="news-page" class="page">
-          <h2>News</h2>
-          <p>Latest news and announcements.</p>
-        </section>
-      </main>
-    </div>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <!-- Chatbot widget (hidden by default) -->
-  <div id="chatbot-widget" class="chatbot">
-    <div class="chat-header">
-      <span>Bio Assistant</span>
-      <button id="chat-close" title="Close">✕</button>
+  <!-- Chatbot -->
+  <div id="chatbot-container" class="hidden">
+    <div id="chatbot-header">Chatbot <button id="close-chatbot">✖</button></div>
+    <div id="chatbot-messages">
+      <p><b>Bot:</b> Hi! How can I help you explore NASA bioscience today?</p>
     </div>
-    <div id="chat-body" class="chat-body">
-      <div class="chat-msg bot">Hi — ask me about publications or resources (demo only).</div>
-    </div>
-    <div class="chat-input">
-      <input id="chat-input-field" placeholder="Type a question..." />
-      <button id="chat-send">Send</button>
-    </div>
+    <input type="text" id="chatbot-input" placeholder="Type a message...">
   </div>
+  <button id="chatbot-toggle">❓</button>
 
-  <!-- Settings modal -->
-  <div id="settings-modal" class="modal hidden">
-    <div class="modal-backdrop"></div>
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="hidden">
     <div class="modal-content">
-      <div class="modal-header">
-        <h3>Settings</h3>
-        <button id="settings-close" class="icon-btn">✕</button>
-      </div>
-
-      <div class="modal-tabs">
+      <span id="close-settings">&times;</span>
+      <h2>Settings</h2>
+      <div class="tabs">
         <button class="tab-btn active" data-tab="general">General</button>
         <button class="tab-btn" data-tab="appearance">Appearance</button>
         <button class="tab-btn" data-tab="privacy">Privacy & Security</button>
       </div>
-
-      <div class="modal-body">
-        <div id="tab-general" class="tab-panel"> 
-          <h4>General</h4>
-          <label>Display name<input id="setting-username" /></label>
-        </div>
-
-        <div id="tab-appearance" class="tab-panel hidden">
-          <h4>Appearance</h4>
-          <label>Theme
-            <select id="setting-theme">
-              <option value="dark">Dark</option>
-              <option value="light">Light</option>
-            </select>
-          </label>
-        </div>
-
-        <div id="tab-privacy" class="tab-panel hidden">
-          <h4>Privacy & Security</h4>
-          <label><input type="checkbox" id="setting-analytics" /> Enable analytics (demo)</label>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button id="settings-save" class="btn">Save</button>
-        <button id="settings-cancel" class="btn hollow">Cancel</button>
-      </div>
+      <div class="tab-content active" id="general">General settings go here.</div>
+      <div class="tab-content" id="appearance">Appearance settings go here.</div>
+      <div class="tab-content" id="privacy">Privacy & security settings go here.</div>
     </div>
   </div>
 
