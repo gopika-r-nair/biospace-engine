@@ -1,211 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EXBIO Portal — BioSpace Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BioSpace Engine</title>
+  <style>
+    :root {
+      --accent: #4CAF50;
+      --muted: #888;
+      --bg: #fff;
+      --text: #000;
+    }
+    [data-theme="dark"] {
+      --bg: #121212;
+      --text: #eee;
+      --muted: #aaa;
+      --accent: #4CAF50;
+    }
+    body {
+      margin:0; font-family:Arial,sans-serif;
+      background:var(--bg); color:var(--text);
+    }
+    /* Top Navigation */
+    .topnav {
+      display:flex; align-items:center; padding:10px 20px; background:#222; color:#fff;
+      gap:12px; flex-wrap:wrap;
+    }
+    .topnav a {
+      color:#fff; text-decoration:none; padding:6px 12px; border-radius:4px;
+    }
+    .topnav a.active, .topnav a:hover {
+      background:var(--accent); color:#fff;
+    }
+    .profile-section {
+      margin-left:auto; display:flex; align-items:center; gap:10px;
+    }
+    .profile-section img {
+      width:40px; height:40px; border-radius:50%; border:2px solid var(--accent); object-fit:cover;
+      cursor:pointer;
+    }
+    .profile-name {
+      text-align:right;
+      font-size:12px; color:var(--muted);
+    }
+    .profile-name b {
+      display:block; font-weight:600; color:#fff;
+    }
+    /* Buttons */
+    button {
+      padding:6px 10px; border:none; border-radius:4px; cursor:pointer;
+    }
+    /* Chatbot */
+    .chatbot {
+      position:fixed; left:18px; bottom:18px; width:300px; max-width:90%; background:#fff; color:#000;
+      border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.3); overflow:hidden; display:flex; flex-direction:column;
+      z-index:9999;
+    }
+    .chatbot .chat-header { padding:8px 12px; background:var(--accent); color:#fff; display:flex; justify-content:space-between; align-items:center; }
+    .chatbot .chat-body { padding:10px; height:200px; overflow-y:auto; flex:1; }
+    .chatbot .chat-input { display:flex; border-top:1px solid #ccc; }
+    .chatbot input { flex:1; padding:6px 8px; border:none; outline:none; }
+    .chatbot button { background:var(--accent); color:#fff; }
+    .chat-msg { margin-bottom:6px; padding:6px 10px; border-radius:6px; max-width:80%; }
+    .chat-msg.bot { background:#eee; color:#000; }
+    .chat-msg.user { background:var(--accent); color:#fff; margin-left:auto; }
 
-<!-- Font Awesome for icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-yH0b7..." crossorigin="anonymous" referrerpolicy="no-referrer"/>
-
-<style>
-:root{
-  --bg:#0f1724; --panel:#0b1220; --muted:#9aa5b1; --accent:#58a6ff;
-  --card:#0d1620; --glass: rgba(255,255,255,0.03); --radius:12px; --gap:14px;
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-body{background:linear-gradient(180deg,var(--bg),#05060a);color:#dbe6ef;font-size:15px}
-.app-container{display:flex;min-height:100vh;}
-.sidebar{width:260px;background:linear-gradient(180deg,#071025 0%, #071427 100%);padding:20px;border-right:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:18px;}
-.logo{display:flex;align-items:center;gap:12px;padding-bottom:6px}
-.logo-icon{font-size:22px}
-.logo-text{font-weight:700;font-size:18px}
-.nav{display:flex;flex-direction:column;gap:6px}
-.nav-link, .nav-sublink{display:block;padding:10px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-weight:600;}
-.nav-link:hover,.nav-sublink:hover{background:rgba(255,255,255,0.02);color:#fff}
-.nav-link.active,.nav-sublink.active{background:linear-gradient(90deg,var(--accent),#2db0ff);color:#051226;box-shadow:0 6px 18px rgba(46,144,255,0.06)}
-.nav-group .dropdown{display:none;flex-direction:column;margin-left:6px;padding-left:6px;border-left:1px dashed rgba(255,255,255,0.02)}
-.dropdown a{padding:8px 14px}
-.caret{float:right;opacity:.7}
-.sidebar-footer{margin-top:auto;display:flex;justify-content:center}
-#chat-toggle{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);padding:10px;border-radius:10px;cursor:pointer}
-.main-area{flex:1;display:flex;flex-direction:column}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:transparent;border-bottom:1px solid rgba(255,255,255,0.02)}
-.app-title{margin:0;color:var(--muted);font-weight:700}
-.icon-btn{background:transparent;border:none;color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
-.icon-btn:hover{background:rgba(255,255,255,0.02)}
-.user-info{display:flex;align-items:center;gap:8px;margin-right:12px}
-.user-icon{font-size:20px;color:var(--accent)}
-.btn{background:var(--accent);color:#051226;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700}
-.btn.hollow{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-.small{padding:6px 10px;font-size:13px}
-.content{padding:28px;overflow:auto}
-.page{display:none}
-.page.active{display:block}
-.table-wrap{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);overflow:auto;margin-top:12px}
-.status{margin-top:10px;color:var(--muted)}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left;font-size:14px}
-th{background:rgba(255,255,255,0.02);font-weight:700;color:var(--muted)}
-.chatbot{position:fixed;left:18px;bottom:18px;width:360px;max-width:calc(100% - 40px);background:linear-gradient(180deg,#071627,#02121a);border-radius:12px;box-shadow:0 12px 40px rgba(2,8,23,0.6);display:flex;flex-direction:column;overflow:hidden;z-index:1100;transform:translateY(14px);opacity:0;pointer-events:none;transition:all .2s ease;}
-.chatbot.visible{transform:translateY(0);opacity:1;pointer-events:auto}
-.chat-header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.03);font-weight:700}
-.chat-body{padding:12px;max-height:320px;overflow:auto;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
-.chat-input{display:flex;padding:10px;border-top:1px solid rgba(255,255,255,0.03);gap:8px}
-.chat-input input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
-.modal.hidden{display:none}
-.modal{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center}
-.modal-backdrop{position:absolute;inset:0;background:rgba(4,6,12,0.6)}
-.modal-content{position:relative;background:linear-gradient(180deg,#071025,#071427);padding:18px;border-radius:12px;width:760px;max-width:95%;z-index:10}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.modal-tabs{display:flex;gap:8px;margin-bottom:12px}
-.tab-btn{padding:8px 12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);cursor:pointer;color:var(--muted)}
-.tab-btn.active{background:var(--accent);color:#051226}
-.modal-body{background:rgba(255,255,255,0.01);padding:12px;border-radius:8px;min-height:120px}
-.tab-panel.hidden{display:none}
-.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
-@media (max-width:900px){.sidebar{display:none}.main-area{margin-left:0}.app-title{font-size:16px}.chatbot{width:92%}}
-</style>
+    /* Modal */
+    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999; }
+    .modal-content { background:var(--bg); color:var(--text); padding:20px; border-radius:8px; width:90%; max-width:400px; }
+    .modal-header { font-weight:600; margin-bottom:10px; }
+    .modal input, .modal select { width:100%; padding:8px; margin-bottom:10px; border-radius:4px; border:1px solid #ccc; }
+    .modal button { width:100%; margin-top:6px; }
+    /* Pages */
+    .page { display:none; padding:20px; }
+    .page.active { display:block; }
+  </style>
 </head>
-<body>
-<div class="app-container">
-  <aside class="sidebar">
-    <div class="logo"><div class="logo-icon">🚀</div><div class="logo-text">BioSpace</div></div>
-    <nav class="nav">
-      <a href="#" class="nav-link" data-page="about">About Us</a>
-      <div class="nav-group">
-        <button class="nav-link dropdown-toggle" data-target="publications">Publications <span class="caret">▾</span></button>
-        <div class="dropdown" id="publications-dropdown">
-          <a href="#" class="nav-sublink" data-page="publications">Latest publications</a>
-          <a href="#" class="nav-sublink" data-page="submit-publication">Submit a new publication</a>
-        </div>
-      </div>
-      <div class="nav-group">
-        <button class="nav-link dropdown-toggle" data-target="activities">Activities <span class="caret">▾</span></button>
-        <div class="dropdown" id="activities-dropdown">
-          <a href="#" class="nav-sublink" data-page="qa">Q/A</a>
-          <a href="#" class="nav-sublink" data-page="simulations">Simulations</a>
-        </div>
-      </div>
-      <a href="#" class="nav-link" data-page="library">Library</a>
-      <div class="nav-group">
-        <button class="nav-link dropdown-toggle" data-target="career">Careers <span class="caret">▾</span></button>
-        <div class="dropdown" id="career-dropdown">
-          <a href="#" class="nav-sublink" data-page="life-at-nasa">Life at NASA</a>
-          <a href="#" class="nav-sublink" data-page="future-of-biospace">Future of Biospace</a>
-        </div>
-      </div>
-      <a href="#" class="nav-link" data-page="news">News</a>
-    </nav>
-    <div class="sidebar-footer"><button id="chat-toggle" title="Open chatbot">❓</button></div>
-  </aside>
-  <div class="main-area">
-    <header class="topbar">
-      <div class="topbar-left"><button id="sidebar-toggle" class="icon-btn"><i class="fa fa-bars"></i></button><h1 class="app-title">BioSpace Dashboard</h1></div>
-      <div class="topbar-right">
-        <div class="user-info"><i class="fa fa-user-circle user-icon"></i><span class="username">Dr. A. Smith</span></div>
-        <button id="settings-btn" class="icon-btn" title="Settings"><i class="fa fa-cog"></i></button>
-        <button id="logout-btn" class="btn small">Logout</button>
-      </div>
-    </header>
-    <main id="main-content" class="content">
-      <section id="about-page" class="page active"><h2>About Us</h2><p>Welcome to the BioSpace EXBIO Portal — a curated dashboard for space biology publications, activities, and resources.</p></section>
-      <section id="publications-page" class="page">
-        <h2>Publications</h2>
-        <div id="publications-status" class="status"></div>
-        <div id="publications-data-table" class="table-wrap"></div>
-      </section>
-      <section id="submit-publication-page" class="page">
-        <h2>Submit a new publication</h2>
-        <form id="submit-publication-form">
-          <label>Title<input name="title" required /></label>
-          <label>Authors<input name="authors" /></label>
-          <label>Year<input name="year" type="number" /></label>
-          <label>Link<input name="link" /></label>
-          <button class="btn" type="submit">Submit</button>
-          <div id="submit-pub-msg" class="status"></div>
-        </form>
-      </section>
-      <section id="qa-page" class="page"><h2>Q/A</h2><p>Questions and answers about space biology experiments.</p></section>
-      <section id="simulations-page" class="page"><h2>Simulations</h2><p>Interactive simulations placeholder.</p></section>
-      <section id="library-page" class="page"><h2>Library</h2><ul>
-        <li><a href="#">NASA Open Science Data Repository (OSDR)</a></li>
-        <li><a href="#">NASA Space Life Sciences Library (NSLSL)</a></li>
-        <li><a href="#">NASA Task Book</a></li>
-      </ul></section>
-      <section id="life-at-nasa-page" class="page"><h2>Life at NASA</h2><p>Internships, research experiences, and life in space science research.</p></section>
-      <section id="future-of-biospace-page" class="page"><h2>Future of Biospace</h2><p>Future directions and opportunities in space biology.</p></section>
-      <section id="news-page" class="page"><h2>News</h2><p>Latest news and announcements.</p></section>
-    </main>
-  </div>
-</div>
+<body data-theme="light">
 
-<div id="chatbot-widget" class="chatbot">
-  <div class="chat-header"><span>Bio Assistant</span><button id="chat-close" title="Close">✕</button></div>
-  <div id="chat-body" class="chat-body"><div class="chat-msg bot">Hi — ask me about publications or resources (demo only).</div></div>
-  <div class="chat-input"><input id="chat-input-field" placeholder="Type a question..." /><button id="chat-send">Send</button></div>
-</div>
-
-<div id="settings-modal" class="modal hidden">
-  <div class="modal-backdrop"></div>
-  <div class="modal-content">
-    <div class="modal-header"><h3>Settings</h3><button id="settings-close" class="icon-btn">✕</button></div>
-    <div class="modal-tabs">
-      <button class="tab-btn active" data-tab="general">General</button>
-      <button class="tab-btn" data-tab="appearance">Appearance</button>
-      <button class="tab-btn" data-tab="privacy">Privacy & Security</button>
-    </div>
-    <div class="modal-body">
-      <div id="tab-general" class="tab-panel"><label>Display name<input id="setting-username"/></label></div>
-      <div id="tab-appearance" class="tab-panel hidden"><label>Theme<select id="setting-theme"><option value="dark">Dark</option><option value="light">Light</option></select></label></div>
-      <div id="tab-privacy" class="tab-panel hidden"><label><input type="checkbox" id="setting-analytics"/> Enable analytics (demo)</label></div>
-    </div>
-    <div class="modal-footer">
-      <button id="settings-save" class="btn">Save</button>
-      <button id="settings-cancel" class="btn hollow">Cancel</button>
+  <!-- Top Navigation -->
+  <div class="topnav">
+    <a href="#" data-page="about" class="active">About Us</a>
+    <a href="#" data-page="publications">Publications</a>
+    <a href="#" data-page="submit-publication">Submit Publication</a>
+    <a href="#" data-page="qa">Q/A</a>
+    <a href="#" data-page="simulations">Simulations</a>
+    <a href="#" data-page="library">Library</a>
+    <a href="#" data-page="life-at-nasa">Life at NASA</a>
+    <a href="#" data-page="future-of-biospace">Future of Biospace</a>
+    <a href="#" data-page="news">News</a>
+    <div class="profile-section" id="profile-area">
+      <!-- Initial view -->
+      <button id="login-btn">Login</button>
+      <button id="settings-btn">Settings</button>
     </div>
   </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', ()=>{
-  const links=document.querySelectorAll('[data-page]'),pages=document.querySelectorAll('.page');
-  function showPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id+'-page'));document.querySelectorAll('.nav-link,.nav-sublink').forEach(n=>n.classList.toggle('active',n.dataset.page===id));if(id==='publications') loadPublications();}
-  links.forEach(l=>{l.addEventListener('click',e=>{e.preventDefault();showPage(l.dataset.page)})});
-  document.querySelectorAll('.dropdown-toggle').forEach(btn=>{btn.addEventListener('click',()=>{const dd=document.getElementById(btn.dataset.target+'-dropdown');if(dd)dd.style.display=dd.style.display==='flex'?'none':'flex';});});
-  document.getElementById('sidebar-toggle')?.addEventListener('click',()=>document.querySelector('.sidebar').classList.toggle('collapsed'));
-  const chatToggle=document.getElementById('chat-toggle'),chatbot=document.getElementById('chatbot-widget'),chatClose=document.getElementById('chat-close'),chatSend=document.getElementById('chat-send'),chatInput=document.getElementById('chat-input-field');
-  chatToggle.addEventListener('click',()=>chatbot.classList.toggle('visible'));
-  chatClose.addEventListener('click',()=>chatbot.classList.remove('visible'));
-  chatSend.addEventListener('click',sendChat);
-  chatInput.addEventListener('keypress',e=>{if(e.key==='Enter')sendChat();});
-  function sendChat(){const txt=chatInput.value.trim();if(!txt)return;appendChat('user',txt);chatInput.value='';setTimeout(()=>appendChat('bot','Demo assistant: I can help locate publications. Try searching "microgravity yeast 2015" or open the Publications page.'),600);}
-  function appendChat(who,text){const body=document.getElementById('chat-body');const div=document.createElement('div');div.className='chat-msg '+(who==='bot'?'bot':'user');div.textContent=text;body.appendChild(div);body.scrollTop=body.scrollHeight;}
-  const settingsBtn=document.getElementById('settings-btn'),settingsModal=document.getElementById('settings-modal'),settingsClose=document.getElementById('settings-close'),settingsCancel=document.getElementById('settings-cancel');
-  settingsBtn.addEventListener('click',()=>settingsModal.classList.remove('hidden'));
-  settingsClose.addEventListener('click',()=>settingsModal.classList.add('hidden'));
-  settingsCancel.addEventListener('click',()=>settingsModal.classList.add('hidden'));
-  document.getElementById('settings-save').addEventListener('click',()=>{
-    const name=document.getElementById('setting-username').value||'Dr. A. Smith',theme=document.getElementById('setting-theme').value,analytics=document.getElementById('setting-analytics').checked;
-    localStorage.setItem('exbio-username',name);localStorage.setItem('exbio-theme',theme);localStorage.setItem('exbio-analytics',analytics);
-    alert('Settings saved (demo).');settingsModal.classList.add('hidden');document.querySelector('.username').textContent=name;
-  });
-  document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const tab=btn.dataset.tab;document.querySelectorAll('.tab-panel').forEach(panel=>panel.classList.toggle('hidden',panel.id!=='tab-'+tab));}));
-  (function(){const name=localStorage.getItem('exbio-username');if(name)document.querySelector('.username').textContent=name;const theme=localStorage.getItem('exbio-theme');if(theme==='light')document.documentElement.style.setProperty('--bg','#f5f7fb');})();
-  document.getElementById('submit-publication-form').addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(e.target);const title=fd.get('title');document.getElementById('submit-pub-msg').textContent=`Received: "${title}" (demo — not saved).`;e.target.reset();});
+  <!-- Pages -->
+  <div id="about" class="page active">
+    <h2>About BioSpace Engine</h2>
+    <p>BioSpace Engine is a platform to explore NASA’s biology experiments in space, from microbial studies to plant growth research. Discover publications, simulations, and more!</p>
+  </div>
+  <div id="publications" class="page">
+    <h2>Publications</h2>
+    <ul>
+      <li>Microgravity effects on Arabidopsis growth - NASA, 2024</li>
+      <li>Space microbiome studies on ISS - Journal of Astrobiology, 2023</li>
+      <li>Cellular response to cosmic radiation - BioSpace Journal, 2022</li>
+    </ul>
+  </div>
+  <div id="submit-publication" class="page">
+    <h2>Submit Publication</h2>
+    <p>Upload your research or link your publication.</p>
+  </div>
+  <div id="qa" class="page">
+    <h2>Questions & Answers</h2>
+    <p>Q: How do microbes behave in microgravity? <br> A: They can show altered growth and gene expression patterns.</p>
+  </div>
+  <div id="simulations" class="page">
+    <h2>Simulations</h2>
+    <p>Try plant growth simulations in zero gravity or cosmic radiation scenarios.</p>
+  </div>
+  <div id="library" class="page">
+    <h2>Library</h2>
+    <p>Access NASA bioscience papers, datasets, and experiment notes.</p>
+  </div>
+  <div id="life-at-nasa" class="page">
+    <h2>Life at NASA</h2>
+    <p>Explore astronaut experiences, lab insights, and educational resources.</p>
+  </div>
+  <div id="future-of-biospace" class="page">
+    <h2>Future of Biospace</h2>
+    <p>Upcoming missions, plant habitats on Moon & Mars, and biotech innovations.</p>
+  </div>
+  <div id="news" class="page">
+    <h2>News</h2>
+    <p>NASA announces new space biology experiments for Artemis II mission.</p>
+  </div>
 
-  // Placeholder Publications
-  const publications=[
-    {Title:'Effects of Microgravity on Yeast Growth',Authors:'J. Doe, A. Smith',Year:'2015',Link:'https://www.nasa.gov/yeast2015'},
-    {Title:'Spaceflight-Induced Changes in Plant Gene Expression',Authors:'L. Chen',Year:'2018',Link:'https://www.nasa.gov/plants2018'},
-    {Title:'Human Muscle Atrophy in Microgravity',Authors:'M. Brown',Year:'2020',Link:'https://www.nasa.gov/muscle2020'}
-  ];
-  const pubStatus=document.getElementById('publications-status'),pubTableWrap=document.getElementById('publications-data-table');
-  function loadPublications(){pubStatus.textContent=`Loaded ${publications.length} records.`;renderPublications(publications);}
-  function renderPublications(rows){pubTableWrap.innerHTML='';if(!rows.length){pubTableWrap.innerHTML='<div class="status">No publications to show.</div>';return;}const cols=Object.keys(rows[0]);const table=document.createElement('table');const thead=document.createElement('thead');const thr=document.createElement('tr');cols.forEach(c=>{const th=document.createElement('th');th.textContent=c;thr.appendChild(th);});thead.appendChild(thr);table.appendChild(thead);const tbody=document.createElement('tbody');rows.forEach(r=>{const tr=document.createElement('tr');cols.forEach(c=>{const td=document.createElement('td');let val=r[c]||'';if(val.startsWith('http')){const a=document.createElement('a');a.href=val;a.target='_blank';a.rel='noopener';a.textContent=val.length>60?val.slice(0,60)+'…':val;td.appendChild(a);}else td.textContent=val;tr.appendChild(td);});tbody.appendChild(tr);});table.appendChild(tbody);pubTableWrap.appendChild(table);}
-  showPage('about');
-});
-</script>
+  <!-- Chatbot -->
+  <div id="chatbot-widget" class="chatbot">
+    <div class="chat-header">
+      <span>Bio Assistant</span>
+      <button id="chat-close">✕</button>
+    </div>
+    <div id="chat-body" class="chat-body">
+      <div class="chat-msg bot">Hi — ask me about publications or resources (demo).</div>
+    </div>
+    <div class="chat-input">
+      <input id="chat-input-field" placeholder="Type a question...">
+      <button id="chat-send">Send</button>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">Login / Create Account</div>
+      <div id="login-form">
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button id="login-submit">Login</button>
+        <button id="show-create">Create Account</button>
+      </div>
+      <div id="create-form" style="display:none;">
+        <input type="text" placeholder="Full Name">
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <input type="password" placeholder="Confirm Password">
+        <button id="create-submit">Create Account</button>
+        <button id="back-to-login">Back to Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">Settings</div>
+      <label>Font Size:</label>
+      <select id="font-size-select">
+        <option value="14px">Small</option>
+        <option value="16px" selected>Normal</option>
+        <option value="18px">Large</option>
+      </select>
+      <label>Font Style:</label>
+      <select id="font-style-select">
+        <option value="Arial,sans-serif">Arial</option>
+        <option value="'Times New Roman',serif">Times New Roman</option>
+        <option value="'Courier New',monospace">Courier New</option>
+      </select>
+      <label>Theme:</label>
+      <select id="theme-select">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+      <button id="close-settings">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Page navigation
+    document.querySelectorAll('.topnav a').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelectorAll('.topnav a').forEach(link=>link.classList.remove('active'));
+        a.classList.add('active');
+        const page = a.dataset.page;
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+        document.getElementById(page).classList.add('active');
+      });
+    });
+
+    // Chatbot toggle
+    document.getElementById('chat-close').addEventListener('click', ()=>{
+      document.getElementById('chatbot-widget').style.display='none';
+    });
+
+    document.getElementById('chat-send').addEventListener('click', ()=>{
+      const input = document.getElementById('chat-input-field');
+      if(input.value.trim()==='') return;
+      const msg = document.createElement('div');
+      msg.className='chat-msg user';
+      msg.textContent=input.value;
+      document.getElementById('chat-body').appendChild(msg);
+      input.value='';
+      document.getElementById('chat-body').scrollTop=document.getElementById('chat-body').scrollHeight;
+      // Demo bot response
+      const botMsg = document.createElement('div');
+      botMsg.className='chat-msg bot';
+      botMsg.textContent='This is a demo response.';
+      document.getElementById('chat-body').appendChild(botMsg);
+    });
+
+    // Login & Create account
+    const loginModal = document.getElementById('login-modal');
+    const settingsModal = document.getElementById('settings-modal');
+    document.getElementById('login-btn').addEventListener('click', ()=> loginModal.style.display='flex');
+    document.getElementById('settings-btn').addEventListener('click', ()=> settingsModal.style.display='flex');
+    document.getElementById('show-create').addEventListener('click', ()=>{
+      document.getElementById('login-form').style.display='none';
+      document.getElementById('create-form').style.display='block';
+    });
+    document.getElementById('back-to-login').addEventListener('click', ()=>{
+      document.getElementById('login-form').style.display='block';
+      document.getElementById('create-form').style.display='none';
+    });
+
+    // Close modals on clicking outside
+    window.addEventListener('click', e=>{
+      if(e.target==loginModal) loginModal.style.display='none';
+      if(e.target==settingsModal) settingsModal.style.display='none';
+    });
+
+    // Login submit demo
+    document.getElementById('login-submit').addEventListener('click', ()=>{
+      const profileArea = document.getElementById('profile-area');
+      profileArea.innerHTML=`
+        <div style="text-align:right;">
+          <div style="font-size:12px;color:var(--muted);">Welcome,</div>
+          <div style="font-weight:600;color:#fff;">Gopika R Nair</div>
+        </div>
+        <img src="https://i.pravatar.cc/40" alt="profile">
+      `;
+      loginModal.style.display='none';
+    });
+
+    document.getElementById('create-submit').addEventListener('click', ()=>{
+      alert('Account created! Logging in...');
+      document.getElementById('login-submit').click();
+    });
+
+    // Settings
+    const themeSelect = document.getElementById('theme-select');
+    const fontSizeSelect = document.getElementById('font-size-select');
+    const fontStyleSelect = document.getElementById('font-style-select');
+    themeSelect.addEventListener('change', ()=> document.body.setAttribute('data-theme',themeSelect.value));
+    fontSizeSelect.addEventListener('change', ()=> document.body.style.fontSize=fontSizeSelect.value);
+    fontStyleSelect.addEventListener('change', ()=> document.body.style.fontFamily=fontStyleSelect.value);
+    document.getElementById('close-settings').addEventListener('click', ()=> settingsModal.style.display='none');
+  </script>
 </body>
 </html>
