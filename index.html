@@ -26,23 +26,56 @@
         <header>
             <h1>EXBIO Portal</h1>
             <div class="header-info">
+                <button id="settings-btn" title="Settings"><i class="fas fa-cog"></i></button>
                 <span id="user-role-display">Role: N/A</span>
-                <button id="change-role-btn" title="Change Role"><i class="fas fa-user-circle"></i></button>
+                <button id="change-role-btn" title="Change Role / Login"><i class="fas fa-user-circle"></i></button>
             </div>
         </header>
 
         <nav class="tabs">
-            <button class="tab-button active" data-tab="publications">Publications</button>
-            <button class="tab-button" data-tab="chatbot">EXBIO-AI Chatbot</button>
-            <button class="tab-button" data-tab="activities">Activities</button>
-            <button class="tab-button" data-tab="career">Career Path</button>
+            <button class="nav-button active" data-tab="about">About Us</button>
+            
+            <div class="dropdown">
+                <button class="nav-button dropdown-main" data-tab-main="publications">Publications <i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-content" data-dropdown="publications">
+                    <button class="nav-button" data-tab="pub-library">Publication Library</button>
+                    <button class="nav-button" data-tab="pub-announcements">Announcements</button>
+                    <button class="nav-button" data-tab="pub-submit">Submit a new application</button>
+                </div>
+            </div>
+
+            <button class="nav-button" data-tab="news">News</button>
+            
+            <div class="dropdown">
+                <button class="nav-button dropdown-main" data-tab-main="activities">Activities <i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-content" data-dropdown="activities">
+                    <button class="nav-button" data-tab="act-qa">Q/A</button>
+                    <button class="nav-button" data-tab="act-interactives">Interactives</button>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <button class="nav-button dropdown-main" data-tab-main="career">Career <i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-content" data-dropdown="career">
+                    <button class="nav-button" data-tab="car-life">Life at NASA</button>
+                    <button class="nav-button" data-tab="car-future">Future of biospace studies</button>
+                </div>
+            </div>
+            
+            <button class="nav-button" data-tab="library">Library</button>
         </nav>
 
         <main class="tab-content-container">
             
-            <div id="publications" class="tab-content active">
-                <h2>Space Biology Publications Library</h2>
-                <p class="role-tip" data-role-target="Scientist,Manager,Architect">This library is powered by a curated subset of real NASA publications to ensure a fast, functional prototype.</p>
+            <div id="about" class="tab-content active">
+                <h2>About Us</h2>
+                <p>Welcome to the EXBIO Portal, powered by the NASA Space Apps Challenge team. We aim to consolidate and visualize NASA's Space Biology research to support mission planning, research, and public education.</p>
+                <p class="role-tip" data-role-target="Scientist,Manager,Architect">This section provides background and links to key external resources.</p>
+            </div>
+
+            <div id="pub-library" class="tab-content">
+                <h2>Publication Library (Core Data)</h2>
+                <p class="role-tip" data-role-target="Scientist,Manager,Architect">Search the curated subset of real NASA publication data below.</p>
 
                 <div class="search-controls">
                     <input type="text" id="publication-search" placeholder="Search by title, abstract, or keywords...">
@@ -72,7 +105,82 @@
                 </div>
             </div>
 
-            <div id="chatbot" class="tab-content">
+            <div id="pub-announcements" class="tab-content">
+                <h2>Publications Announcements</h2>
+                <p>No new publications or events announced today. Check back later for updates!</p>
+            </div>
+            
+            <div id="pub-submit" class="tab-content">
+                <h2>Submit a new application</h2>
+                <p class="role-tip" data-role-target="Scientist">Use this form to submit your idea or research abstract for consideration by the EXBIO team.</p>
+                <div class="form-placeholder">
+                    <p>*** Submission Form Placeholder ***</p>
+                    <p>Fields: Define your idea, Personal details/contact, Submit.</p>
+                </div>
+            </div>
+            
+            <div id="news" class="tab-content">
+                <h2>News & Updates</h2>
+                <p>Latest news from NASA Space Life Sciences. News includes recent breakthroughs and mission updates.</p>
+            </div>
+            
+            <div id="library" class="tab-content">
+                <h2>Library (External Resources)</h2>
+                <p>This section provides links to NASA Open Science Data Repositories and external tools.</p>
+            </div>
+
+            <div id="act-qa" class="tab-content">
+                <h2>Q/A (Questions and Answers)</h2>
+                <p class="role-tip" data-role-target="Visitor">This is a collection of Frequently Asked Questions about Space Biology.</p>
+                <p>***</p>
+                <h3>Q: What is the main challenge of long-duration spaceflight?</h3>
+                <p>A: The main challenges are radiation exposure, microgravity-induced health effects (bone loss, vision changes), and psychological isolation.</p>
+            </div>
+            
+            <div id="act-interactives" class="tab-content">
+                <h2>Interactives (Games & Simulations)</h2>
+                <p class="role-tip" data-role-target="Visitor">Engage with fun activities to learn about the challenges of living in space.</p>
+                <div class="activity-card">
+                    <h3>Quiz: Life in Space</h3>
+                    <p>What is the primary effect of long-term microgravity on the human body?</p>
+                    <ul class="quiz-options">
+                        <li><input type="radio" name="q1" value="a"> Increased muscle mass</li>
+                        <li><input type="radio" name="q1" value="b"> Bone density loss</li>
+                        <li><input type="radio" name="q1" value="c"> Enhanced vision</li>
+                    </ul>
+                    <button class="check-answer-btn" data-correct="b">Check Answer</button>
+                    <p class="quiz-feedback"></p>
+                </div>
+            </div>
+
+            <div id="car-life" class="tab-content">
+                <h2>Life at NASA</h2>
+                <p>Hear from NASA employees about their daily work and experience in the Space Life Sciences division.</p>
+                <div class="career-grid">
+                    <div class="career-card">
+                        <h3>Astronaut Health Specialist</h3>
+                        <p>Works directly with flight crews to monitor and maintain physical and mental well-being before, during, and after missions.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="car-future" class="tab-content">
+                <h2>Future of biospace studies</h2>
+                <p>This field is rapidly expanding to cover areas like personalized medicine in space, artificial gravity, and planetary protection.</p>
+                <div class="career-grid">
+                    <div class="career-card">
+                        <h3>Planetary Protection Officer</h3>
+                        <p>Ensures we do not contaminate other worlds with Earth microbes, and that samples returned to Earth are safely managed.</p>
+                    </div>
+                    <div class="career-card">
+                        <h3>Space Biologist</h3>
+                        <p>Focuses on how living organisms, from microbes to humans, adapt to or are affected by space environments.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chatbot-modal" class="chatbot-floating-modal">
+                <button id="close-chatbot-btn">&times;</button>
                 <h2>EXBIO-AI Chatbot (Simulated)</h2>
                 <p class="role-tip" data-role-target="Scientist,Manager">The chatbot is programmed to provide answers grounded in the publication data available in this portal.</p>
                 <div class="chat-window">
@@ -88,41 +196,10 @@
                 </div>
             </div>
 
-            <div id="activities" class="tab-content">
-                <h2>Fun Learning Activities</h2>
-                <p class="role-tip" data-role-target="Visitor">Take a quick quiz to test your knowledge on Space Biology!</p>
-                <div class="activity-card">
-                    <h3>Quiz: Life in Space</h3>
-                    <p>What is the primary effect of long-term microgravity on the human body?</p>
-                    <ul class="quiz-options">
-                        <li><input type="radio" name="q1" value="a"> Increased muscle mass</li>
-                        <li><input type="radio" name="q1" value="b"> Bone density loss</li>
-                        <li><input type="radio" name="q1" value="c"> Enhanced vision</li>
-                    </ul>
-                    <button class="check-answer-btn" data-correct="b">Check Answer</button>
-                    <p class="quiz-feedback"></p>
-                </div>
-            </div>
-
-            <div id="career" class="tab-content">
-                <h2>Career Path Navigator</h2>
-                <p class="role-tip" data-role-target="Visitor">Explore careers in Space Life Sciences and the skills you need.</p>
-                <div class="career-grid">
-                    <div class="career-card">
-                        <h3>Space Biologist</h3>
-                        <p>Focuses on how living organisms, from microbes to humans, adapt to or are affected by space environments.</p>
-                        <p class="requirements">**Skills:** Molecular Biology, Genetics, Data Analysis.</p>
-                    </div>
-                    <div class="career-card">
-                        <h3>Mission Architect</h3>
-                        <p>Designs the habitats and systems to keep astronauts healthy during long-duration missions to Mars or the Moon.</p>
-                        <p class="requirements">**Skills:** Systems Engineering, Radiation Physics, Biomedical Engineering.</p>
-                    </div>
-                </div>
-            </div>
-
         </main>
     </div>
+    
+    <button id="fixed-chatbot-btn" title="Open Chatbot"><i class="fas fa-question-circle"></i></button>
 
     <script src="script.js"></script>
 </body>
