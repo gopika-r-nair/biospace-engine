@@ -3,131 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXBIO Portal</title>
+    <title>NASA Space Life Sciences Dashboard</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <section id="user-selection-page" class="portal-page active">
         <div class="user-select-container">
-            <h1>Welcome to The EXBIO portal</h1>
-            <h2>Please select your user type:</h2>
+            <h1>Welcome to the NASA Space Life Sciences Dashboard</h1>
+            <h2>Please select your role to tailor your experience:</h2>
             
             <div class="user-type-grid">
                 <div class="user-type-card" data-type="Scientist">
                     <span class="icon">🔬</span>
                     <h3 class="title">Scientist</h3>
-                    <p class="description">Conduct research & analyze data</p>
+                    <p class="description">Conducting new research or developing hypotheses.</p>
                 </div>
                 <div class="user-type-card" data-type="Manager">
                     <span class="icon">⚙️</span>
                     <h3 class="title">Manager</h3>
-                    <p class="description">Oversve projects & teams</p>
+                    <p class="description">Identifying investment opportunities for missions.</p>
                 </div>
                 <div class="user-type-card" data-type="Mission Architect">
                     <span class="icon">🚀</span>
                     <h3 class="title">Mission Architect</h3>
-                    <p class="description">Design & build systems</p>
+                    <p class="description">Planning for safe and efficient space exploration.</p>
                 </div>
                 <div class="user-type-card" data-type="Visitor">
                     <span class="icon">👤</span>
                     <h3 class="title">Visitor</h3>
-                    <p class="description">Explore public content</p>
+                    <p class="description">An enthusiast or student exploring the topic.</p>
                 </div>
             </div>
             <button id="continue-btn" disabled>Continue</button>
-            <p style="margin-top: 20px; color: #bdc3c7;">Don't see your type? Contact Support.</p>
         </div>
     </section>
 
     <div id="main-application" style="display: none;">
 
         <header id="main-header">
-            <div class="header-left">
-                <h1>WELCOME TO EXBIO PORTAL</h1>
-                <p>powered by cosmic minds</p>
-            </div>
-            <nav class="main-nav">
-                <a href="#" data-page="home-page">Home</a>
-                <a href="#" data-page="about-page">About us</a>
-                <a href="#" data-page="publications-page">Publications</a>
-                <a href="#" data-page="activity-page">Activity</a>
-                <a href="#" data-page="career-page">Career</a>
-                <a href="#" data-page="news-page">News</a>
-                <a href="#" data-page="library-page">Library</a>
-            </nav>
-            <div class="header-right">
-                <div class="user-type-stats" title="User Type Distribution">
-                    <span>👥</span>
-                    <div id="user-type-graph"></div>
-                </div>
-                
-                <div class="user-profile-bar">
-                    <span class="settings-icon" onclick="alert('Settings menu opened!')" title="Settings">⚙️</span>
-                    <span id="current-user-type">Profile: None</span>
-                    <button onclick="alert('Login functionality coming soon!')">Login</button>
-                </div>
+            <h1>NASA Space Life Sciences Dashboard</h1>
+            <div class="user-profile-bar">
+                <span id="current-user-type">Role: None</span>
+                <button onclick="document.location.reload()">Change Role</button>
             </div>
         </header>
 
+        <nav class="main-nav-tabs">
+            <a href="#" data-page="about-page" class="active-tab">About</a>
+            <a href="#" data-page="publications-page">Publications</a>
+            <a href="#" data-page="library-page">Library</a>
+            <a href="#" data-page="projects-page">Projects</a>
+            <a href="#" data-page="activities-page">Activities</a>
+            <a href="#" data-page="career-page">Career</a>
+            <a href="#" data-page="news-page">Space News</a>
+        </nav>
+
         <main>
             
-            <section id="home-page" class="portal-page active">
-                <div class="home-content">
-                    <div class="card"><h2>Announcements</h2><p>Latest updates...</p></div>
-                    <a href="#" data-page="publications-page" class="card action-card">
-                        <h2>View Publications</h2>
-                        <p>Explore Space Biology Data.</p>
-                    </a>
-                    <a href="#" data-page="submit-publication-page" class="card action-card">
-                        <h2>Submit a publication</h2>
-                        <p>Share your research.</p>
-                    </a>
-                    <div class="card"><h2>Q/A</h2><p>Common questions.</p></div>
-                    <a href="#" data-page="interactives-page" class="card action-card">
-                        <h2>Interactives</h2>
-                        <p>Games and tools.</p>
-                    </a>
-                    <a href="#" data-page="future-of-biospace-page" class="card action-card">
-                        <h2>Future of Biospace</h2>
-                        <p>Scope of the field.</p>
-                    </a>
+            <section id="about-page" class="portal-page active">
+                <h2 id="welcome-message">Welcome, User!</h2>
+                <p>The NASA Space Life Sciences Dashboard is a central hub for exploring how the space environment affects living systems. This platform consolidates publications, datasets, and projects from NASA's Space Biology research, making it accessible to scientists, students, and enthusiasts.</p>
+                <hr>
+
+                <h3>Ask our Space Biology Chatbot!</h3>
+                <div id="chat-container">
+                    <div id="chat-history">
+                        <div class="chat-message bot">Hello! I'm your NASA Space Life Sciences chatbot. How can I help you today?</div>
+                    </div>
+                    <input type="text" id="chat-input" placeholder="Ask a question about space biology..." onkeypress="handleChatInput(event)">
                 </div>
             </section>
 
             <section id="publications-page" class="portal-page">
-                <button class="back-tab" data-page="home-page">← back to tab</button>
-                <h2>Publications: Space Biology Knowledge Engine</h2>
-
-                <div class="publications-actions">
-                    <input type="text" id="search-publications" placeholder="Search: Title, Summary, or Author...">
-                    <button onclick="filterPublications()">Search</button>
-                </div>
+                <h2>Publications</h2>
                 
-                <div class="subject-filters">
-                    <label>Filter by Subject:</label>
-                    <div id="subject-tags">
-                        <button class="tag-button active-tag" data-tag="all">All</button>
-                        <button class="tag-button" data-tag="Artificial Intelligence & Machine Learning">AI & ML</button>
-                        <button class="tag-button" data-tag="Data Management">Data Mgt</button>
-                        <button class="tag-button" data-tag="Flora & Fauna">Flora & Fauna</button>
-                        <button class="tag-button" data-tag="Software">Software</button>
-                        <button class="tag-button" data-tag="Education">Education</button>
-                        <button class="tag-button" data-tag="Writing & Communications">Writing</button>
-                    </div>
+                <div class="sidebar-menu">
+                    <button class="pub-sub-btn active" data-sub="Search Publications">Search Publications</button>
+                    <button class="pub-sub-btn" data-sub="Latest Publications">Latest Publications</button>
+                    <button class="pub-sub-btn" data-sub="Submit a Publication">Submit a Publication</button>
                 </div>
 
-                <a href="#" data-page="submit-publication-page" class="submit-pub-link">
-                    Click to submit a new publication →
-                </a>
+                <div id="pubs-content">
+                    <div id="pubs-search-view" class="sub-view active">
+                        <h3>Search Publications</h3>
+                        <input type="text" id="pub-search-input" placeholder="Search by Title or Keyword...">
+                        <button onclick="filterPublications()">Search</button>
+                        <div id="publications-dashboard">
+                            <p>Enter a query or click search to view all data...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="pubs-latest-view" class="sub-view">
+                        <h3>Latest Publications</h3>
+                        <div id="latest-publications-list">
+                            <p>Loading latest data...</p>
+                        </div>
+                    </div>
 
-                <div id="publications-dashboard">
-                    <p>Loading publications...</p>
+                    <div id="pubs-submit-view" class="sub-view">
+                        <h3>Submit a Publication</h3>
+                        <p class="info-box">This is a placeholder for a submission form. Please check the official NASA websites for submission guidelines.</p>
+                        <p>If you have a paper that should be included in the NASA Space Life Sciences database, please refer to the official submission process on the relevant NASA portals.</p>
+                    </div>
                 </div>
             </section>
 
-            <section id="about-page" class="portal-page"><button class="back-tab" data-page="home-page">← back</button><h2>About Us</h2><div class="page-content-grid"><div class="description"><p>Major success in biospace studies, collaborating across government and private sectors to advance human and planetary exploration.</p><p>Our goal is to centralize space biology knowledge for researchers, managers, and mission planners alike.</p></div><div class="image-placeholder"><p>Some Images</p></div></div></section>
-            <section id="activity-page" class="portal-page"><button class="back-tab" data-page="home-page">← back</button><h2>Activities</h2><div class="page-content-grid"><div class="description"><p>Important! Some description about our activities.</p><p>Explore current analog missions, upcoming flight experiments, and ground-based research campaigns.</p><a href="#" data-page="interactives-page" class="sub-link">Go to Interactives →</a></div><div class="image-placeholder"><p>Some Images</p></div></div></section>
-            <section id="interactives-page" class="portal-page"><button class="back-tab" data-page="activity-page">← back to Activities</button><h2>Interactives</h2><div class="description"><p>Some description about interactive tools and games.</p><ul><li><a href="#game1">Game 1 (Click to Game 1)</a>: Microgravity Simulator</li><li><a href="#game2">Game 2 (Click to Game 2)</a>: Radiation Dose Calculator</li><li>Dynamic Data Visualizer</li></ul></div></section>
-            <section id="news-page" class="portal-page"><button class="back-tab" data-page="home-page">← back</button><h2>News</h2><div class="news-list"><h3>Trending Research:</h3><ul><li>Latest breakthroughs in long-duration human spaceflight.</li><li>Update on Artemis Gateway biology experiments.</li></ul><h3>Events/Others:</h3><ul><li>Space Apps 2025 Wrap-up.</li><li>Upcoming scientific conferences.</li></ul></div></section>
-            <section id="career-page" class="portal-page"><button class="back-tab" data-page="home-page">← back</button><h2>Career</h2><div class="page-content-grid"><div class="description"><p>Some description about careers in space biology.</p><p>Access job listings, internship opportunities, and mentorship programs.</p><a href="#" data-page="life-at-nasa-page" class="sub-link">View Life at NASA →</a><a href="#" data-page="future-of-biospace-page" class="sub-link">Future of Biospace Studies →</a></div><div class="image-placeholder"><p>Power
+            <section id="library-page" class="portal-page">
+                <h2>NASA Space Life Sciences Library</h2>
+                <p>This dashboard is your gateway to some of the most comprehensive open-access space biology data and resources from NASA.</p>
+                <hr>
+                
+                <h3>Open Science Data Repository (OSDR)</h3>
+                <p>The OSDR provides access to data from over **500 biological experiments** conducted in space. It's a key resource for raw 'omics and physiological data.</p>
+                <a href="https://osdr.nasa.gov/bio/" target="_blank">Explore the OSDR Data Portal →</a>
+                <hr>
+                
+                <h3>NASA Space Life Sciences Library (NSLSL)</h3>
+                <p>The NSLSL consolidates global space life sciences literature into a single database. Search through **over 200,000 articles** to support your research.</p>
+                <a href="https://public.ksc.nasa.gov/nslsl/" target="_blank">Visit the NSLSL →</a>
+                <hr>
+
+                <h3>NASA Task Book</h3>
+                <p>This is an online database of research projects supported by NASA's science divisions. You can view project descriptions, reports, and publications.</p>
+                <a href="https://taskbook.nasa.gov/" target="_blank">Browse the NASA Task Book →</a>
+            </section>
+
+            <section id="projects-page" class="portal-page">
+                <h2>Featured NASA Task Book Projects</h2>
+                <p>These projects are representative examples of the research funded by NASA. For the full database, visit the official NASA Task Book website.</p>
+                <hr>
+                <div id="projects-list">
+                    </div>
+                <p>For a complete list of funded research projects, visit the official NASA Task Book:</p>
+                <a href="https://taskbook.nasa.gov/" target="_blank">Browse the NASA Task Book →</a>
+            </section>
+
+            <section id="activities-page" class="portal-page">
+                <h2>Interactive Activities</h2>
+                
+                <div class="sidebar-menu">
+                    <button class="activity-sub-btn active" data-sub="Quiz">Quiz</button>
+                    <button class="activity-sub-btn" data-sub="Future Activities">Future Activities</button>
+                </div>
+
+                <div id="activities-content">
+                    <div id="activity-quiz-view" class="sub-view active">
+                        <h3>Quiz: Space Effects</h3>
+                        <p>Engaging experiments and fun quizzes to test your knowledge of space biology!</p>
+                        <hr>
+                        <div id="quiz-question-1">
+                            <p><strong>What is one major effect of long-term microgravity on the human body?</strong></p>
+                            <label><input type="radio" name="quiz1" value="Bones become denser"> Bones become denser</label><br>
+                            <label><input type="radio" name="quiz1" value="Muscles get stronger"> Muscles get stronger</label><br>
+                            <label><input type="radio" name="quiz1" value="Bones lose density"> Bones lose density</label><br>
+                            <label><input type="radio" name="quiz1" value="Hair grows faster"> Hair grows faster</label><br>
+                            <button id="quiz-submit-btn">Submit Answer</button>
+                            <p id="quiz-feedback" style="margin-top: 10px; font-weight: bold;"></p>
+                        </div>
+                    </div>
+                    
+                    <div id="activity-future-view" class="sub-view">
+                        <h3>Future Activities</h3>
+                        <p class="info-box">This section is under development. We plan to add interactive experiments and simulations related to space biology soon.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="career-page" class="portal-page">
+                <h2>Careers in Space Biology</h2>
+                
+                <div class="sidebar-menu">
+                    <button class="career-sub-btn active" data-sub="Life at NASA">Life at NASA</button>
+                    <button class="career-sub-btn" data-sub="Career Scopes">Career Scopes</button>
+                    <button class="career-sub-btn" data-sub="Q&A">Q&A</button>
+                </div>
+
+                <div id="career-content">
+                    <div id="career-life-view" class="sub-view active">
+                        <h3>Life at NASA as a Bio-Space Engineer</h3>
+                        <p>A career at NASA as a bio-space engineer or life scientist involves pushing the boundaries of human knowledge and endurance. Engineers in this field work on developing life support systems, designing habitats for long-duration missions, and creating countermeasures to protect astronauts from the harsh space environment. This role combines biology, medicine, and engineering to solve some of humanity's greatest challenges.</p>
+                        <hr>
+                        <h3>Key Areas of Focus:</h3>
+                        <ul>
+                            <li><strong>Life Support Systems:</strong> Designing closed-loop systems for recycling air, water, and waste.</li>
+                            <li><strong>Human Performance:</strong> Researching how to maintain astronaut health, including diet, exercise, and mental well-being.</li>
+                            <li><strong>Radiation Shielding:</strong> Developing new materials and strategies to protect against cosmic radiation.</li>
+                        </ul>
+                    </div>
+                    
+                    <div id="career-scopes-view" class="sub-view">
+                        <h3>Future Scope and Open Questions</h3>
+                        <p>The future of space biology is vast and full of opportunity. As we plan missions to Mars and beyond, new challenges in human health and sustainable living will arise.</p>
+                        <hr>
+                        <h3>Key Research Questions:</h3>
+                        <ul>
+                            <li>How can we fully prevent bone and muscle loss in microgravity?</li>
+                            <li>Can we engineer plants to thrive in the unique conditions of space?</li>
+                            <li>What are the long-term genetic effects of cosmic radiation on living organisms?</li>
+                        </ul>
+                    </div>
+
+                    <div id="career-qna-view" class="sub-view">
+                        <h3>Q&A on Careers</h3>
+                        <p>Frequently asked questions about careers in space biology.</p>
+                        <hr>
+                        <h3>Q: What is the typical educational background for this field?</h3>
+                        <p class="info-box">A: Most professionals in this field have a degree in biomedical engineering, biology, genetics, or medicine, often at the graduate level.</p>
+                        <h3>Q: What are the primary skills needed?</h3>
+                        <p class="info-box">A: Strong problem-solving skills, a passion for scientific research, and an ability to work in interdisciplinary teams are essential.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="news-page" class="portal-page">
+                <h2>Space Biology News</h2>
+                <p>This section will be updated with the latest headlines and breakthroughs in space biology research.</p>
+                <p class="info-box">Check back soon for the latest news!</p>
+            </section>
+
+        </main>
+
+    </div> <script src="script.js"></script>
+</body>
+</html>
