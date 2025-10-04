@@ -1,14 +1,4 @@
-/* --- Global Reset & Variables --- */
-:root {
-    --dark-bg: #1e1e2d;         /* Very dark background for the outside */
-    --card-bg: #27293d;         /* Slightly lighter dark for inner cards/sidebar */
-    --content-bg: #2c2e43;      /* Slightly different dark for main content area */
-    --primary-blue: #007bff;    /* For active/focus states and accents */
-    --light-text: #e0e0e0;      /* Main text color */
-    --faded-text: #888;         /* Secondary/placeholder text color */
-    --header-height: 60px;
-}
-
+/* Basic Reset and Global Styles */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -16,616 +6,380 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--dark-bg);
-    color: var(--light-text);
-    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f9; /* Light background */
+    color: #333;
     line-height: 1.6;
 }
 
-/* --- Portal Container & Header --- */
-.portal-container {
-    background-color: var(--card-bg);
-    border-radius: 12px;
-    overflow: hidden;
-    min-height: 80vh;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.portal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: rgba(0, 0, 0, 0.2);
-    height: var(--header-height);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.portal-title {
-    font-size: 1.5em;
-    font-weight: 300;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    font-size: 0.9em;
-    color: var(--faded-text);
-}
-
-.user-icon {
-    font-size: 1.8em;
-    margin-right: 10px;
-    color: var(--light-text);
-}
-
-.user-role, .user-name {
-    margin-right: 15px;
-    padding-right: 15px;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
-.user-name { border-right: none; }
-
-
-.header-actions button {
-    background: none;
-    border: none;
-    color: var(--light-text);
-    padding: 8px 15px;
-    margin-left: 5px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 0.9em;
-}
-
-.header-actions button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
 /* --- Main Layout --- */
-.portal-main {
+.main-container {
     display: flex;
-    min-height: calc(80vh - var(--header-height));
+    min-height: 100vh;
 }
 
 /* --- Sidebar Navigation --- */
 .sidebar {
     width: 250px;
-    padding: 20px 0;
-    background-color: var(--card-bg);
-    flex-shrink: 0;
-    position: relative;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #2c3e50; /* Dark Blue */
+    color: #ecf0f1;
+    padding-top: 20px;
+    position: fixed;
+    height: 100%;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 100;
 }
 
-.nav-list {
-    list-style: none;
-}
-
-.nav-item a {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    text-decoration: none;
-    color: var(--light-text);
-    transition: background-color 0.2s, color 0.2s;
-    font-size: 1.1em;
-}
-
-.nav-item a i {
-    width: 20px;
-    margin-right: 15px;
+.logo {
+    font-size: 1.6em;
+    font-weight: bold;
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     text-align: center;
+    color: #3498db; /* Light NASA Blue for text logo */
 }
 
-.nav-item:hover a {
-    background-color: rgba(255, 255, 255, 0.05);
+.nav-menu ul {
+    list-style: none;
+    padding: 10px 0;
 }
 
-/* Active Menu Item */
-.nav-item.active {
-    border-left: 4px solid var(--primary-blue);
-    background-color: rgba(0, 123, 255, 0.1);
+.nav-menu a {
+    display: block;
+    padding: 12px 20px;
+    color: #ecf0f1;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+    position: relative;
+    cursor: pointer;
 }
 
-.nav-item.active a {
-    color: var(--primary-blue);
+/* Hover and Active State */
+.nav-menu a:hover:not(.active) {
+    background-color: #34495e; 
+}
+
+.nav-menu a.active,
+.dropdown-parent.active > .nav-item {
+    background-color: #3498db; /* NASA Blue highlight */
+    color: white;
     font-weight: bold;
 }
 
-/* Dropdown/Sub-Menu Styling */
-.has-dropdown > a {
-    justify-content: space-between;
-}
-
-.dropdown-icon {
-    font-size: 0.7em;
-    transition: transform 0.3s;
-}
-.nav-item.open .dropdown-icon {
-    transform: rotate(180deg);
-}
-
-/* Sub-Menu */
-.sub-menu {
+/* Dropdown Styling */
+.dropdown-menu {
     list-style: none;
-    padding-left: 40px;
+    padding-left: 0; /* Remove default padding */
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-    background-color: rgba(0, 0, 0, 0.1);
+    transition: max-height 0.4s ease-in-out; 
+    background-color: #3a536b; /* Slightly lighter shade for sub-menu */
 }
 
-.sub-menu li a {
-    padding: 8px 0;
-    font-size: 0.95em;
-    color: var(--faded-text);
-}
-.sub-menu li.active a {
-    color: var(--primary-blue);
-    font-weight: bold;
-}
-.sub-menu li a:hover {
-    color: var(--light-text);
-    background-color: transparent;
+.dropdown-parent.open .dropdown-menu {
+    max-height: 500px; /* Expands the dropdown */
 }
 
-
-/* --- Chatbot Styling --- */
-.chatbot-trigger-btn {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--primary-blue);
-    color: white;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
-    z-index: 10;
-    transition: background-color 0.3s ease;
-}
-.chatbot-trigger-btn:hover {
-    background-color: #0056b3;
-}
-
-
-.chatbot-popup {
-    position: absolute;
-    bottom: 80px;
-    left: 20px;
-    width: 220px;
-    background-color: white;
-    color: #333;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    z-index: 15;
-    overflow: hidden;
-}
-
-.hidden {
-    display: none;
-}
-
-.chatbot-header {
-    background-color: var(--primary-blue);
-    color: white;
-    padding: 8px 10px;
+.dropdown-menu li a {
+    padding: 8px 20px 8px 35px; /* Indent sub-items */
     font-size: 0.9em;
-    font-weight: bold;
+    color: #bdc3c7;
 }
 
-.chatbot-body {
-    padding: 10px;
-    font-size: 0.8em;
+.dropdown-menu li a:hover,
+.dropdown-menu li a.active {
+    background-color: #2c3e50; 
+    color: #fff;
 }
 
-.chatbot-body ol {
-    padding-left: 20px;
-    margin-top: 5px;
+/* --- Content Area and Header --- */
+.content-area {
+    margin-left: 250px; /* Space for the fixed sidebar */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    background-color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 60px; /* Fixed height for header */
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-icon {
+    font-size: 1.2em;
+    color: #555;
+    margin-right: 8px;
+}
+
+.user-text {
+    margin-right: 20px;
+    font-size: 0.9em;
     color: #555;
 }
 
-.chatbot-input {
-    display: flex;
-    border-top: 1px solid #ddd;
-}
-
-.chatbot-input input {
-    flex-grow: 1;
-    border: none;
-    padding: 8px;
-    font-size: 0.9em;
-    outline: none;
-    color: #333;
-}
-
-.chatbot-input button {
+.header-btn {
     background: none;
     border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-left: 10px;
     padding: 5px 10px;
-    color: var(--primary-blue);
-    cursor: pointer;
-    font-size: 1.1em;
-}
-
-
-/* --- Main Content Area --- */
-.content-area {
-    flex-grow: 1;
-    padding: 30px;
-    background-color: var(--content-bg);
-    min-width: 0;
-    overflow-y: auto;
-}
-
-.content-section {
-    display: none;
-}
-
-.content-section.active {
-    display: block;
-}
-
-.content-title {
-    font-size: 2em;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-}
-
-.back-btn {
-    cursor: pointer;
-    margin-right: 15px;
-    font-size: 0.8em;
-    color: var(--faded-text);
-    transition: color 0.2s;
-}
-.back-btn:hover {
-    color: var(--light-text);
-}
-
-
-.content-intro {
-    font-style: italic;
-    color: var(--faded-text);
-    margin-bottom: 30px;
-    line-height: 1.5;
-}
-
-.main-content-section {
-    background-color: var(--card-bg);
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    position: relative;
-}
-
-.main-content-section h3 {
-    color: var(--primary-blue);
-    margin-bottom: 15px;
-    font-weight: 400;
-}
-
-.research-list, .main-content-section ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.research-list li, .main-content-section ul li {
-    padding: 5px 0;
-    font-size: 1.1em;
-    display: flex;
-    align-items: center;
-    color: var(--light-text);
-}
-.main-content-section ul li i {
-    margin-right: 10px;
-    color: var(--primary-blue);
-}
-
-.check-icon {
-    color: #4CAF50;
-    margin-right: 10px;
-}
-
-.role-tip {
-    position: absolute;
-    top: -10px;
-    left: 20px;
-    background-color: #3f4258;
-    color: var(--light-text);
-    padding: 3px 8px;
     border-radius: 4px;
-    font-size: 0.75em;
-    text-transform: uppercase;
-    font-weight: bold;
+    transition: background-color 0.2s;
 }
 
-/* Image container and Grid Layout */
-.content-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
+.header-btn:hover {
+    background-color: #eee;
 }
 
-.image-container {
-    height: 250px;
-    background-color: #3f4258;
-    border-radius: 8px;
+/* Main Content */
+.main-content {
+    padding: 30px;
+    flex-grow: 1;
+    background-color: #fff;
+}
+
+.main-content h1 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    border-left: 5px solid #3498db;
+    padding-left: 15px;
+}
+
+.main-content p {
+    margin-bottom: 15px;
+    color: #555;
+}
+
+/* --- Chatbot Toggle Button --- */
+.chatbot-toggle {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background-color: #3498db; 
+    color: white;
+    font-size: 2em; /* Larger emoji */
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    z-index: 1000;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: var(--faded-text);
-    font-size: 1.2em;
-    overflow: hidden;
-    position: relative; /* For p tag positioning */
+    transition: background-color 0.2s;
 }
 
-.image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+/* --- Chatbot Window --- */
+.chatbot-window {
+    position: fixed;
+    bottom: 85px;
+    left: 20px;
+    width: 320px;
+    height: 400px;
+    background-color: #fff;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    display: block;
-}
-.image-container p {
-    position: absolute;
-    background-color: rgba(0,0,0,0.5);
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.8em;
-    z-index: 1;
-    bottom: 0; /* Position caption at the bottom */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    flex-direction: column;
 }
 
-
-/* --- Publications Section Specific --- */
-.publication-table {
-    background-color: var(--card-bg);
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.table-header, .table-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 0.5fr;
-    padding: 12px 20px;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.table-header {
-    background-color: rgba(0, 0, 0, 0.2);
-    font-weight: bold;
-    color: var(--primary-blue);
-}
-
-.table-row:last-child {
-    border-bottom: none;
-}
-
-.table-row a {
-    color: var(--primary-blue);
-    text-decoration: none;
-}
-
-.download-btn {
-    background-color: #4CAF50;
+.chatbot-header {
+    background-color: #2c3e50;
     color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
+    padding: 12px;
+    font-weight: bold;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+}
+
+.chatbot-body {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 0.9em;
+    background-color: #f9f9f9;
+}
+
+.chatbot-footer {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+.chatbot-footer input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 8px;
     font-size: 0.9em;
 }
 
-.publication-form input,
-.publication-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.2);
-    color: var(--light-text);
-    font-size: 1em;
-    resize: vertical;
-    outline: none;
-}
-
-.submit-pub-btn {
-    background-color: var(--primary-blue);
+.chatbot-footer button {
+    padding: 8px 15px;
+    background-color: #3498db;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 1.1em;
-    margin-right: 15px;
-}
-
-/* --- News Section Specific --- */
-.news-feed {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
-}
-
-.news-item {
-    background-color: var(--card-bg);
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.news-item h3 {
-    color: var(--primary-blue);
-    margin-bottom: 10px;
-    font-size: 1.3em;
-}
-
-.news-date {
-    font-size: 0.8em;
-    color: var(--faded-text);
-    margin-bottom: 15px;
-}
-
-.news-image {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 6px;
-    margin-bottom: 15px;
-}
-
-.news-item .read-more {
-    color: var(--primary-blue);
-    text-decoration: none;
-    font-weight: bold;
-}
-
-/* --- Activities & Career Section Buttons --- */
-.careers-btn, .library-btn, .interactivity-btn {
-    background-color: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    margin-top: 15px;
     transition: background-color 0.2s;
 }
-.careers-btn:hover, .library-btn:hover, .interactivity-btn:hover {
-    background-color: #0056b3;
+
+.chatbot-footer button:hover {
+    background-color: #2980b9;
 }
 
-/* --- Interactivities Specific --- */
-.interactivities-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
+/* --- Settings Modal --- */
+.modal {
+    position: fixed;
+    z-index: 2000; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
-.interactivity-item {
-    background-color: var(--card-bg);
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; 
+    padding: 30px;
+    width: 90%;
+    max-width: 800px;
     border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-.interactivity-item h4 {
-    color: var(--primary-blue);
-    margin-bottom: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* --- Library Section Specific --- */
-.library-categories {
-    list-style: none;
-    padding-left: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Settings Tabs Styling (Chrome Mimic) */
+.settings-nav {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
     margin-bottom: 20px;
 }
 
-.library-categories li {
-    background-color: rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+.settings-nav a {
+    padding: 12px 18px;
+    text-decoration: none;
+    color: #555;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+.settings-nav a.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+}
+
+.settings-tabs {
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
     padding: 15px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    background-color: #fff;
+}
+
+.setting-tab {
+    display: none;
+}
+
+.setting-tab.active {
+    display: block;
+}
+
+.setting-tab h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 5px;
+}
+
+.setting-tab label {
+    display: block;
+    margin: 10px 0;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
-}
-.library-categories li:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-    transform: translateY(-3px);
-}
-
-.library-categories li i {
-    font-size: 2em;
-    margin-bottom: 10px;
-    color: var(--primary-blue);
-}
-.library-categories li {
-    color: var(--light-text);
-    font-weight: bold;
 }
 
 
-/* --- Responsive Adjustments (For Mobile/Tablet Views) --- */
-@media (max-width: 900px) {
-    .portal-main {
-        flex-direction: column;
-    }
-
+/* --- Responsiveness --- */
+@media (max-width: 768px) {
     .sidebar {
         width: 100%;
-        padding-bottom: 70px;
-    }
-
-    .portal-header {
-        flex-wrap: wrap;
         height: auto;
+        position: relative;
+        padding-bottom: 0;
     }
-
-    .user-info, .header-actions {
-        margin-top: 10px;
-    }
-
-    .content-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 600px) {
-    .portal-title {
-        font-size: 1.2em;
-    }
-    .user-info {
-        flex-direction: column;
-        align-items: flex-start;
-        font-size: 0.8em;
-    }
-    .user-role, .user-name {
-        border-right: none;
-        padding-right: 0;
-        margin-right: 0;
-    }
-
-    .header-actions {
-        width: 100%;
+    
+    .nav-menu ul {
         display: flex;
+        flex-wrap: wrap;
+        padding: 10px;
         justify-content: space-around;
-        margin-top: 15px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding-top: 10px;
+        text-align: center;
     }
-    .header-actions button {
-        flex-grow: 1;
-        margin: 0 5px;
+
+    .nav-menu li {
+        flex-basis: 30%; /* Three items per row */
+    }
+
+    .nav-menu a {
+        padding: 8px 5px;
+        font-size: 0.85em;
+    }
+    
+    /* Hide dropdowns completely on small screen to save space */
+    .dropdown-parent.open .dropdown-menu {
+        display: none;
+    }
+
+    .dropdown-menu {
+        /* Since we're using flex, this isn't strictly necessary but good practice */
+        position: absolute; 
+        width: 100%;
+        top: 100%;
+        left: 0;
+        z-index: 10;
     }
 
     .content-area {
-        padding: 20px;
+        margin-left: 0;
     }
 
-    .table-header, .table-row {
-        grid-template-columns: 1.5fr 1fr;
+    .user-text {
+        display: none; /* Hide long text on mobile */
     }
-    .table-header span:last-child, .table-row span:last-child {
-        display: none;
+    
+    .chatbot-window {
+        width: 90%;
+        left: 5%;
+    }
+
+    .chatbot-toggle {
+        bottom: 10px;
+        left: 10px;
     }
 }
