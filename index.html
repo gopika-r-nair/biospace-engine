@@ -1,237 +1,218 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXBIO Portal: NASA Space Biology Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
-
-    <div id="role-selector-modal" class="modal">
-        <div class="modal-content">
-            <h2>Welcome to EXBIO Portal</h2>
-            <p>Select your role to tailor your dashboard experience and prioritize mission-critical information.</p>
-            <div class="roles-container">
-                <button class="role-button" data-role="Scientist">🔬 Scientist</button>
-                <button class="role-button" data-role="Manager">📊 Mission Manager</button>
-                <button class="role-button" data-role="Architect">🏗️ Systems Architect</button>
-                <button class="role-button" data-role="Visitor">👤 Public Visitor</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="dashboard-container">
-        <header>
-            <h1>EXBIO Portal</h1>
-            <div class="header-info">
-                <button id="settings-btn" title="Settings"><i class="fas fa-cog"></i></button>
-                <span id="user-role-display">Role: N/A</span>
-                <button id="change-role-btn" title="Change Role / Login"><i class="fas fa-user-circle"></i></button>
-            </div>
-        </header>
-
-        <nav class="tabs">
-            <button class="nav-button active" data-tab="about">About Us</button>
-            
-            <div class="dropdown">
-                <button class="nav-button dropdown-main" data-tab-main="publications">Publications <i class="fas fa-caret-down"></i></button>
-                <div class="dropdown-content" data-dropdown="publications">
-                    <button class="nav-button" data-tab="pub-library">Publication Library</button>
-                    <button class="nav-button" data-tab="pub-announcements">Announcements</button>
-                    <button class="nav-button" data-tab="pub-submit">Submit a new application</button>
-                </div>
-            </div>
-
-            <button class="nav-button" data-tab="news">News</button>
-            
-            <div class="dropdown">
-                <button class="nav-button dropdown-main" data-tab-main="activities">Activities <i class="fas fa-caret-down"></i></button>
-                <div class="dropdown-content" data-dropdown="activities">
-                    <button class="nav-button" data-tab="act-qa">Q/A</button>
-                    <button class="nav-button" data-tab="act-interactives">Interactives</button>
-                </div>
-            </div>
-
-            <div class="dropdown">
-                <button class="nav-button dropdown-main" data-tab-main="career">Career <i class="fas fa-caret-down"></i></button>
-                <div class="dropdown-content" data-dropdown="career">
-                    <button class="nav-button" data-tab="car-life">Life at NASA</button>
-                    <button class="nav-button" data-tab="car-future">Future of biospace studies</button>
-                </div>
-            </div>
-            
-            <button class="nav-button" data-tab="library">Library</button>
-        </nav>
-
-        <main class="tab-content-container">
-            
-            <div id="about" class="tab-content active">
-                <h2>About Us</h2>
-                <p>Welcome to the EXBIO Portal, powered by the NASA Space Apps Challenge team. We aim to consolidate and visualize NASA's Space Biology research to support mission planning, research, and public education.</p>
-                <p class="role-tip" data-role-target="Scientist,Manager,Architect">This section provides background and links to key external resources.</p>
-            </div>
-
-            <div id="pub-library" class="tab-content">
-                <h2>Publication Library (Core Data)</h2>
-                <p class="role-tip" data-role-target="Scientist,Manager,Architect">Search the curated subset of real NASA publication data below.</p>
-
-                <div class="search-controls">
-                    <input type="text" id="publication-search" placeholder="Search by title, abstract, or keywords...">
-                    <select id="year-filter">
-                        <option value="">Filter by Year (All)</option>
-                    </select>
-                </div>
-                
-                <div class="publication-data-info">
-                    <span id="row-count">Loading data...</span>
-                </div>
-
-                <div class="table-scroll-container">
-                    <table id="publications-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Title</th>
-                                <th>Abstract Summary</th>
-                                <th>Year</th>
-                                <th>Link</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="pub-announcements" class="tab-content">
-                <h2>Publications Announcements</h2>
-                <p>No new publications or events announced today. Check back later for updates!</p>
-            </div>
-            
-            <div id="pub-submit" class="tab-content">
-                <h2>Submit a new application</h2>
-                <p class="role-tip" data-role-target="Scientist">Use this form to submit your idea or research abstract for consideration by the EXBIO team.</p>
-                <div class="form-placeholder">
-                    <p>*** Submission Form Placeholder ***</p>
-                    <p>Fields: Define your idea, Personal details/contact, Submit.</p>
-                </div>
-            </div>
-            
-            <div id="news" class="tab-content">
-                <h2>News & Updates</h2>
-                <p>Latest news and updates relevant to Space Life Sciences, powered by NASA's data sources.</p>
-
-                <div class="news-card">
-                    <h3>New Data Release: OSDR Mission 7.2</h3>
-                    <p>Over 50 new datasets from biological experiments on the ISS are now available via the Open Science Data Repository.</p>
-                    <a href="https://placeholder.nasa.gov/osdr" target="_blank" class="news-link"><i class="fas fa-database"></i> Access NASA Open Science Data Repository (OSDR)</a>
-                </div>
+<main class="tab-content-container">
+    
+    <div id="about" class="tab-content active">
+        <h2>About Us</h2>
+        <div class="content-split">
+            <div class="content-description">
+                <p>Welcome to the EXBIO Portal, powered by the NASA Space Apps Challenge team. We aim to consolidate and visualize NASA's Space Biology research to support mission planning, research, and public education.</p>
                 
-                <div class="news-card">
-                    <h3>Task Book Q4 Reports Published</h3>
-                    <p>The latest quarterly reports on active Human Research Program (HRP) and Biological and Physical Sciences (BPS) projects are now available.</p>
-                    <a href="https://placeholder.nasa.gov/taskbook" target="_blank" class="news-link"><i class="fas fa-book-open"></i> Explore NASA Task Book</a>
+                <h3>Major Studies in Biospace Research</h3>
+                <ul>
+                    <li>Effects of Microgravity on Human Physiology</li>
+                    <li>Radiation Countermeasures for Deep Space</li>
+                    <li>Closed-Loop Life Support Systems (CELSS)</li>
+                    <li>Planetary Protection Protocols</li>
+                </ul>
+                <p class="role-tip" data-role-target="Scientist,Manager,Architect">This section provides background and links to key external resources.</p>
+            </div>
+            <div class="content-image">
+                <img src="placeholder-about.jpg" alt="Space Biology Image Placeholder" style="width: 100%; height: auto; border-radius: 8px;">
+                <p style="text-align: center; font-size: 0.8em; margin-top: 5px; color: #ccc;">Some image placeholder</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="pub-library" class="tab-content">
+        <h2>Publication Library (Core Data)</h2>
+        <p class="role-tip" data-role-target="Scientist,Manager,Architect">Search the curated subset of real NASA publication data below.</p>
+
+        <div class="search-controls">
+            <input type="text" id="publication-search" placeholder="Search by title, abstract, or keywords...">
+            <select id="year-filter">
+                <option value="">Filter by Year (All)</option>
+            </select>
+        </div>
+        
+        <div class="publication-data-info">
+            <span id="row-count">Loading data...</span>
+        </div>
+
+        <div class="table-scroll-container">
+            <table id="publications-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Abstract Summary</th>
+                        <th>Year</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div id="news" class="tab-content">
+        <h2>News & Updates</h2>
+        <p>Latest news and updates relevant to Space Life Sciences, powered by NASA's data sources.</p>
+
+        <div class="news-grid">
+            <div class="news-card">
+                <h3>Research Highlights</h3>
+                <p>New findings on bone density countermeasures from ISS mission 70. Click to read more.</p>
+                <a href="#" class="news-link"><i class="fas fa-microscope"></i> Read Research Summary</a>
+            </div>
+            <div class="news-card">
+                <h3>Expedition Updates</h3>
+                <p>Latest crew changes and upcoming scientific activities on the International Space Station.</p>
+                <a href="#" class="news-link"><i class="fas fa-rocket"></i> View Mission Log</a>
+            </div>
+            <div class="news-card">
+                <h3>OSDR Data Release</h3>
+                <p>Over 50 new datasets from biological experiments are now available via the Open Science Data Repository.</p>
+                <a href="https://placeholder.nasa.gov/osdr" target="_blank" class="news-link"><i class="fas fa-database"></i> Access NASA OSDR</a>
+            </div>
+            <div class="news-card">
+                <h3>Upcoming Events</h3>
+                <p>Schedule for the next Bioscience teleconference and public Q&A session.</p>
+                <a href="#" class="news-link"><i class="fas fa-calendar-alt"></i> See Schedule</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="library" class="tab-content">
+        <h2>Library (Data Repositories)</h2>
+        <p>Direct links to NASA's most critical data repositories and literature databases.</p>
+
+        <div class="resource-card">
+            <h3>NASA Open Science Data Repository (OSDR)</h3>
+            <p>Access data from over 500 biological experiments performed in space or in support of space exploration.</p>
+            <a href="https://placeholder.nasa.gov/osdr" target="_blank" class="check-answer-btn" style="background-color: var(--color-accent);"><i class="fas fa-external-link-alt"></i> Go to OSDR</a>
+        </div>
+
+        <div class="resource-card">
+            <h3>NASA Space Life Sciences Library (NSLSL)</h3>
+            <p>A consolidated database of global space life sciences literature supporting research on the effects of the space environment on biological systems.</p>
+            <a href="https://placeholder.nasa.gov/nslsl" target="_blank" class="check-answer-btn"><i class="fas fa-external-link-alt"></i> Go to NSLSL</a>
+        </div>
+    </div>
+
+    <div id="act-qa" class="tab-content">
+        <h2>Q/A (Questions and Answers)</h2>
+        <div class="content-split">
+            <div class="content-description">
+                <p class="role-tip" data-role-target="Visitor">This is a collection of Frequently Asked Questions about Space Biology.</p>
+                <p>***</p>
+                <h3>Q: What is the main challenge of long-duration spaceflight?</h3>
+                <p>A: The main challenges are radiation exposure, microgravity-induced health effects (bone loss, vision changes), and psychological isolation.</p>
+                <h3>Q: How can I help NASA research?</h3>
+                <p>A: You can participate in citizen science projects, apply for internships, or submit your research proposal through our Publications tab.</p>
+            </div>
+            <div class="content-image">
+                <img src="placeholder-activities-qa.jpg" alt="Q/A Image Placeholder" style="width: 100%; height: auto; border-radius: 8px;">
+                <p style="text-align: center; font-size: 0.8em; margin-top: 5px; color: #ccc;">How can I help a placeholder</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="act-interactives" class="tab-content">
+        <h2>Interactives (Games & Simulations)</h2>
+        <p class="role-tip" data-role-target="Visitor">Engage with fun activities to learn about the challenges of living in space.</p>
+        <div class="activity-grid">
+            <div class="activity-card">
+                <h3>Game 1: Radiation Defender</h3>
+                <p>Simulation where you manage shielding to protect a Martian colony.</p>
+                <button class="check-answer-btn" style="background-color: #50fa7b;">Click to Game 1</button>
+            </div>
+            <div class="activity-card">
+                <h3>Game 2: Plant Growth Challenge</h3>
+                <p>Optimize nutrient and light delivery for crops on the ISS.</p>
+                <button class="check-answer-btn" style="background-color: #f89e56;">Click to Game 2</button>
+            </div>
+            <div class="activity-card">
+                <h3>Quiz: Life in Space</h3>
+                <p>Test your knowledge on space biology facts.</p>
+                <p>What is the primary effect of long-term microgravity on the human body?</p>
+                <ul class="quiz-options">
+                    <li><input type="radio" name="q1" value="a"> Increased muscle mass</li>
+                    <li><input type="radio" name="q1" value="b"> Bone density loss</li>
+                    <li><input type="radio" name="q1" value="c"> Enhanced vision</li>
+                </ul>
+                <button class="check-answer-btn" data-correct="b">Check Answer</button>
+                <p class="quiz-feedback"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="car-life" class="tab-content">
+        <h2>Life at NASA</h2>
+        <div class="content-split">
+            <div class="content-description">
+                <p>Hear from NASA employees about their daily work and experience in the Space Life Sciences division. Find out what it's really like to work on missions that push the boundaries of human exploration.</p>
+                <div class="career-grid">
+                    <div class="career-card">
+                        <h3>Astronaut Health Specialist</h3>
+                        <p>Works directly with flight crews to monitor and maintain physical and mental well-being before, during, and after missions.</p>
+                    </div>
                 </div>
-            </div>
-            
-            <div id="library" class="tab-content">
-                <h2>Library (External Resources)</h2>
-                <p>This section provides direct links to NASA's most critical data repositories and literature databases.</p>
+            </div>
+            <div class="content-image">
+                <img src="placeholder-career-life.jpg" alt="Life at NASA Image Placeholder" style="width: 100%; height: auto; border-radius: 8px;">
+                <p style="text-align: center; font-size: 0.8em; margin-top: 5px; color: #ccc;">Experience shared by NASA workers</p>
+            </div>
+        </div>
+    </div>
 
-                <div class="resource-card">
-                    <h3>NASA Open Science Data Repository (OSDR)</h3>
-                    <p>Access data from over 500 biological experiments performed in space or in support of space exploration.</p>
-                    <a href="https://placeholder.nasa.gov/osdr" target="_blank" class="check-answer-btn" style="background-color: var(--color-accent);"><i class="fas fa-external-link-alt"></i> Go to OSDR</a>
+    <div id="car-future" class="tab-content">
+        <h2>Future of Biospace Studies</h2>
+        <div class="content-split">
+            <div class="content-description">
+                <p>This field is rapidly expanding to cover areas like personalized medicine in space, artificial gravity, and planetary protection. Explore the anticipated scope of this field and the opportunities ahead.</p>
+                <h3>Upcoming Scope in the Field:</h3>
+                <ul>
+                    <li>AI-driven autonomous life support</li>
+                    <li>Personalized medicine and 'omics' in space</li>
+                    <li>Long-term habitation for Mars missions</li>
+                    <li>Advanced radiation drug therapies</li>
+                </ul>
+                <div class="career-grid">
+                    <div class="career-card">
+                        <h3>Space Biologist</h3>
+                        <p>Focuses on how living organisms, from microbes to humans, adapt to or are affected by space environments.</p>
+                    </div>
                 </div>
+            </div>
+            <div class="content-image">
+                <img src="placeholder-career-future.jpg" alt="Future Image Placeholder" style="width: 100%; height: auto; border-radius: 8px;">
+                <p style="text-align: center; font-size: 0.8em; margin-top: 5px; color: #ccc;">Future scope in the field</p>
+            </div>
+        </div>
+    </div>
 
-                <div class="resource-card">
-                    <h3>NASA Space Life Sciences Library (NSLSL)</h3>
-                    <p>A consolidated database of global space life sciences literature supporting research on the effects of the space environment on biological systems.</p>
-                    <a href="https://placeholder.nasa.gov/nslsl" target="_blank" class="check-answer-btn"><i class="fas fa-external-link-alt"></i> Go to NSLSL</a>
+    <div id="chatbot-modal" class="chatbot-floating-modal">
+        <button id="close-chatbot-btn">&times;</button>
+        <h2>EXBIO-AI Chatbot (Simulated)</h2>
+        <p class="role-tip" data-role-target="Scientist,Manager">The chatbot is programmed to provide answers grounded in the publication data available in this portal.</p>
+        <div class="chat-window">
+            <div id="chat-messages" class="chat-messages">
+                <div class="message system">
+                    Hello! I am EXBIO-AI, your Space Biology assistant. Ask me about radiation, long-duration missions, or microgravity effects.
                 </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Ask a question..." disabled>
+                <button id="send-chat-btn" disabled><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
 
-                <div class="resource-card">
-                    <h3>NASA Task Book</h3>
-                    <p>An online database of research projects supported by NASA's BPS and HRP divisions, including project descriptions, reports, and publication listings.</p>
-                    <a href="https://placeholder.nasa.gov/taskbook" target="_blank" class="check-answer-btn" style="background-color: var(--color-primary);"><i class="fas fa-external-link-alt"></i> Go to Task Book</a>
-                </div>
+</main>
+    </div>
+    
+    <button id="fixed-chatbot-btn" title="Open Chatbot"><i class="fas fa-question-circle"></i></button>
 
-            </div>
-
-            <div id="act-qa" class="tab-content">
-                <h2>Q/A (Questions and Answers)</h2>
-                <p class="role-tip" data-role-target="Visitor">This is a collection of Frequently Asked Questions about Space Biology.</p>
-                <p>***</p>
-                <h3>Q: What is the main challenge of long-duration spaceflight?</h3>
-                <p>A: The main challenges are radiation exposure, microgravity-induced health effects (bone loss, vision changes), and psychological isolation.</p>
-            </div>
-            
-            <div id="act-interactives" class="tab-content">
-                <h2>Interactives (Games & Simulations)</h2>
-                <p class="role-tip" data-role-target="Visitor">Engage with fun activities to learn about the challenges of living in space.</p>
-                <div class="activity-card">
-                    <h3>Quiz: Life in Space</h3>
-                    <p>What is the primary effect of long-term microgravity on the human body?</p>
-                    <ul class="quiz-options">
-                        <li><input type="radio" name="q1" value="a"> Increased muscle mass</li>
-                        <li><input type="radio" name="q1" value="b"> Bone density loss</li>
-                        <li><input type="radio" name="q1" value="c"> Enhanced vision</li>
-                    </ul>
-                    <button class="check-answer-btn" data-correct="b">Check Answer</button>
-                    <p class="quiz-feedback"></p>
-                </div>
-            </div>
-
-            <div id="car-life" class="tab-content">
-                <h2>Life at NASA</h2>
-                <p>Hear from NASA employees about their daily work and experience in the Space Life Sciences division.</p>
-                <div class="career-grid">
-                    <div class="career-card">
-                        <h3>Astronaut Health Specialist</h3>
-                        <p>Works directly with flight crews to monitor and maintain physical and mental well-being before, during, and after missions.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="car-future" class="tab-content">
-                <h2>Future of biospace studies</h2>
-                <p>This field is rapidly expanding to cover areas like personalized medicine in space, artificial gravity, and planetary protection.</p>
-                <div class="career-grid">
-                    <div class="career-card">
-                        <h3>Planetary Protection Officer</h3>
-                        <p>Ensures we do not contaminate other worlds with Earth microbes, and that samples returned to Earth are safely managed.</p>
-                    </div>
-                    <div class="career-card">
-                        <h3>Space Biologist</h3>
-                        <p>Focuses on how living organisms, from microbes to humans, adapt to or are affected by space environments.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="chatbot-modal" class="chatbot-floating-modal">
-                <button id="close-chatbot-btn">&times;</button>
-                <h2>EXBIO-AI Chatbot (Simulated)</h2>
-                <p class="role-tip" data-role-target="Scientist,Manager">The chatbot is programmed to provide answers grounded in the publication data available in this portal.</p>
-                <div class="chat-window">
-                    <div id="chat-messages" class="chat-messages">
-                        <div class="message system">
-                            Hello! I am EXBIO-AI, your Space Biology assistant. Ask me about radiation, long-duration missions, or microgravity effects.
-                        </div>
-                    </div>
-                    <div class="chat-input-container">
-                        <input type="text" id="chat-input" placeholder="Ask a question..." disabled>
-                        <button id="send-chat-btn" disabled><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-    </div>
-    
-    <button id="fixed-chatbot-btn" title="Open Chatbot"><i class="fas fa-question-circle"></i></button>
-
-    <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
