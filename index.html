@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EXBIO Portal</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -30,6 +30,7 @@
                     <li class="nav-item" data-section="about-us"><a href="#"><i class="fas fa-info-circle"></i> About Us</a></li>
                     <li class="nav-item active" data-section="publications"><a href="#"><i class="fas fa-book"></i> Publications</a></li>
                     <li class="nav-item" data-section="news"><a href="#"><i class="fas fa-newspaper"></i> News</a></li>
+                    
                     <li class="nav-item has-dropdown" data-section="activities">
                         <a href="#"><i class="fas fa-running"></i> Activities <i class="fas fa-chevron-down dropdown-icon"></i></a>
                         <ul class="sub-menu">
@@ -37,11 +38,12 @@
                             <li data-section="events"><a href="#">Events</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item" data-section="career">
+
+                    <li class="nav-item has-dropdown" data-section="career">
                         <a href="#"><i class="fas fa-briefcase"></i> Career <i class="fas fa-chevron-down dropdown-icon"></i></a>
                         <ul class="sub-menu">
                             <li data-section="life-at-nasa"><a href="#">Life at NASA</a></li>
-                            <li data-section="future-studies"><a href="#">Future of Biospace Studies</a></li>
+                            <li data-section="future-studies"><a href="#">Future Studies</a></li>
                         </ul>
                     </li>
                     <li class="nav-item" data-section="library"><a href="#"><i class="fas fa-book-reader"></i> Library</a></li>
@@ -70,9 +72,30 @@
             </nav>
 
             <main class="content-area">
+                
+                <section id="about-us-section" class="content-section hidden">
+                    <h2 class="content-title">About Us</h2>
+                    <p class="content-intro">If alite ae portal toin that anlorating pait a he Hrtual arseld on toi reske the dapat thou Yot Im ar uarlefts on shenoid kourp sihdueten uly doliy. **(Some description about page)**</p>
+
+                    <div class="content-grid">
+                        <div class="main-content-section">
+                            <h3>Major Studies in Biospace Research</h3>
+                            <ul class="research-list">
+                                <li><i class="fas fa-check-circle check-icon"></i> Publication Library</li>
+                                <li><i class="fas fa-check-circle check-icon"></i> Submit a new application</li>
+                            </ul>
+                            <span class="role-tip">role-tip</span>
+                        </div>
+                        <div class="image-container">
+                            <p>About Us - Biospace Laboratory</p>
+                            <img src="https://picsum.photos/id/1015/400/250" alt="Biospace Laboratory Image">
+                        </div>
+                    </div>
+                </section>
+
                 <section id="publications-section" class="content-section active">
-                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn"></i> Publications</h2>
-                    <p class="content-intro">Explore our latest research and publications.</p>
+                    <h2 class="content-title">Publications</h2>
+                    <p class="content-intro">Explore our latest research and publications. **(Details in .CSV file)**</p>
 
                     <div class="publication-table">
                         <div class="table-header">
@@ -90,64 +113,36 @@
                             <span><a href="#" target="_blank">View PDF</a></span>
                             <span><button class="download-btn"><i class="fas fa-download"></i></button></span>
                         </div>
-                        <div class="table-row">
-                            <span>Biospace Radiation Effects on Human Cells</span>
-                            <span><a href="#" target="_blank">View PDF</a></span>
-                            <span><button class="download-btn"><i class="fas fa-download"></i></button></span>
-                        </div>
                     </div>
 
                     <div class="main-content-section" style="margin-top: 30px;">
                         <h3>Submit a New Publication</h3>
-                        <p>Define your title, abstract, and any relevant personal details.</p>
+                        <p>Define your title, abstract, and any relevant personal details/contact.</p>
                         <form class="publication-form">
                             <input type="text" placeholder="Publication Title" required>
                             <textarea placeholder="Abstract / Description" rows="5" required></textarea>
-                            <input type="text" placeholder="Your Name (Optional)">
-                            <input type="email" placeholder="Your Email (Optional)">
+                            <input type="email" placeholder="Contact Email (Optional)">
                             <button type="submit" class="submit-pub-btn">Submit</button>
                             <a href="#" class="help-link">Click for help</a>
                         </form>
                     </div>
                 </section>
 
-                <section id="about-us-section" class="content-section hidden">
-                    <h2 class="content-title">About Us</h2>
-                    <p class="content-intro">If alite ae portal toin that anlorating pait a he Hrtual arseld on toi reske the dapat thou Yot Im ar uarlefts on shenoid kourp sihdueten uly doliy.</p>
-
-                    <div class="content-grid">
-                        <div class="main-content-section">
-                            <h3>Major Studies in Biospace Research</h3>
-                            <ul class="research-list">
-                                <li><i class="fas fa-check-circle check-icon"></i> Publication Library</li>
-                                <li><i class="fas fa-check-circle check-icon"></i> Submit a new application</li>
-                            </ul>
-                            <span class="role-tip">role-tip</span>
-                        </div>
-                        <div class="image-container">
-                            <p>Here's an image related to About Us.</p>
-                            <img src="https://picsum.photos/id/1015/400/250" alt="About Us Image">
-                        </div>
-                    </div>
-                </section>
-
                 <section id="news-section" class="content-section hidden">
                     <h2 class="content-title">News & Announcements</h2>
-                    <p class="content-intro">Stay updated with the latest happenings at EXBIO.</p>
+                    <p class="content-intro">Stay updated with the latest happenings at EXBIO. **(Including News, Research, Events, Others)**</p>
 
                     <div class="news-feed">
                         <div class="news-item">
                             <h3>Groundbreaking Discovery in Exoplanet Research</h3>
                             <p class="news-date">October 26, 2023</p>
                             <img src="https://picsum.photos/id/237/300/180" alt="Exoplanet image" class="news-image">
-                            <p>Our team has identified a new exoplanet with potential for liquid water. This discovery opens new avenues for understanding extraterrestrial life.</p>
                             <a href="#" class="read-more">Read More</a>
                         </div>
                         <div class="news-item">
                             <h3>New Partnership for AI in Biospace</h3>
                             <p class="news-date">October 20, 2023</p>
                             <img src="https://picsum.photos/id/250/300/180" alt="AI partnership image" class="news-image">
-                            <p>EXBIO has partnered with TechCorp to develop cutting-edge AI solutions for analyzing complex biological data from space missions.</p>
                             <a href="#" class="read-more">Read More</a>
                         </div>
                     </div>
@@ -155,7 +150,7 @@
 
                 <section id="activities-section" class="content-section hidden">
                     <h2 class="content-title">Activities</h2>
-                    <p class="content-intro">Engage with our various interactive programs and events.</p>
+                    <p class="content-intro">Engage with our various interactive programs and events. **(Important some description)**</p>
 
                     <div class="content-grid">
                         <div class="main-content-section">
@@ -167,15 +162,15 @@
                             </ul>
                         </div>
                         <div class="image-container">
-                            <p>Image of activities/events.</p>
+                            <p>Activities/Events Image</p>
                             <img src="https://picsum.photos/id/1005/400/250" alt="Activities Image">
                         </div>
                     </div>
                 </section>
-
+                
                 <section id="interactivities-section" class="content-section hidden">
-                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn"></i> Interactivities</h2>
-                    <p class="content-intro">Participate in our educational games and simulations.</p>
+                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn" data-parent="activities"></i> Interactivities</h2>
+                    <p class="content-intro">Participate in our educational games and simulations. **(Some description)**</p>
                     <div class="interactivities-list">
                         <div class="interactivity-item">
                             <h4>Game 1: Asteroid Miner</h4>
@@ -192,7 +187,7 @@
 
                 <section id="career-section" class="content-section hidden">
                     <h2 class="content-title">Career Opportunities</h2>
-                    <p class="content-intro">Join our team and contribute to cutting-edge biospace research.</p>
+                    <p class="content-intro">Join our team and contribute to cutting-edge biospace research. **(Some description)**</p>
 
                     <div class="content-grid">
                         <div class="main-content-section">
@@ -205,15 +200,15 @@
                             <button class="careers-btn">View All Openings</button>
                         </div>
                         <div class="image-container">
-                            <p>Image related to careers.</p>
+                            <p>Careers Image</p>
                             <img src="https://picsum.photos/id/1020/400/250" alt="Career Image">
                         </div>
                     </div>
                 </section>
 
                 <section id="life-at-nasa-section" class="content-section hidden">
-                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn"></i> Life at NASA</h2>
-                    <p class="content-intro">Experience shared by NASA workers.</p>
+                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn" data-parent="career"></i> Life at NASA</h2>
+                    <p class="content-intro">Experience shared by NASA workers. **(Some images)**</p>
                     <div class="content-grid">
                         <div class="main-content-section">
                             <p>Read inspiring stories and insights from individuals working at NASA, detailing their daily challenges, breakthroughs, and passion for space exploration.</p>
@@ -227,16 +222,14 @@
                 </section>
 
                 <section id="future-studies-section" class="content-section hidden">
-                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn"></i> Future of Biospace Studies</h2>
-                    <p class="content-intro">Explore the evolving landscape and scope in the field.</p>
+                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn" data-parent="career"></i> Future of Biospace Studies</h2>
+                    <p class="content-intro">Explore the evolving landscape and scope in the field. **(About scope in field)**</p>
                     <div class="content-grid">
                         <div class="main-content-section">
                             <h3>Key Areas of Growth:</h3>
                             <ul>
                                 <li><i class="fas fa-microscope"></i> Astrobiology and Exoplanet Habitability</li>
                                 <li><i class="fas fa-dna"></i> Space Genomics and Epigenetics</li>
-                                <li><i class="fas fa-robot"></i> AI and Robotics in Space Exploration</li>
-                                <li><i class="fas fa-lungs"></i> Human Health and Performance in Deep Space</li>
                             </ul>
                         </div>
                         <div class="image-container">
@@ -246,10 +239,9 @@
                     </div>
                 </section>
 
-
                 <section id="library-section" class="content-section hidden">
                     <h2 class="content-title">Library</h2>
-                    <p class="content-intro">Access our extensive collection of digital resources.</p>
+                    <p class="content-intro">Access our extensive collection of digital resources. **(Different versions)**</p>
 
                     <div class="main-content-section">
                         <h3>Resource Categories</h3>
