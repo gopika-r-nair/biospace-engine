@@ -9,12 +9,12 @@
 </head>
 <body>
 
-    <div class="main-container">
+    <div class="portal-layout">
         <aside class="sidebar">
             <div class="logo">EXBIO Portal</div>
             <nav class="nav-menu">
                 <ul>
-                    <li><a href="#" class="nav-item" data-page="about-us">About Us</a></li>
+                    <li><a href="#" class="nav-item active" data-page="about-us">About Us</a></li>
                     <li><a href="#" class="nav-item" data-page="news">News</a></li>
                     
                     <li class="dropdown-parent">
@@ -46,27 +46,83 @@
             </nav>
         </aside>
 
-        <div class="content-area">
+        <div class="content-wrapper">
             <header class="header">
-                <div class="user-info">
-                    <i class="fa-solid fa-user-circle user-icon"></i>
-                    <span class="user-text">User: Dr. A. Smith</span>
-                    <button id="settings-btn" class="header-btn" title="Settings">⚙️</button>
-                    <button id="logout-btn" class="header-btn">Logout</button>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <i class="fas fa-user-circle user-icon"></i>
+                        <span class="user-name">User: Dr. A. Smith</span>
+                    </div>
+                    <button id="settings-btn" class="header-action-btn" title="Settings">⚙️</button>
+                    <button id="logout-btn" class="header-action-btn">Logout</button>
                 </div>
             </header>
 
-            <main id="main-content" class="main-content">
-                </main>
+            <main class="main-content-area">
+                
+                <div id="about-us-page" class="page-content active">
+                    <div class="page-header">
+                        <h1>About Us</h1>
+                        <p>If aitte ae portal fain that ankorating pait a he Hnual arseld on toi reske the dapat thou Yoat I'm ar uaflets on shenoid knurp sihduerten tly doity.</p>
+                    </div>
+                    <div class="page-body">
+                        <div class="page-text-content">
+                            <h2>Major Studies in Biospace Research</h2>
+                            <ul>
+                                <li><i class="fas fa-check-circle"></i> Publication Library</li>
+                                <li><i class="fas fa-check-circle"></i> Submit a new application</li>
+                            </ul>
+                            <p>Detailed information about ongoing research projects, past findings, and future initiatives in the field of biospace exploration. Our teams are dedicated to understanding life in extreme environments and ensuring human survival in space.</p>
+                            <p>Explore our vast collection of scientific papers and apply for research grants to contribute to our mission.</p>
+                        </div>
+                        <div class="page-image-placeholder">
+                            <img id="content-image" src="img/about-us.jpg" alt="About Us Section Image">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="publications-page" class="page-content">
+                    <div class="page-header">
+                        <h1>Our Publications Library</h1>
+                        <p>Explore the comprehensive list of scientific papers and research articles from the EXBIO community, dynamically loaded from the PMC data stream on GitHub.</p>
+                    </div>
+                    <div id="publications-data-table">
+                        <p class="loading-message">Loading publication data...</p>
+                    </div>
+                </div>
+
+                <div id="news-page" class="page-content">
+                    <div class="page-header"><h1>Latest News</h1><p>Stay up-to-date with the latest discoveries and announcements.</p></div>
+                </div>
+                <div id="pub-announcements-page" class="page-content">
+                    <div class="page-header"><h1>Publications > Announcements</h1></div>
+                </div>
+                <div id="pub-submit-page" class="page-content">
+                    <div class="page-header"><h1>Publications > Submit a New Publication</h1></div>
+                </div>
+                <div id="act-qa-page" class="page-content">
+                    <div class="page-header"><h1>Activities > Question and Answer section</h1></div>
+                </div>
+                <div id="act-interactives-page" class="page-content">
+                    <div class="page-header"><h1>Activities > Interactives</h1></div>
+                </div>
+                <div id="car-nasa-page" class="page-content">
+                    <div class="page-header"><h1>Career > Life at NASA</h1></div>
+                </div>
+                <div id="car-future-page" class="page-content">
+                    <div class="page-header"><h1>Career > Future of Biospace Studies</h1></div>
+                </div>
+                <div id="library-page" class="page-content">
+                    <div class="page-header"><h1>Library</h1></div>
+                </div>
+
+            </main>
         </div>
     </div>
 
     <button id="chatbot-toggle" class="chatbot-toggle" title="Chatbot">❓</button>
-
-    <div id="chatbot-window" class="chatbot-window" style="display: none;">
-        <div class="chatbot-header">
-            EXBIO-AI Chatbot
-        </div>
+    <div id="chatbot-window" class="chatbot-window">
+        <div class="chatbot-header">EXBIO-AI Chatbot</div>
         <div class="chatbot-body">
             <p>Hello! How can I assist with the portal today? You ask me about: 1. Publications 2. Activities/Features 3. Get Help</p>
         </div>
@@ -76,7 +132,7 @@
         </div>
     </div>
 
-    <div id="settings-modal" class="modal" style="display: none;">
+    <div id="settings-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <h2>Settings</h2>
