@@ -2,11 +2,10 @@
 
 let allPublications = [];
 let currentRole = null;
-const PUBLICATIONS_CSV_URL = 'publications_pmc.csv'; // Assumes the file is in the same directory
+let currentActiveTab = 'about'; // Default starting tab
+const PUBLICATIONS_CSV_URL = 'publications_pmc.csv'; 
 
 // Dummy Data to simulate the content of publications_pmc.csv
-// NOTE: For the live submission, you MUST have the actual CSV file.
-// The structure is critical for the code to work correctly.
 const DUMMY_CSV_DATA = `ID,Title,Abstract Summary,Year,PMC_Link
 1,Effects of Microgravity on Human Bone Density,A study analyzing the impact of long-duration spaceflight on bone loss in astronauts. Findings inform countermeasure development.,2022,https://example.com/pub/1
 2,Radiation Shielding for Lunar Habitats,Research into new composite materials for shielding against cosmic radiation in deep space missions.,2023,https://example.com/pub/2
@@ -20,8 +19,6 @@ const DUMMY_CSV_DATA = `ID,Title,Abstract Summary,Year,PMC_Link
 10,Impact of Space Radiation on Gene Expression,Study on how different types of space radiation affect gene expression patterns in human cells.,2023,https://example.com/pub/10
 `;
 
-
-// Function to parse the CSV data (simplified for this hackathon context)
 function parseCSV(csvText) {
     const lines = csvText.trim().split('\n');
     const headers = lines[0].split(',');
@@ -32,7 +29,6 @@ function parseCSV(csvText) {
         if (values.length === headers.length) {
             let row = {};
             for (let j = 0; j < headers.length; j++) {
-                // Trim the values and headers
                 row[headers[j].trim()] = values[j].trim();
             }
             data.push(row);
@@ -41,23 +37,19 @@ function parseCSV(csvText) {
     return data;
 }
 
-// Fetch the data from the CSV file
 async function loadPublications() {
     try {
         const response = await fetch(PUBLICATIONS_CSV_URL);
         if (!response.ok) {
-            console.warn(`Could not fetch actual data from ${PUBLICATIONS_CSV_URL}. Using dummy data.`);
             allPublications = parseCSV(DUMMY_CSV_DATA);
         } else {
             const csvText = await response.text();
             allPublications = parseCSV(csvText);
         }
     } catch (error) {
-        console.error("Error loading data:", error);
         allPublications = parseCSV(DUMMY_CSV_DATA);
     }
     
-    // Final processing after data is loaded/set
     renderPublications(allPublications);
     populateYearFilter();
     updateRowCount(allPublications.length);
@@ -69,13 +61,21 @@ async function loadPublications() {
 
 function renderPublications(publications) {
     const tbody = document.querySelector('#publications-table tbody');
-    tbody.innerHTML = ''; // Clear existing rows
+    tbody.innerHTML = '';
+    
+    if (publications.length === 0) {
+        const row = tbody.insertRow();
+        const cell = row.insertCell();
+        cell.colSpan = 5;
+        cell.textContent = "No publications found matching your criteria.";
+        return;
+    }
 
     publications.forEach(pub => {
         const row = tbody.insertRow();
         row.insertCell().textContent = pub.ID;
         row.insertCell().textContent = pub.Title;
-        row.insertCell().textContent = pub['Abstract Summary'].substring(0, 100) + '...'; // Truncate summary
+        row.insertCell().textContent = pub['Abstract Summary'].substring(0, 100) + '...';
         row.insertCell().textContent = pub.Year;
         
         const linkCell = row.insertCell();
@@ -145,7 +145,7 @@ function addMessage(text, type, linkData = null) {
     }
 
     chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to latest
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 function respondToChat(message) {
@@ -153,7 +153,6 @@ function respondToChat(message) {
     let responseText = "I found this relevant data, but please refine your question for a specific answer.";
     let link = null;
     
-    // Keyword-based search simulation using the real, loaded data
     const keywords = msg.split(' ');
     let bestMatch = null;
     let maxMatches = 0;
@@ -174,13 +173,10 @@ function respondToChat(message) {
     });
 
     if (bestMatch && maxMatches > 0) {
-        // Direct answer simulation based on keywords
         if (msg.includes('bone') || msg.includes('microgravity')) {
-            responseText = `Based on current research, long-term microgravity is known to cause bone density loss in astronauts. Countermeasures are under development. See the linked research for details.`;
+            responseText = `Based on current research, long-term microgravity is known to cause bone density loss in astronauts. See the linked research for details.`;
         } else if (msg.includes('radiation') || msg.includes('shielding')) {
-            responseText = `Protecting crews from space radiation is critical. Research focuses on advanced shielding materials for habitats and spacecraft. The following publication explores this area.`;
-        } else if (msg.includes('plant') || msg.includes('food')) {
-             responseText = `To support long-duration missions, NASA is researching closed-loop systems for growing food in space. Find out more about resource cycling here.`;
+            responseText = `Protecting crews from space radiation is critical. Research focuses on advanced shielding materials. The following publication explores this area.`;
         } else {
             responseText = `I found a highly relevant publication for your query based on keywords. The central theme of this research is: "${bestMatch.Title}".`;
         }
@@ -200,7 +196,70 @@ function respondToChat(message) {
 }
 
 
-// --- 4. ROLE SELECTION AND UI MANAGEMENT ---
+// --- 4. UI MANAGEMENT (TABS, DROPDOWNS, ROLES) ---
+
+function showTab(tabId) {
+    // 1. Deactivate all content and buttons
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+    
+    // 2. Hide all dropdown content
+    document.querySelectorAll('.dropdown-content').forEach(content => content.style.display = 'none');
+
+    // 3. Activate new content
+    const newTabContent = document.getElementById(tabId);
+    if (newTabContent) {
+        newTabContent.classList.add('active');
+        currentActiveTab = tabId;
+
+        // 4. Find and activate the button/dropdown chain
+        const clickedButton = document.querySelector(`.nav-button[data-tab="${tabId}"]`) || 
+                              document.querySelector(`.nav-button[data-tab-main="${tabId}"]`);
+        
+        if (clickedButton) {
+            clickedButton.classList.add('active');
+            
+            // If it's a sub-tab, activate its parent main tab too (for visual consistency)
+            const parentDropdown = clickedButton.closest('.dropdown');
+            if (parentDropdown) {
+                parentDropdown.querySelector('.dropdown-main').classList.add('active');
+            }
+        }
+    }
+}
+
+function handleTabClick(e) {
+    const tabId = e.target.dataset.tab;
+    const tabMainId = e.target.dataset.tabMain;
+
+    if (tabId) {
+        // Clicks a content tab (e.g., 'pub-library', 'about', 'news')
+        showTab(tabId);
+    } else if (tabMainId) {
+        // Clicks a main dropdown button (e.g., 'Publications', 'Activities')
+        const dropdownContent = document.querySelector(`[data-dropdown="${tabMainId}"]`);
+        
+        // Toggle the dropdown visibility
+        if (dropdownContent) {
+            // Close all other dropdowns
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                if (content !== dropdownContent) content.style.display = 'none';
+            });
+
+            // Toggle the current one
+            if (dropdownContent.style.display === 'block') {
+                dropdownContent.style.display = 'none';
+            } else {
+                dropdownContent.style.display = 'block';
+                // Automatically switch to the first sub-tab if available
+                const firstSubTab = dropdownContent.querySelector('.nav-button[data-tab]');
+                if (firstSubTab) {
+                    showTab(firstSubTab.dataset.tab);
+                }
+            }
+        }
+    }
+}
 
 function showRoleModal() {
     document.getElementById('role-selector-modal').style.display = 'block';
@@ -215,10 +274,12 @@ function setRole(role) {
     document.getElementById('user-role-display').textContent = `Role: ${role}`;
     hideRoleModal();
     updateRoleSpecificContent();
+    // Ensure the default tab is shown after role is set
+    showTab(currentActiveTab); 
 }
 
 function updateRoleSpecificContent() {
-    // 1. Manage Role Tip Visibility
+    // Manage Role Tip Visibility
     document.querySelectorAll('.role-tip').forEach(tip => {
         const roles = tip.dataset.roleTarget.split(',');
         if (roles.includes(currentRole)) {
@@ -227,54 +288,56 @@ function updateRoleSpecificContent() {
             tip.style.display = 'none';
         }
     });
+}
 
-    // 2. Manage Specific Career Content
-    const careerCards = document.querySelectorAll('.career-card');
-    careerCards.forEach(card => {
-        // Example logic: Mission Architect is more relevant for Manager/Architect roles
-        if (card.querySelector('h3').textContent.includes('Mission Architect') && (currentRole === 'Manager' || currentRole === 'Architect')) {
-            card.style.borderLeftColor = 'yellow'; // Highlight relevant card
+function handleQuizCheck(e) {
+    const correct = e.target.dataset.correct;
+    const selected = document.querySelector('input[name="q1"]:checked');
+    const feedback = document.querySelector('.quiz-feedback');
+    
+    if (selected) {
+        if (selected.value === correct) {
+            feedback.textContent = 'Correct! Bone density loss is a major challenge.';
+            feedback.className = 'quiz-feedback feedback-correct';
         } else {
-             card.style.borderLeftColor = 'var(--color-accent)';
+            feedback.textContent = 'Incorrect. The primary effect is bone density loss.';
+            feedback.className = 'quiz-feedback feedback-wrong';
         }
-    });
+    } else {
+        feedback.textContent = 'Please select an answer.';
+        feedback.className = 'quiz-feedback feedback-wrong';
+    }
 }
 
 
 // --- 5. EVENT LISTENERS AND INITIALIZATION ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // A. Initial Data Load
     loadPublications(); 
-    
-    // B. Show Role Selection on start
     showRoleModal(); 
 
-    // C. Role Selector Event Listeners
+    // A. Role Selector
     document.querySelectorAll('.role-button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            setRole(e.target.dataset.role);
-        });
+        button.addEventListener('click', (e) => setRole(e.target.dataset.role));
     });
     document.getElementById('change-role-btn').addEventListener('click', showRoleModal);
 
-
-    // D. Tab Switching
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            e.target.classList.add('active');
-            document.getElementById(e.target.dataset.tab).classList.add('active');
-        });
-    });
-
-    // E. Publications Search and Filter
+    // B. Navigation/Tab Switching (Handles all main and sub-tabs)
+    document.querySelector('.tabs').addEventListener('click', handleTabClick);
+    
+    // C. Publications Search and Filter
     document.getElementById('publication-search').addEventListener('input', handleSearchAndFilter);
     document.getElementById('year-filter').addEventListener('change', handleSearchAndFilter);
 
-    // F. Chatbot Input
+    // D. Chatbot (Floating Modal)
+    const chatbotModal = document.getElementById('chatbot-modal');
+    document.getElementById('fixed-chatbot-btn').addEventListener('click', () => {
+        chatbotModal.style.display = 'flex';
+    });
+    document.getElementById('close-chatbot-btn').addEventListener('click', () => {
+        chatbotModal.style.display = 'none';
+    });
+    
     const chatInput = document.getElementById('chat-input');
     const sendBtn = document.getElementById('send-chat-btn');
     
@@ -291,23 +354,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') handleChat();
     });
 
-    // G. Quiz Activity
-    document.querySelector('.check-answer-btn').addEventListener('click', (e) => {
-        const correct = e.target.dataset.correct;
-        const selected = document.querySelector('input[name="q1"]:checked');
-        const feedback = document.querySelector('.quiz-feedback');
-        
-        if (selected) {
-            if (selected.value === correct) {
-                feedback.textContent = 'Correct! Bone density loss is a major challenge.';
-                feedback.className = 'quiz-feedback feedback-correct';
-            } else {
-                feedback.textContent = 'Incorrect. The primary effect is bone density loss.';
-                feedback.className = 'quiz-feedback feedback-wrong';
-            }
-        } else {
-            feedback.textContent = 'Please select an answer.';
-            feedback.className = 'quiz-feedback feedback-wrong';
+    // E. Quiz Activity Check
+    const quizButton = document.querySelector('.check-answer-btn');
+    if (quizButton) {
+        quizButton.addEventListener('click', handleQuizCheck);
+    }
+
+    // F. Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-content').forEach(content => content.style.display = 'none');
         }
     });
 });
