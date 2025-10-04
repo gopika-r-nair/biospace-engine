@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXBIO Portal Clone</title>
-    <link rel="stylesheet" href="styles.css"> 
+    <title>EXBIO Portal</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -27,25 +27,24 @@
 
             <nav class="sidebar">
                 <ul class="nav-list">
-                    <li class="nav-item"><a href="#"><i class="fas fa-info-circle"></i> About Us</a></li>
-                    <li class="nav-item active"><a href="#"><i class="fas fa-book"></i> Publications</a></li>
-                    <li class="nav-item"><a href="#"><i class="fas fa-newspaper"></i> News</a></li>
-                    <li class="nav-item has-dropdown">
+                    <li class="nav-item" data-section="about-us"><a href="#"><i class="fas fa-info-circle"></i> About Us</a></li>
+                    <li class="nav-item active" data-section="publications"><a href="#"><i class="fas fa-book"></i> Publications</a></li>
+                    <li class="nav-item" data-section="news"><a href="#"><i class="fas fa-newspaper"></i> News</a></li>
+                    <li class="nav-item has-dropdown" data-section="activities">
                         <a href="#"><i class="fas fa-running"></i> Activities <i class="fas fa-chevron-down dropdown-icon"></i></a>
                         <ul class="sub-menu">
-                            <li><a href="#">Sub-Activity 1</a></li>
-                            <li><a href="#">Sub-Activity 2</a></li>
+                            <li data-section="interactivities"><a href="#">Interactivities</a></li>
+                            <li data-section="events"><a href="#">Events</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item has-dropdown">
-                        <a href="#"><i class="fas fa-running"></i> Activities <i class="fas fa-chevron-down dropdown-icon"></i></a>
+                    <li class="nav-item" data-section="career">
+                        <a href="#"><i class="fas fa-briefcase"></i> Career <i class="fas fa-chevron-down dropdown-icon"></i></a>
                         <ul class="sub-menu">
-                            <li><a href="#">Sub-Activity 3</a></li>
-                            <li><a href="#">Sub-Activity 4</a></li>
+                            <li data-section="life-at-nasa"><a href="#">Life at NASA</a></li>
+                            <li data-section="future-studies"><a href="#">Future of Biospace Studies</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a href="#"><i class="fas fa-briefcase"></i> Career</a></li>
-                    <li class="nav-item"><a href="#"><i class="fas fa-book-reader"></i> Library</a></li>
+                    <li class="nav-item" data-section="library"><a href="#"><i class="fas fa-book-reader"></i> Library</a></li>
                 </ul>
 
                 <button class="chatbot-trigger-btn" id="chatbot-trigger">
@@ -71,21 +70,199 @@
             </nav>
 
             <main class="content-area">
-                <h2 class="content-title">About Aus</h2>
-                <p class="content-intro">If alite ae portal toin that anlorating pait a he Hrtual arseld on toi reske the dapat thou Yot Im ar uarlefts on shenoid kourp sihdueten uly doliy.</p>
+                <section id="publications-section" class="content-section active">
+                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn"></i> Publications</h2>
+                    <p class="content-intro">Explore our latest research and publications.</p>
 
-                <div class="main-content-section">
-                    <h3>Major Studies in Biospace Research</h3>
-                    <ul class="research-list">
-                        <li><i class="fas fa-check-circle check-icon"></i> Publication Library</li>
-                        <li><i class="fas fa-check-circle check-icon"></i> Submit a new application</li>
-                    </ul>
-                    <span class="role-tip">role-tip</span>
-                </div>
+                    <div class="publication-table">
+                        <div class="table-header">
+                            <span>Research Title</span>
+                            <span>Link</span>
+                            <span>Click to get CSV</span>
+                        </div>
+                        <div class="table-row">
+                            <span>A Study on Galactic Dust Composition</span>
+                            <span><a href="#" target="_blank">View PDF</a></span>
+                            <span><button class="download-btn"><i class="fas fa-download"></i></button></span>
+                        </div>
+                        <div class="table-row">
+                            <span>Impact of Microgravity on Plant Growth</span>
+                            <span><a href="#" target="_blank">View PDF</a></span>
+                            <span><button class="download-btn"><i class="fas fa-download"></i></button></span>
+                        </div>
+                        <div class="table-row">
+                            <span>Biospace Radiation Effects on Human Cells</span>
+                            <span><a href="#" target="_blank">View PDF</a></span>
+                            <span><button class="download-btn"><i class="fas fa-download"></i></button></span>
+                        </div>
+                    </div>
 
-                <div class="image-placeholder">
-                    Some image placeholder
-                </div>
+                    <div class="main-content-section" style="margin-top: 30px;">
+                        <h3>Submit a New Publication</h3>
+                        <p>Define your title, abstract, and any relevant personal details.</p>
+                        <form class="publication-form">
+                            <input type="text" placeholder="Publication Title" required>
+                            <textarea placeholder="Abstract / Description" rows="5" required></textarea>
+                            <input type="text" placeholder="Your Name (Optional)">
+                            <input type="email" placeholder="Your Email (Optional)">
+                            <button type="submit" class="submit-pub-btn">Submit</button>
+                            <a href="#" class="help-link">Click for help</a>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="about-us-section" class="content-section hidden">
+                    <h2 class="content-title">About Us</h2>
+                    <p class="content-intro">If alite ae portal toin that anlorating pait a he Hrtual arseld on toi reske the dapat thou Yot Im ar uarlefts on shenoid kourp sihdueten uly doliy.</p>
+
+                    <div class="content-grid">
+                        <div class="main-content-section">
+                            <h3>Major Studies in Biospace Research</h3>
+                            <ul class="research-list">
+                                <li><i class="fas fa-check-circle check-icon"></i> Publication Library</li>
+                                <li><i class="fas fa-check-circle check-icon"></i> Submit a new application</li>
+                            </ul>
+                            <span class="role-tip">role-tip</span>
+                        </div>
+                        <div class="image-container">
+                            <p>Here's an image related to About Us.</p>
+                            <img src="https://picsum.photos/id/1015/400/250" alt="About Us Image">
+                        </div>
+                    </div>
+                </section>
+
+                <section id="news-section" class="content-section hidden">
+                    <h2 class="content-title">News & Announcements</h2>
+                    <p class="content-intro">Stay updated with the latest happenings at EXBIO.</p>
+
+                    <div class="news-feed">
+                        <div class="news-item">
+                            <h3>Groundbreaking Discovery in Exoplanet Research</h3>
+                            <p class="news-date">October 26, 2023</p>
+                            <img src="https://picsum.photos/id/237/300/180" alt="Exoplanet image" class="news-image">
+                            <p>Our team has identified a new exoplanet with potential for liquid water. This discovery opens new avenues for understanding extraterrestrial life.</p>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                        <div class="news-item">
+                            <h3>New Partnership for AI in Biospace</h3>
+                            <p class="news-date">October 20, 2023</p>
+                            <img src="https://picsum.photos/id/250/300/180" alt="AI partnership image" class="news-image">
+                            <p>EXBIO has partnered with TechCorp to develop cutting-edge AI solutions for analyzing complex biological data from space missions.</p>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="activities-section" class="content-section hidden">
+                    <h2 class="content-title">Activities</h2>
+                    <p class="content-intro">Engage with our various interactive programs and events.</p>
+
+                    <div class="content-grid">
+                        <div class="main-content-section">
+                            <h3>Upcoming Events</h3>
+                            <ul>
+                                <li><i class="fas fa-calendar-alt"></i> Virtual Seminar: "Future of Space Medicine" - Nov 15th</li>
+                                <li><i class="fas fa-calendar-alt"></i> Workshop: "Data Visualization in Biospace" - Dec 2nd</li>
+                                <li><i class="fas fa-calendar-alt"></i> Annual Conference: "Biospace Innovations 2024" - Jan 20-22nd</li>
+                            </ul>
+                        </div>
+                        <div class="image-container">
+                            <p>Image of activities/events.</p>
+                            <img src="https://picsum.photos/id/1005/400/250" alt="Activities Image">
+                        </div>
+                    </div>
+                </section>
+
+                <section id="interactivities-section" class="content-section hidden">
+                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn"></i> Interactivities</h2>
+                    <p class="content-intro">Participate in our educational games and simulations.</p>
+                    <div class="interactivities-list">
+                        <div class="interactivity-item">
+                            <h4>Game 1: Asteroid Miner</h4>
+                            <p>Explore an asteroid field, mine resources, and learn about space geology.</p>
+                            <button class="interactivity-btn">Click to Game 1</button>
+                        </div>
+                        <div class="interactivity-item">
+                            <h4>Game 2: Mars Colony Builder</h4>
+                            <p>Design and manage your own sustainable colony on Mars.</p>
+                            <button class="interactivity-btn">Click to Game 2</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="career-section" class="content-section hidden">
+                    <h2 class="content-title">Career Opportunities</h2>
+                    <p class="content-intro">Join our team and contribute to cutting-edge biospace research.</p>
+
+                    <div class="content-grid">
+                        <div class="main-content-section">
+                            <h3>Current Openings</h3>
+                            <ul>
+                                <li><i class="fas fa-user-tie"></i> Research Scientist - Astrobiology</li>
+                                <li><i class="fas fa-user-tie"></i> Data Analyst - Biospace Genomics</li>
+                                <li><i class="fas fa-user-tie"></i> Software Engineer - Simulation Systems</li>
+                            </ul>
+                            <button class="careers-btn">View All Openings</button>
+                        </div>
+                        <div class="image-container">
+                            <p>Image related to careers.</p>
+                            <img src="https://picsum.photos/id/1020/400/250" alt="Career Image">
+                        </div>
+                    </div>
+                </section>
+
+                <section id="life-at-nasa-section" class="content-section hidden">
+                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn"></i> Life at NASA</h2>
+                    <p class="content-intro">Experience shared by NASA workers.</p>
+                    <div class="content-grid">
+                        <div class="main-content-section">
+                            <p>Read inspiring stories and insights from individuals working at NASA, detailing their daily challenges, breakthroughs, and passion for space exploration.</p>
+                            <p>Learn about different roles, projects, and the culture that drives innovation.</p>
+                        </div>
+                        <div class="image-container">
+                            <p>NASA Astronaut Image</p>
+                            <img src="https://picsum.photos/id/97/400/250" alt="NASA Image">
+                        </div>
+                    </div>
+                </section>
+
+                <section id="future-studies-section" class="content-section hidden">
+                    <h2 class="content-title"><i class="fas fa-arrow-left back-btn"></i> Future of Biospace Studies</h2>
+                    <p class="content-intro">Explore the evolving landscape and scope in the field.</p>
+                    <div class="content-grid">
+                        <div class="main-content-section">
+                            <h3>Key Areas of Growth:</h3>
+                            <ul>
+                                <li><i class="fas fa-microscope"></i> Astrobiology and Exoplanet Habitability</li>
+                                <li><i class="fas fa-dna"></i> Space Genomics and Epigenetics</li>
+                                <li><i class="fas fa-robot"></i> AI and Robotics in Space Exploration</li>
+                                <li><i class="fas fa-lungs"></i> Human Health and Performance in Deep Space</li>
+                            </ul>
+                        </div>
+                        <div class="image-container">
+                            <p>Futuristic Biospace Image</p>
+                            <img src="https://picsum.photos/id/90/400/250" alt="Future Studies Image">
+                        </div>
+                    </div>
+                </section>
+
+
+                <section id="library-section" class="content-section hidden">
+                    <h2 class="content-title">Library</h2>
+                    <p class="content-intro">Access our extensive collection of digital resources.</p>
+
+                    <div class="main-content-section">
+                        <h3>Resource Categories</h3>
+                        <ul class="library-categories">
+                            <li><i class="fas fa-book-open"></i> E-books & Journals</li>
+                            <li><i class="fas fa-video"></i> Video Lectures</li>
+                            <li><i class="fas fa-file-alt"></i> Research Papers</li>
+                            <li><i class="fas fa-database"></i> Datasets</li>
+                        </ul>
+                        <button class="library-btn">Browse All Resources</button>
+                    </div>
+                </section>
+
             </main>
 
         </div>
