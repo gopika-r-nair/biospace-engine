@@ -1,188 +1,265 @@
+// Basic interactivity: page switching, dropdown toggles, CSV fetch + parse, chatbot, settings modal
+
 document.addEventListener('DOMContentLoaded', () => {
-    const sidebarLinks = document.querySelectorAll('.nav-menu a');
-    const pageContents = document.querySelectorAll('.page-content');
-    
-    // --- Configuration ---
-    // URL to the RAW CSV file on your GitHub repository
-    const PUBLICATIONS_CSV_URL = 'https://raw.githubusercontent.com/gopika-r-nair/biospace-engine/main/publications_pmc.csv';
-    const PUBLICATIONS_TABLE_CONTAINER = document.getElementById('publications-data-table');
+  // Page routing: links with data-page
+  const links = document.querySelectorAll('[data-page]');
+  const pages = document.querySelectorAll('.page');
 
-    // --- Page Switching Logic ---
-    function setActivePage(pageId) {
-        // 1. Deactivate all pages and links
-        pageContents.forEach(page => page.classList.remove('active'));
-        sidebarLinks.forEach(link => link.classList.remove('active'));
-
-        // 2. Activate the selected page/link
-        const newPage = document.getElementById(pageId + '-page');
-        const newLink = document.querySelector(`[data-page="${pageId}"]`);
-        
-        if (newPage) newPage.classList.add('active');
-        if (newLink) newLink.classList.add('active');
-
-        // Handle active state for parent of a sub-link
-        const subLink = document.querySelector(`[data-page="${pageId}"]`);
-        if (subLink && subLink.closest('.dropdown-parent')) {
-             subLink.closest('.dropdown-parent').querySelector('.nav-item').classList.add('active');
-        }
-
-        // 3. Special handling for Publications (CSV Load)
-        if (pageId === 'publications') {
-            loadPublicationsCSV();
-        }
-    }
-
-    // Initialize: Set 'About Us' as the default active page on load
-    setActivePage('about-us');
-
-    // Add event listeners for navigation links
-    sidebarLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const pageId = this.getAttribute('data-page');
-
-            if (this.parentNode.classList.contains('dropdown-parent') && this.classList.contains('nav-item')) {
-                // If it's the dropdown parent, toggle open/close
-                this.parentNode.classList.toggle('open');
-                // Also switch the page to the parent's default view
-                setActivePage(pageId);
-            } else if (pageId) {
-                // If it's a direct link or a sub-link, switch the page
-                setActivePage(pageId);
-                
-                // Close all other dropdowns
-                document.querySelectorAll('.dropdown-parent').forEach(p => {
-                    if (p !== this.parentNode) {
-                        p.classList.remove('open');
-                    }
-                });
-            }
-        });
+  function showPage(id){
+    pages.forEach(p => p.classList.toggle('active', p.id === id + '-page'));
+    // highlight nav items
+    document.querySelectorAll('.nav-link, .nav-sublink').forEach(n => {
+      n.classList.toggle('active', n.dataset.page === id);
     });
+    // If publications page -> load CSV
+    if(id === 'publications') loadPublications();
+  }
 
-    // --- CSV Publications Data Loading Logic ---
-    async function loadPublicationsCSV() {
-        // Check if data is already loaded to avoid re-fetching on every click
-        if (PUBLICATIONS_TABLE_CONTAINER.querySelector('table')) {
-            return;
-        }
-
-        PUBLICATIONS_TABLE_CONTAINER.innerHTML = '<p class="loading-message">Fetching data from GitHub...</p>';
-
-        try {
-            const response = await fetch(PUBLICATIONS_CSV_URL);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const csvText = await response.text();
-            renderTable(csvText);
-
-        } catch (error) {
-            console.error("Failed to load CSV file:", error);
-            PUBLICATIONS_TABLE_CONTAINER.innerHTML = '<p class="loading-message" style="color: red;">Error: Could not load publications data. Check the GitHub file path.</p>';
-        }
-    }
-
-    // Function to parse CSV text and generate HTML table
-    function renderTable(csv) {
-        // Split by newline, filtering out empty lines
-        const allRows = csv.split(/\r?\n/).filter(row => row.trim() !== '');
-        if (allRows.length <= 1) { // 1 row is just the header
-            PUBLICATIONS_TABLE_CONTAINER.innerHTML = '<p class="loading-message">The CSV file is empty or contains only headers.</p>';
-            return;
-        }
-
-        const table = document.createElement('table');
-        const tbody = document.createElement('tbody');
-        const thead = document.createElement('thead');
-
-        // Split data by comma, respecting quoted fields (simple regex split)
-        // This is a basic approach and might break on complex CSVs, but should work for clean data.
-        const csvSplitter = (row) => row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(d => d.trim().replace(/^"|"$/g, ''));
-
-
-        // Headers (First row of CSV)
-        const headerRow = csvSplitter(allRows[0]);
-        const headerTR = document.createElement('tr');
-        headerRow.forEach(headerText => {
-            const th = document.createElement('th');
-            th.textContent = headerText;
-            headerTR.appendChild(th);
-        });
-        thead.appendChild(headerTR);
-        table.appendChild(thead);
-
-        // Data Rows (Remaining rows)
-        for (let i = 1; i < allRows.length; i++) {
-            const data = csvSplitter(allRows[i]);
-            
-            // Skip if the row doesn't have the expected number of columns
-            if (data.length !== headerRow.length) continue; 
-
-            const tr = document.createElement('tr');
-
-            data.forEach(cellData => {
-                const td = document.createElement('td');
-                td.textContent = cellData;
-                tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-        }
-
-        PUBLICATIONS_TABLE_CONTAINER.innerHTML = ''; // Clear loading message
-        table.appendChild(tbody);
-        PUBLICATIONS_TABLE_CONTAINER.appendChild(table);
-    }
-    
-    // --- Modal/Settings Logic ---
-    const settingsBtn = document.getElementById('settings-btn');
-    const modal = document.getElementById('settings-modal');
-    const closeBtn = document.querySelector('.modal .close-btn');
-    const settingTabs = document.querySelectorAll('.setting-tab');
-    const settingsNavLinks = document.querySelectorAll('.settings-nav a');
-
-    if (settingsBtn) {
-        settingsBtn.onclick = function() { modal.style.display = "block"; }
-    }
-    if (closeBtn) {
-        closeBtn.onclick = function() { modal.style.display = "none"; }
-    }
-    window.onclick = function(event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    }
-
-    settingsNavLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const tabId = this.getAttribute('data-setting-tab');
-
-            // Deactivate all links and tabs
-            settingsNavLinks.forEach(l => l.classList.remove('active'));
-            settingTabs.forEach(t => t.classList.remove('active'));
-
-            // Activate current link and corresponding tab
-            this.classList.add('active');
-            document.getElementById(tabId + '-settings').classList.add('active');
-        });
+  links.forEach(l=>{
+    l.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const page = l.getAttribute('data-page');
+      if(page) showPage(page);
+      // On small screens collapse dropdowns
     });
+  });
 
-    // --- Chatbot Logic ---
-    const chatbotToggle = document.getElementById('chatbot-toggle');
-    const chatbotWindow = document.getElementById('chatbot-window');
-    
-    if (chatbotToggle && chatbotWindow) {
-        // Initialize chatbot window to be hidden
-        chatbotWindow.style.display = 'none'; 
-        
-        chatbotToggle.addEventListener('click', () => {
-            if (chatbotWindow.style.display === 'none' || chatbotWindow.style.display === '') {
-                chatbotWindow.style.display = 'flex';
-            } else {
-                chatbotWindow.style.display = 'none';
-            }
-        });
+  // Dropdown toggle buttons in sidebar
+  document.querySelectorAll('.dropdown-toggle').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const name = btn.getAttribute('data-target');
+      const dd = document.getElementById(name + '-dropdown');
+      if(!dd) return;
+      dd.style.display = dd.style.display === 'flex' ? 'none' : 'flex';
+    });
+  });
+
+  // Sidebar toggle (mobile)
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  sidebarToggle?.addEventListener('click', ()=>{
+    document.querySelector('.sidebar').classList.toggle('collapsed');
+  });
+
+  // Chatbot toggle logic
+  const chatToggle = document.getElementById('chat-toggle');
+  const chatbot = document.getElementById('chatbot-widget');
+  const chatClose = document.getElementById('chat-close');
+  const chatSend = document.getElementById('chat-send');
+  const chatInput = document.getElementById('chat-input-field');
+  chatToggle.addEventListener('click', ()=> {
+    chatbot.classList.toggle('visible');
+  });
+  chatClose.addEventListener('click', ()=> chatbot.classList.remove('visible'));
+  chatSend.addEventListener('click', sendChat);
+  chatInput.addEventListener('keypress', (e)=> { if(e.key === 'Enter') sendChat(); });
+
+  function sendChat(){
+    const txt = chatInput.value.trim();
+    if(!txt) return;
+    appendChat('user', txt);
+    chatInput.value = '';
+    // Demo bot response: echo with canned help
+    setTimeout(()=> {
+      const resp = `Demo assistant: I can help locate publications. Try searching "microgravity yeast 2015" or open the Publications page.`;
+      appendChat('bot', resp);
+    }, 600);
+  }
+
+  function appendChat(who, text){
+    const body = document.getElementById('chat-body');
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + (who === 'bot' ? 'bot' : 'user');
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  // Settings modal
+  const settingsBtn = document.getElementById('settings-btn');
+  const settingsModal = document.getElementById('settings-modal');
+  const settingsClose = document.getElementById('settings-close');
+  const settingsCancel = document.getElementById('settings-cancel');
+
+  settingsBtn.addEventListener('click', ()=> settingsModal.classList.remove('hidden'));
+  settingsClose.addEventListener('click', ()=> settingsModal.classList.add('hidden'));
+  settingsCancel.addEventListener('click', ()=> settingsModal.classList.add('hidden'));
+  document.getElementById('settings-save').addEventListener('click', () => {
+    // save some demo settings to localStorage
+    const name = document.getElementById('setting-username').value || 'Dr. A. Smith';
+    const theme = document.getElementById('setting-theme').value;
+    const analytics = document.getElementById('setting-analytics').checked;
+    localStorage.setItem('exbio-username', name);
+    localStorage.setItem('exbio-theme', theme);
+    localStorage.setItem('exbio-analytics', analytics);
+    alert('Settings saved (demo).');
+    settingsModal.classList.add('hidden');
+    // reflect name in header
+    document.querySelector('.username').textContent = name;
+  });
+
+  // Tabs inside settings
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.getAttribute('data-tab');
+      document.querySelectorAll('.tab-panel').forEach(panel=>{
+        panel.classList.toggle('hidden', panel.id !== 'tab-' + tab);
+      });
+    });
+  });
+
+  // Load saved settings
+  (function loadSettings(){
+    const name = localStorage.getItem('exbio-username');
+    if(name) document.querySelector('.username').textContent = name;
+    const theme = localStorage.getItem('exbio-theme');
+    if(theme && theme === 'light') document.documentElement.style.setProperty('--bg','#f5f7fb');
+  })();
+
+  // Simple submit publication demo
+  document.getElementById('submit-publication-form').addEventListener('submit', e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const title = fd.get('title');
+    document.getElementById('submit-pub-msg').textContent = `Received: "${title}" (demo — not saved to CSV).`;
+    e.target.reset();
+  });
+
+  // PUBLICATIONS: fetch CSV and render table
+  const csvUrl = 'https://raw.githubusercontent.com/gopika-r-nair/biospace-engine/main/publications_pmc.csv';
+  const pubStatus = document.getElementById('publications-status');
+  const pubTableWrap = document.getElementById('publications-data-table');
+  const pubSearch = document.getElementById('pub-search');
+  const pubRefresh = document.getElementById('pub-refresh');
+
+  let publications = []; // cached
+
+  async function loadPublications(force=false){
+    // If already loaded and not forced, render cached
+    if(publications.length && !force){ renderPublications(publications); return; }
+
+    pubStatus.textContent = 'Loading publications...';
+    pubTableWrap.innerHTML = '';
+    try{
+      const resp = await fetch(csvUrl);
+      if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const text = await resp.text();
+      publications = parseCSV(text);
+      pubStatus.textContent = `Loaded ${publications.length} records.`;
+      renderPublications(publications);
+    }catch(err){
+      pubStatus.textContent = 'Error loading publications: ' + err.message;
+      console.error(err);
+    }
+  }
+
+  // Refresh button
+  pubRefresh.addEventListener('click', ()=> loadPublications(true));
+  // search filtering
+  pubSearch.addEventListener('input', (e)=>{
+    const q = e.target.value.trim().toLowerCase();
+    if(!q) return renderPublications(publications);
+    const filtered = publications.filter(r => {
+      return (r.title && r.title.toLowerCase().includes(q)) ||
+             (r.authors && r.authors.toLowerCase().includes(q));
+    });
+    renderPublications(filtered);
+  });
+
+  // naive CSV parser (handles basic quoted fields)
+  function parseCSV(text){
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+    if(lines.length === 0) return [];
+    // header
+    const header = splitCSVLine(lines[0]);
+    const rows = [];
+    for(let i=1;i<lines.length;i++){
+      const cols = splitCSVLine(lines[i]);
+      if(cols.length === 0) continue;
+      const obj = {};
+      for(let j=0;j<header.length;j++){
+        obj[header[j].trim()] = cols[j] ? cols[j].trim() : '';
+      }
+      rows.push(obj);
+    }
+    return rows;
+  }
+
+  // Splits a single CSV line, handling basic quotes
+  function splitCSVLine(line){
+    const result = [];
+    let cur = '';
+    let inQuotes = false;
+    for(let i=0;i<line.length;i++){
+      const ch = line[i];
+      if(ch === '"' ){
+        // if next is also quote, it's an escaped quote
+        if(inQuotes && line[i+1] === '"'){
+          cur += '"'; i++; continue;
+        }
+        inQuotes = !inQuotes; continue;
+      }
+      if(ch === ',' && !inQuotes){
+        result.push(cur); cur = ''; continue;
+      }
+      cur += ch;
+    }
+    result.push(cur);
+    return result;
+  }
+
+  function renderPublications(rows){
+    pubTableWrap.innerHTML = '';
+    if(!rows || rows.length === 0){
+      pubTableWrap.innerHTML = '<div class="status">No publications to show.</div>'; return;
     }
 
+    // Choose columns to show if available
+    const keys = Object.keys(rows[0]);
+    // prefer Title, Authors, Year, Link if present (case-insensitive)
+    const prefer = ['title','authors','year','link','journal'];
+    const cols = [];
+    prefer.forEach(p=>{
+      const k = keys.find(h=>h.toLowerCase()===p);
+      if(k) cols.push(k);
+    });
+    // add rest
+    keys.forEach(k=>{ if(!cols.includes(k)) cols.push(k); });
+
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const thr = document.createElement('tr');
+    cols.forEach(c=> {
+      const th = document.createElement('th');
+      th.textContent = c;
+      thr.appendChild(th);
+    });
+    thead.appendChild(thr);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    rows.forEach(r=>{
+      const tr = document.createElement('tr');
+      cols.forEach(c=>{
+        const td = document.createElement('td');
+        let val = r[c] || '';
+        // if it looks like a URL, show anchor
+        if(val && (val.startsWith('http://') || val.startsWith('https://'))){
+          const a = document.createElement('a'); a.href = val; a.target = '_blank'; a.rel='noopener';
+          a.textContent = val.length > 60 ? val.slice(0,60) + '…' : val;
+          td.appendChild(a);
+        } else {
+          td.textContent = val;
+        }
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    pubTableWrap.appendChild(table);
+  }
+
+  // On first load show about page
+  showPage('about');
 });
