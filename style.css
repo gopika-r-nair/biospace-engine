@@ -7,25 +7,25 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f7f9;
+    background-color: #f4f7f9; /* Light grey background for the overall page */
     color: #333;
     line-height: 1.6;
 }
 
-/* --- Portal Layout --- */
+/* --- Portal Layout: Ensures everything scales to full height/width --- */
 .portal-layout {
     display: flex;
-    min-height: 100vh;
-    background-color: #f8f8f8;
+    min-height: 100vh; /* Scales to full viewport height */
+    background-color: #f8f8f8; /* Light background for content area */
 }
 
 /* --- Sidebar Navigation --- */
 .sidebar {
     width: 280px;
-    background-color: #364a5c;
+    background-color: #364a5c; /* Darker blue-grey for sidebar */
     color: #ecf0f1;
     padding-top: 20px;
-    position: fixed;
+    position: fixed; /* Fixed position for orientation */
     height: 100%;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
     z-index: 100;
@@ -66,10 +66,10 @@ body {
 }
 
 .nav-menu a.active {
-    background-color: #47b2e4;
+    background-color: #47b2e4; /* Accent blue for active */
     color: white;
     font-weight: bold;
-    border-left: 5px solid #3498db;
+    border-left: 5px solid #3498db; /* Blue accent bar on active */
     padding-left: 20px;
 }
 
@@ -99,10 +99,10 @@ body {
     color: #fff;
 }
 
-/* --- Content Wrapper and Header --- */
+/* --- Content Wrapper and Header: Key to proper scaling --- */
 .content-wrapper {
-    margin-left: 280px;
-    flex-grow: 1;
+    margin-left: 280px; /* Offset for fixed sidebar: Critical for orientation */
+    flex-grow: 1; /* Allows content to take up remaining space */
     display: flex;
     flex-direction: column;
 }
@@ -155,14 +155,15 @@ body {
     color: #333;
 }
 
-/* --- Main Content Area --- */
+/* --- Main Content Area: Ensures the content area is prominent --- */
 .main-content-area {
     padding: 30px;
     flex-grow: 1;
     background-color: #fff;
-    margin: 20px;
+    margin: 20px; /* Margin around content area */
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    min-height: calc(100vh - 100px); /* Ensures it fills space even if content is short */
 }
 
 .page-content {
@@ -251,7 +252,7 @@ body {
 }
 
 
-/* --- Publications Table Styling (New) --- */
+/* --- Publications Table Styling --- */
 #publications-data-table table {
     width: 100%;
     border-collapse: collapse;
@@ -265,7 +266,7 @@ body {
     padding: 12px 15px;
     text-align: left;
     border: 1px solid #ddd;
-    vertical-align: top; /* Align content to the top */
+    vertical-align: top;
 }
 
 #publications-data-table th {
@@ -274,8 +275,6 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    position: sticky; /* Sticky header for better scrolling */
-    top: 0;
 }
 
 #publications-data-table tr:nth-child(even) {
@@ -331,7 +330,7 @@ body {
     border-radius: 10px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     z-index: 1000;
-    display: none; /* Initial state hidden via JS */
+    display: none; /* Initial state hidden by default in CSS */
     flex-direction: column;
     overflow: hidden;
 }
