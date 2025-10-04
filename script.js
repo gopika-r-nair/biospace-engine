@@ -317,8 +317,9 @@ function updateRoleSpecificContent() {
 
 function handleQuizCheck(e) {
     const correct = e.target.dataset.correct;
-    const selected = document.querySelector('input[name="q1"]:checked');
-    const feedback = document.querySelector('.quiz-feedback');
+    const quizContainer = e.target.closest('.activity-card');
+    const selected = quizContainer.querySelector('input[name="q1"]:checked');
+    const feedback = quizContainer.querySelector('.quiz-feedback');
     
     if (selected) {
         if (selected.value === correct) {
@@ -368,7 +369,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('year-filter').addEventListener('change', handleSearchAndFilter);
 
     // E. Activities Tab Quiz
-    document.querySelector('.check-answer-btn').addEventListener('click', handleQuizCheck);
+    // Note: Using event delegation or specific selector for the Check Answer button
+    document.querySelectorAll('.activity-card .check-answer-btn[data-correct]').forEach(btn => {
+        btn.addEventListener('click', handleQuizCheck);
+    });
     
     // F. Chatbot Logic Fix
     document.getElementById('fixed-chatbot-btn').addEventListener('click', toggleChatbotModal);
