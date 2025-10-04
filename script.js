@@ -173,7 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatbotWindow = document.getElementById('chatbot-window');
     
     if (chatbotToggle && chatbotWindow) {
-        // Chatbot window is hidden via CSS, but we can manage it with JS
+        // Initialize chatbot window to be hidden
+        chatbotWindow.style.display = 'none'; 
+        
         chatbotToggle.addEventListener('click', () => {
             if (chatbotWindow.style.display === 'none' || chatbotWindow.style.display === '') {
                 chatbotWindow.style.display = 'flex';
