@@ -1,994 +1,538 @@
-let allPublications = [];
-let currentRole = null;
-let currentActiveTab = 'about'; // Default starting tab
-const PUBLICATIONS_CSV_URL = 'publications_pmc.csv';
-
-// Dummy Data to simulate the content of publications_pmc.csv
-const DUMMY_CSV_DATA = `ID,Title,Abstract Summary,Year,PMC_Link
-1,Effects of Microgravity on Human Bone Density,A study analyzing the impact of long-duration spaceflight on bone loss in astronauts. Findings inform countermeasure development.,2022,https://example.com/pub/1
-2,Radiation Shielding for Lunar Habitats,Research into new composite materials for shielding against cosmic radiation in deep space missions.,2023,https://example.com/pub/2
-3,Plant Growth in Closed-Loop Life Support Systems,Investigating optimal nutrient delivery for crops grown on the ISS to support bioregenerative life support.,2021,https://example.com/pub/3
-4,Psychological Effects of Isolation on Crew,Longitudinal study of crew behavioral health during simulated Mars missions to identify risk factors.,2024,https://example.com/pub/4
-5,Microbial Ecology of the International Space Station,Mapping the diversity of fungal and bacterial communities on ISS surfaces and their potential impact on hardware and crew health.,2023,https://example.com/pub/5
-6,Automated Health Monitoring for Deep Space,Development of AI-driven systems to diagnose and treat common illnesses without Earth support.,2024,https://example.com/pub/6
-7,Metabolic Changes During Long-Duration Spaceflight,A comprehensive analysis of astronaut metabolism and its implications for nutrition planning beyond LEO.,2022,https://example.com/pub/7
-8,Advanced Water Recycling Technologies for Space,Testing next-generation water recovery systems for highly efficient closed-loop environmental control.,2021,https://example.com/pub/8
-9,Bone Density Loss in Long-Term Missions,A follow-up study confirming initial findings on bone density. Crucial data for mission architects.,2024,https://example.com/pub/9
-10,Impact of Space Radiation on Gene Expression,Study on how different types of space radiation affect gene expression patterns in human cells.,2023,https://example.com/pub/10
-`;
-
-function parseCSV(csvText) {
-    const lines = csvText.trim().split('\n');
-    const headers = lines[0].split(',');
-    const data = [];
-
-    for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',');
-        if (values.length === headers.length) {
-            let row = {};
-            for (let j = 0; j < headers.length; j++) {
-                row[headers[j].trim()] = values[j].trim();
-            }
-            data.push(row);
-        }
-    }
-    return data;
-}
-
-async function loadPublications() {
-    try {
-        const response = await fetch(PUBLICATIONS_CSV_URL);
-        if (!response.ok) {
-            allPublications = parseCSV(DUMMY_CSV_DATA);
-        } else {
-            const csvText = await response.text();
-            allPublications = parseCSV(csvText);
-        }
-    } catch (error) {
-        allPublications = parseCSV(DUMMY_CSV_DATA);
-    }
-   
-    renderPublications(allPublications);
-    populateYearFilter();
-    updateRowCount(allPublications.length);
-    enableChatInput();
-}
-
-
-// --- 2. PUBLICATIONS TAB LOGIC ---
-
-function renderPublications(publications) {
-    const tbody = document.querySelector('#publications-table tbody');
-    tbody.innerHTML = '';
-   
-    if (publications.length === 0) {
-        const row = tbody.insertRow();
-        const cell = row.insertCell();
-        cell.colSpan = 5;
-        cell.textContent = "No publications found matching your criteria.";
-        return;
-    }
-
-    publications.forEach(pub => {
-        const row = tbody.insertRow();
-        row.insertCell().textContent = pub.ID;
-        row.insertCell().textContent = pub.Title;
-        row.insertCell().textContent = pub['Abstract Summary'].substring(0, 100) + '...';
-        row.insertCell().textContent = pub.Year;
-       
-        const linkCell = row.insertCell();
-        const link = document.createElement('a');
-        link.href = pub.PMC_Link;
-        link.target = '_blank';
-        link.textContent = 'View';
-        linkCell.appendChild(link);
-    });
-    updateRowCount(publications.length);
-}
-
-function populateYearFilter() {
-    const yearFilter = document.getElementById('year-filter');
-    const years = [...new Set(allPublications.map(pub => pub.Year))].sort((a, b) => b - a);
-   
-    years.forEach(year => {
-        const option = document.createElement('option');
-        option.value = year;
-        option.textContent = year;
-        yearFilter.appendChild(option);
-    });
-}
-
-function handleSearchAndFilter() {
-    const searchTerm = document.getElementById('publication-search').value.toLowerCase();
-    const selectedYear = document.getElementById('year-filter').value;
-
-    const filtered = allPublications.filter(pub => {
-        const matchesSearch = searchTerm === '' ||
-            pub.Title.toLowerCase().includes(searchTerm) ||
-            pub['Abstract Summary'].toLowerCase().includes(searchTerm);
-       
-        const matchesYear = selectedYear === '' || pub.Year === selectedYear;
-
-        return matchesSearch && matchesYear;
-    });
-
-    renderPublications(filtered);
-}
-
-function updateRowCount(count) {
-    document.getElementById('row-count').textContent = `Showing ${count} of ${allPublications.length} publications.`;
-}
-
-
-// --- 3. CHATBOT LOGIC (SIMULATED AI) ---
-
-function enableChatInput() {
-    document.getElementById('chat-input').disabled = false;
-    document.getElementById('send-chat-btn').disabled = false;
-}
-
-function addMessage(text, type, linkData = null) {
-    const chatMessages = document.getElementById('chat-messages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${type}`;
-    messageDiv.textContent = text;
-   
-    if (linkData) {
-        const link = document.createElement('a');
-        link.href = linkData.url;
-        link.target = '_blank';
-        link.className = 'chat-link';
-        link.textContent = `Source: ${linkData.title} (ID: ${linkData.id})`;
-        messageDiv.appendChild(link);
-    }
-
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function respondToChat(message) {
-    const msg = message.toLowerCase();
-    let responseText = "I found this relevant data, but please refine your question for a specific answer.";
-    let link = null;
-   
-    const keywords = msg.split(' ');
-    let bestMatch = null;
-    let maxMatches = 0;
-
-    allPublications.forEach(pub => {
-        let matchCount = 0;
-        const pubText = (pub.Title + ' ' + pub['Abstract Summary']).toLowerCase();
-        keywords.forEach(keyword => {
-            if (keyword.length > 3 && pubText.includes(keyword)) {
-                matchCount++;
-            }
-        });
-
-        if (matchCount > maxMatches) {
-            maxMatches = matchCount;
-            bestMatch = pub;
-        }
-    });
-
-    if (bestMatch && maxMatches > 0) {
-        if (msg.includes('bone') || msg.includes('microgravity')) {
-            responseText = `Based on current research, long-term microgravity is known to cause bone density loss in astronauts. See the linked research for details.`;
-        } else if (msg.includes('radiation') || msg.includes('shielding')) {
-            responseText = `Protecting crews from space radiation is critical. Research focuses on advanced shielding materials. The following publication explores this area.`;
-        } else {
-            responseText = `I found a highly relevant publication for your query based on keywords. The central theme of this research is: "${bestMatch.Title}".`;
-        }
-       
-        link = {
-            title: bestMatch.Title.substring(0, 50) + '...',
-            url: bestMatch.PMC_Link,
-            id: bestMatch.ID
-        };
-    } else if (msg.includes('hello') || msg.includes('hi')) {
-        responseText = "Hello! I am ready to help you navigate Space Biology research. Try asking about 'radiation shielding' or 'bone density loss'.";
-    }
-
-    setTimeout(() => {
-        addMessage(responseText, 'system', link);
-    }, 800);
-}
-
-
-// --- 4. UI MANAGEMENT (TABS, DROPDOWNS, ROLES) ---
-
-function showTab(tabId) {
-    // 1. Deactivate all content and buttons
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
-   
-    // 2. Hide all dropdown content
-    document.querySelectorAll('.dropdown-content').forEach(content => content.style.display = 'none');
-
-    // 3. Activate new content
-    const newTabContent = document.getElementById(tabId);
-    if (newTabContent) {
-        newTabContent.classList.add('active');
-        currentActiveTab = tabId;
-
-        // 4. Find and activate the button/dropdown chain
-        const clickedButton = document.querySelector(`.nav-button[data-tab="${tabId}"]`) ||
-                              document.querySelector(`.nav-button[data-tab-main="${tabId}"]`);
-       
-        if (clickedButton) {
-            clickedButton.classList.add('active');
-           
-            // If it's a sub-tab, activate its parent main tab too (for visual consistency)
-            const parentDropdown = clickedButton.closest('.dropdown');
-            if (parentDropdown) {
-                parentDropdown.querySelector('.dropdown-main').classList.add('active');
-            }
-        }
-    }
-}
-
-function handleTabClick(e) {
-    const tabId = e.target.dataset.tab;
-    const tabMainId = e.target.dataset.tabMain;
-
-    if (tabId) {
-        // Clicks a content tab (e.g., 'pub-library', 'about', 'news')
-        showTab(tabId);
-    } else if (tabMainId) {
-        // Clicks a main dropdown button (e.g., 'Publications', 'Activities')
-        const dropdownContent = document.querySelector(`[data-dropdown="${tabMainId}"]`);
-       
-        // Toggle the dropdown visibility
-        if (dropdownContent) {
-            // Close all other dropdowns
-            document.querySelectorAll('.dropdown-content').forEach(content => {
-                if (content !== dropdownContent) content.style.display = 'none';
-            });
-
-            // Toggle the current one
-            if (dropdownContent.style.display === 'block') {
-                dropdownContent.style.display = 'none';
-            } else {
-                dropdownContent.style.display = 'block';
-                // Automatically switch to the first sub-tab if available
-                const firstSubTab = dropdownContent.querySelector('.nav-button[data-tab]');
-                if (firstSubTab) {
-                    showTab(firstSubTab.dataset.tab);
-                }
-            }
-        }
-    }
-}
-
-function showRoleModal() {
-    document.getElementById('role-selector-modal').style.display = 'block';
-}
-
-function hideRoleModal() {
-    document.getElementById('role-selector-modal').style.display = 'none';
-}
-
-function setRole(role) {
-    currentRole = role;
-    document.getElementById('user-role-display').textContent = `Role: ${role}`;
-    hideRoleModal();
-    updateRoleSpecificContent();
-    // Ensure the default tab is shown after role is set
-    showTab(currentActiveTab);
-}
-
-function updateRoleSpecificContent() {
-    // Manage Role Tip Visibility
-    document.querySelectorAll('.role-tip').forEach(tip => {
-        const roles = tip.dataset.roleTarget.split(',');
-        if (roles.includes(currentRole)) {
-            tip.style.display = 'block';
-        } else {
-            tip.style.display = 'none';
-        }
-    });
-}
-
-function handleQuizCheck(e) {
-    const correct = e.target.dataset.correct;
-    const selected = document.querySelector('input[name="q1"]:checked');
-    const feedback = document.querySelector('.quiz-feedback');
-   
-    if (selected) {
-        if (selected.value === correct) {
-            feedback.textContent = 'Correct! Bone density loss is a major challenge.';
-            feedback.className = 'quiz-feedback feedback-correct';
-        } else {
-            feedback.textContent = 'Incorrect. The primary effect is bone density loss.';
-            feedback.className = 'quiz-feedback feedback-wrong';
-        }
-    } else {
-        feedback.textContent = 'Please select an answer.';
-        feedback.className = 'quiz-feedback feedback-wrong';
-    }
-}
-
-
-// --- 5. EVENT LISTENERS AND INITIALIZATION ---
-
-document.addEventListener('DOMContentLoaded', () => {
-    loadPublications();
-    showRoleModal();
-
-    // A. Role Selector
-    document.querySelectorAll('.role-button').forEach(button => {
-        button.addEventListener('click', (e) => setRole(e.target.dataset.role));
-    });
-    document.getElementById('change-role-btn').addEventListener('click', showRoleModal);
-
-    // B. Navigation/Tab Switching (Handles all main and sub-tabs)
-    document.querySelector('.tabs').addEventListener('click', handleTabClick);
-   
-    // C. Publications Search and Filter
-    document.getElementById('publication-search').addEventListener('input', handleSearchAndFilter);
-    document.getElementById('year-filter').addEventListener('change', handleSearchAndFilter);
-
-    // D. Chatbot (Floating Modal)
-    const chatbotModal = document.getElementById('chatbot-modal');
-    document.getElementById('fixed-chatbot-btn').addEventListener('click', () => {
-        chatbotModal.style.display = 'flex';
-    });
-    document.getElementById('close-chatbot-btn').addEventListener('click', () => {
-        chatbotModal.style.display = 'none';
-    });
-   
-    const chatInput = document.getElementById('chat-input');
-    const sendBtn = document.getElementById('send-chat-btn');
-   
-    const handleChat = () => {
-        const message = chatInput.value.trim();
-        if (message === "") return;
-        addMessage(message, 'user');
-        respondToChat(message);
-        chatInput.value = '';
-    };
-
-    sendBtn.addEventListener('click', handleChat);
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleChat();
-    });
-
-    // E. Quiz Activity Check
-    const quizButton = document.querySelector('.check-answer-btn');
-    if (quizButton) {
-        quizButton.addEventListener('click', handleQuizCheck);
-    }
-
-    // F. Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-content').forEach(content => content.style.display = 'none');
-        }
-    });
-});
-
-
-
-/* --- Global Styles & Dark Mode Base --- */
-:root {
-    --color-background: #1e1e2f;
-    --color-card-bg: #27293d;
-    --color-text: #ffffff;
-    --color-primary: #8d56f8; /* A vibrant purple */
-    --color-accent: #f89e56; /* Orange for highlights */
-    --color-border: #44476a;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background-color: var(--color-background);
-    color: var(--color-text);
-    padding: 20px;
-}
-
-.dashboard-container {
-    max-width: 1300px;
-    margin: 0 auto;
-    background-color: var(--color-card-bg);
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    padding: 20px;
-}
-
-/* --- Header & Persistent Utilities --- */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0 20px 0;
-    border-bottom: 1px solid var(--color-border);
-}
-
-header h1 {
-    color: var(--color-primary);
-    font-size: 2em;
-}
-
-.header-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-#user-role-display {
-    background-color: var(--color-border);
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.9em;
-}
-
-#change-role-btn, #settings-btn { /* Persistent Utility Buttons */
-    background: none;
-    border: none;
-    color: var(--color-text);
-    cursor: pointer;
-    font-size: 1.2em;
-    padding: 5px;
-}
-#change-role-btn:hover, #settings-btn:hover {
-    color: var(--color-accent);
-}
-
-/* --- Main Navigation Tabs and Dropdown --- */
-.tabs {
-    display: flex;
-    margin-top: 20px;
-    border-bottom: 2px solid var(--color-border);
-}
-
-/* Navigation Button Styling (Used for main and sub-tabs) */
-.nav-button {
-    background: none;
-    border: none;
-    color: var(--color-text);
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: color 0.3s, border-bottom 0.3s, background-color 0.3s;
-    border-bottom: 3px solid transparent;
-    margin-right: 10px;
-    white-space: nowrap;
-}
-
-.nav-button:hover:not(.active) {
-    color: var(--color-accent);
-}
-
-.nav-button.active {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
-    font-weight: bold;
-}
-
-/* --- Dropdown Menu Styling --- */
-.dropdown {
-    position: relative;
-    display: inline-block;
-    margin-right: 10px;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: var(--color-card-bg);
-    min-width: 220px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
-    z-index: 20;
-    border-radius: 5px;
-    border: 1px solid var(--color-primary);
-    padding: 5px 0;
-}
-
-.dropdown-content .nav-button {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 10px 15px;
-    border-bottom: none;
-    margin-right: 0;
-}
-
-.dropdown-content .nav-button:hover {
-    background-color: var(--color-border);
-    color: var(--color-accent);
-    border-bottom-color: transparent;
-}
-
-/* --- Content & Shared Styles --- */
-
-.tab-content {
-    display: none;
-    padding: 20px 0;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.tab-content h2 {
-    color: var(--color-accent);
-    margin-bottom: 15px;
-    border-left: 4px solid var(--color-primary);
-    padding-left: 10px;
-}
-
-.role-tip {
-    background-color: #3b3d5b;
-    padding: 10px 15px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    font-style: italic;
-    color: #c0c0e0;
-}
-
-/* --- Publications Table Styles --- */
-.search-controls {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-#publication-search, #year-filter {
-    padding: 10px;
-    border: 1px solid var(--color-border);
-    border-radius: 5px;
-    background-color: #3b3d5b;
-    color: var(--color-text);
-    flex-grow: 1;
-}
-
-.table-scroll-container {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-}
-
-#publications-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9em;
-}
-
-#publications-table th, #publications-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--color-border);
-}
-
-#publications-table th {
-    background-color: var(--color-border);
-    color: var(--color-text);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-#publications-table a {
-    color: var(--color-accent);
-    text-decoration: none;
-}
-
-/* --- Activity Quiz Styles --- */
-.activity-card {
-    background-color: #3b3d5b;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-.quiz-options {
-    list-style: none;
-    margin: 15px 0;
-}
-.check-answer-btn {
-    background-color: var(--color-primary);
-    color: var(--color-text);
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.feedback-correct { color: #50fa7b; }
-.feedback-wrong { color: #ff5555; }
-
-/* --- Career Tab Styles --- */
-.career-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-.career-card {
-    background-color: #3b3d5b;
-    padding: 20px;
-    border-radius: 8px;
-    border-left: 5px solid var(--color-accent);
-}
-
-/* --- Fixed Chatbot Button and Modal --- */
-#fixed-chatbot-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: var(--color-primary);
-    color: var(--color-text);
-    border: none;
-    font-size: 2em;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-    z-index: 50;
-    transition: background-color 0.2s;
-}
-#fixed-chatbot-btn:hover {
-    background-color: var(--color-accent);
-}
-
-.chatbot-floating-modal {
-    position: fixed;
-    bottom: 100px;
-    right: 20px;
-    width: 350px;
-    height: 500px;
-    background-color: var(--color-card-bg);
-    border-radius: 10px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
-    display: none;
-    flex-direction: column;
-    z-index: 40;
-    padding: 15px;
-}
-
-#close-chatbot-btn {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    background: none;
-    border: none;
-    color: var(--color-text);
-    font-size: 1.5em;
-    cursor: pointer;
-}
-
-.chat-window {
-    flex-grow: 1;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background-color: #3b3d5b;
-    margin-top: 10px;
-}
-
-.chat-messages {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 15px;
-}
-
-.message {
-    padding: 8px 12px;
-    border-radius: 15px;
-    margin-bottom: 8px;
-    max-width: 85%;
-    font-size: 0.9em;
-    line-height: 1.4;
-}
-
-.message.system {
-    background-color: var(--color-primary);
-    margin-right: auto;
-}
-
-.message.user {
-    background-color: var(--color-accent);
-    color: #1e1e2f;
-    margin-left: auto;
-}
-
-.chat-link {
-    display: block;
-    margin-top: 5px;
-    font-size: 0.8em;
-    color: #eee;
-    text-decoration: underline;
-}
-
-.chat-input-container {
-    display: flex;
-    padding: 10px;
-    border-top: 1px solid var(--color-border);
-}
-
-#chat-input {
-    flex-grow: 1;
-    padding: 8px;
-    border: none;
-    border-radius: 5px 0 0 5px;
-    background-color: #44476a;
-    color: var(--color-text);
-}
-
-#send-chat-btn {
-    background-color: var(--color-primary);
-    color: var(--color-text);
-    border: none;
-    padding: 8px 12px;
-    border-radius: 0 5px 5px 0;
-    cursor: pointer;
-}
-#send-chat-btn:disabled, #chat-input:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* --- Modal for Role Selection (from previous file) --- */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.85);
-    padding-top: 50px;
-}
-
-.modal-content {
-    background-color: var(--color-card-bg);
-    margin: 10% auto;
-    padding: 30px;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 600px;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-}
-
-.roles-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.role-button {
-    background-color: var(--color-primary);
-    color: var(--color-text);
-    border: none;
-    padding: 15px 25px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1em;
-    transition: background-color 0.2s, transform 0.2s;
-}
-
-.role-button:hover {
-    background-color: var(--color-accent);
-    transform: translateY(-2px);
-}
-
-
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXBIO Portal: NASA Space Biology Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BioSpace Engine</title>
+<style>
+  :root {
+    --accent: #4CAF50;
+    --bg: #ffffff;
+    --card: #fbfbfb;
+    --text: #111;
+    --muted: #6b6b6b;
+  }
+  [data-theme="dark"]{
+    --bg:#0f1113; --card:#121315; --text:#e8e8e8; --muted:#9aa0a6;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+  /* top bar */
+  .topbar{position:sticky;top:0;z-index:1200;display:flex;align-items:center;padding:10px 18px;background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);border-bottom:1px solid rgba(0,0,0,0.04)}
+  .brand{font-weight:700;margin-right:16px}
+  nav.nav-left{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .nav-item{position:relative}
+  .nav-link{display:inline-block;padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:600;font-size:14px}
+  .nav-link:hover{background:rgba(0,0,0,0.04)}
+  .dropdown{position:absolute;top:calc(100% + 10px);left:0;min-width:240px;background:var(--card);box-shadow:0 12px 30px rgba(0,0,0,0.08);border-radius:10px;padding:10px;display:none}
+  .nav-item:hover .dropdown{display:block}
+  .dropdown a{display:block;padding:8px;border-radius:6px;text-decoration:none;color:var(--text)}
+  .dropdown a:hover{background:rgba(0,0,0,0.03)}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .icon-btn{padding:8px;border-radius:8px;border:0;background:transparent;cursor:pointer}
+  .btn{padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:white;font-weight:600;cursor:pointer}
+  .btn.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--text)}
+  /* profile compact */
+  .profile-compact{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:10px;cursor:pointer}
+  .profile-compact img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)}
+  .profile-compact .name{font-size:13px;line-height:1}
+  .profile-compact .small{font-size:12px;color:var(--muted)}
+  /* layout */
+  .container{max-width:1200px;margin:20px auto;padding:0 16px}
+  .grid{display:grid;grid-template-columns:1fr 340px;gap:20px}
+  @media (max-width:980px){.grid{grid-template-columns:1fr;padding-bottom:80px}}
+  .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.04)}
+  h1,h2{margin:0 0 12px 0}
+  p{margin:0 0 10px 0;color:var(--muted)}
+  /* pages */
+  .page{display:none}
+  .page.active{display:block}
+  /* publications */
+  .pub-item{padding:10px;border-radius:8px;margin-bottom:10px;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)}
+  .pub-title{font-weight:700}
+  .meta{font-size:13px;color:var(--muted)}
+  /* announcements */
+  .announcement{padding:10px;border-left:4px solid var(--accent);margin-bottom:10px}
+  /* qa */
+  .qa-item{margin-bottom:12px}
+  .q{font-weight:700}
+  .a{color:var(--muted);margin-top:6px}
+  /* simulations */
+  .sim-card{padding:12px;border-radius:8px;margin-bottom:10px;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)}
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:1400}
+  .modal{background:var(--card);padding:18px;border-radius:10px;width:94%;max-width:480px;box-shadow:0 14px 40px rgba(0,0,0,0.4)}
+  .form-row{margin-bottom:10px}
+  .form-row input,.form-row select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent;color:var(--text)}
+  .small{font-size:13px;color:var(--muted)}
+  /* chatbot */
+  .chat-toggle{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;box-shadow:0 12px 36px rgba(0,0,0,0.25);z-index:1500}
+  .chat-window{position:fixed;right:18px;bottom:84px;width:340px;height:440px;border-radius:12px;background:var(--card);box-shadow:0 18px 40px rgba(0,0,0,0.25);display:none;flex-direction:column;overflow:hidden;z-index:1500}
+  .chat-header{padding:10px 12px;background:linear-gradient(90deg,var(--accent),#2e8b3a);color:#fff;display:flex;justify-content:space-between;align-items:center}
+  .chat-body{padding:12px;flex:1;overflow:auto}
+  .chat-input{display:flex;padding:10px;border-top:1px solid rgba(0,0,0,0.06);gap:8px}
+  .chat-input input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
+  .msg{padding:8px 10px;border-radius:10px;margin-bottom:8px;max-width:78%}
+  .msg.bot{background:#efefef;color:#111}
+  .msg.user{background:var(--accent);color:#fff;margin-left:auto}
+  footer{padding:18px;text-align:center;color:var(--muted);font-size:13px;margin-top:24px}
+</style>
 </head>
-<body>
+<body data-theme="light">
 
-    <div id="role-selector-modal" class="modal">
-        <div class="modal-content">
-            <h2>Welcome to EXBIO Portal</h2>
-            <p>Select your role to tailor your dashboard experience and prioritize mission-critical information.</p>
-            <div class="roles-container">
-                <button class="role-button" data-role="Scientist">🔬 Scientist</button>
-                <button class="role-button" data-role="Manager">📊 Mission Manager</button>
-                <button class="role-button" data-role="Architect">🏗️ Systems Architect</button>
-                <button class="role-button" data-role="Visitor">👤 Public Visitor</button>
-            </div>
+  <!-- topbar -->
+  <div class="topbar" role="navigation" aria-label="Top Navigation">
+    <div class="brand">BioSpace Engine</div>
+
+    <nav class="nav-left" aria-label="Main Links">
+      <div class="nav-item"><a class="nav-link" href="#" data-page="home">About Us</a></div>
+
+      <div class="nav-item">
+        <a class="nav-link" href="#" aria-haspopup="true">Publications ▾</a>
+        <div class="dropdown" role="menu" aria-hidden="true">
+          <a href="#" data-page="publications">Publications</a>
+          <a href="#" data-page="submit-publication">Submit Publication</a>
+          <a href="#" data-page="announcements">Announcements</a>
         </div>
+      </div>
+
+      <div class="nav-item">
+        <a class="nav-link" href="#" aria-haspopup="true">Activities ▾</a>
+        <div class="dropdown">
+          <a href="#" data-page="qa">Q/A</a>
+          <a href="#" data-page="simulations">Simulations</a>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <a class="nav-link" href="#" aria-haspopup="true">Career ▾</a>
+        <div class="dropdown">
+          <a href="#" data-page="life-at-nasa">Life at NASA</a>
+          <a href="#" data-page="future-of-biospace">Future of Biospace Studies</a>
+        </div>
+      </div>
+
+      <div class="nav-item"><a class="nav-link" href="#" data-page="library">Library</a></div>
+      <div class="nav-item"><a class="nav-link" href="#" data-page="news">News</a></div>
+    </nav>
+
+    <div class="top-right">
+      <button id="settings-open" class="icon-btn" aria-label="Settings">⚙️</button>
+      <div id="auth-area">
+        <button id="login-open" class="btn">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- main content -->
+  <main class="container">
+    <div class="grid">
+      <div>
+
+        <!-- Home -->
+        <section id="home" class="page active card" aria-labelledby="home-heading">
+          <h1 id="home-heading">About BioSpace Engine</h1>
+          <p>BioSpace Engine aggregates summaries, publications, datasets and resources related to biology in space — experiments aboard the ISS, ground-analogs, and mission planning for lunar and Martian bioscience.</p>
+
+          <h2 style="margin-top:14px">Portal highlights</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px">
+            <div style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfb)">
+              <strong>OSDR experiments</strong>
+              <div class="small">Summaries and datasets from NASA's Open Science Data Repository for biological experiments in space.</div>
+            </div>
+            <div style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfb)">
+              <strong>Space Life Sciences Library</strong>
+              <div class="small">Consolidated literature and references supporting space life sciences research.</div>
+            </div>
+            <div style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfb)">
+              <strong>Simulations & Tools</strong>
+              <div class="small">Descriptions of available simulation tools for plant growth, microbe behavior, radiation effects and more.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Publications -->
+        <section id="publications" class="page card" aria-labelledby="pub-heading">
+          <h2 id="pub-heading">Publications</h2>
+          <p class="small">Representative publication entries (attempts to read <code>publications_pmc.csv</code> from repository; falls back to sample entries).</p>
+          <div id="pub-list" style="margin-top:12px"></div>
+        </section>
+
+        <!-- Submit Publication -->
+        <section id="submit-publication" class="page card">
+          <h2>Submit a Publication</h2>
+          <p class="small">Provide publication details or upload a PDF/DOI. This demo accepts static input and displays it locally (no backend).</p>
+          <div style="margin-top:12px">
+            <div class="form-row"><input id="sub-title" placeholder="Publication title"></div>
+            <div class="form-row"><input id="sub-authors" placeholder="Authors (comma separated)"></div>
+            <div class="form-row"><textarea id="sub-abstract" rows="4" placeholder="Abstract / summary"></textarea></div>
+            <div style="display:flex;gap:8px"><button id="sub-submit" class="btn">Submit (demo)</button><button id="sub-clear" class="btn ghost">Clear</button></div>
+            <div id="sub-feedback" class="small" style="margin-top:10px;color:var(--muted)"></div>
+          </div>
+        </section>
+
+        <!-- Announcements -->
+        <section id="announcements" class="page card">
+          <h2>Announcements</h2>
+          <p class="small">Latest portal announcements & community news.</p>
+          <div style="margin-top:12px">
+            <div class="announcement">
+              <strong>NASA Space Biology Challenge 2025</strong>
+              <div class="small">Call for abstracts and student participation — deadline: Dec 10, 2025 (placeholder).</div>
+            </div>
+            <div class="announcement">
+              <strong>New OSDR experiment dataset added</strong>
+              <div class="small">Dataset: Plant growth under partial gravity analog — sample summary available.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Q/A -->
+        <section id="qa" class="page card">
+          <h2>Questions & Answers</h2>
+          <p class="small">Curated Q/A about space biology (sampled from public NASA resources; placeholder answers for demo).</p>
+          <div id="qa-list" style="margin-top:12px"></div>
+        </section>
+
+        <!-- Simulations -->
+        <section id="simulations" class="page card">
+          <h2>Simulations</h2>
+          <p class="small">Descriptions of simulation tools and experiment types used to model biology in space.</p>
+          <div style="margin-top:12px">
+            <div class="sim-card">
+              <strong>Plant growth microgravity simulation</strong>
+              <div class="small">Simulate root orientation, nutrient flow, and water behavior for plants in microgravity conditions.</div>
+            </div>
+            <div class="sim-card">
+              <strong>Radiation exposure model</strong>
+              <div class="small">Model cellular radiation damage and shielding effects for orbital and deep-space missions.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Library -->
+        <section id="library" class="page card">
+          <h2>Library</h2>
+          <p class="small">Sample entries from NASA Space Life Sciences Library (NSLSL) and other repositories.</p>
+          <div style="margin-top:12px">
+            <div class="pub-item"><div class="pub-title">Spaceflight Effects on Microbial Communities</div><div class="meta">Journal — 2023 • Dataset: OSDR</div></div>
+            <div class="pub-item"><div class="pub-title">Plant Physiology in Microgravity</div><div class="meta">Conference — 2022 • NASA Technical Report</div></div>
+          </div>
+        </section>
+
+        <!-- Life at NASA -->
+        <section id="life-at-nasa" class="page card">
+          <h2>Life at NASA</h2>
+          <p class="small">Profiles and experiences: astronaut lab workflows, experimental procedures aboard the ISS, and training for biological investigations.</p>
+          <div style="margin-top:12px">
+            <div class="small">Astronauts follow strict protocols to collect biological samples — sample preparation, contamination control, and cold-chain storage are critical.</div>
+          </div>
+        </section>
+
+        <!-- Future of Biospace -->
+        <section id="future-of-biospace" class="page card">
+          <h2>Future of Biospace Studies</h2>
+          <p class="small">Overview of planned missions and research directions: lunar habitats, Mars life support testing, synthetic biology in space.</p>
+          <div style="margin-top:12px">
+            <div class="small">Research priorities include closed-loop life support, radiation protection, and long-duration physiology monitoring.</div>
+          </div>
+        </section>
+
+        <!-- News -->
+        <section id="news" class="page card">
+          <h2>News</h2>
+          <p class="small">Notable items and press — placeholder content for demo.</p>
+          <div style="margin-top:12px">
+            <div class="announcement"><strong>Artemis biology payloads announced</strong><div class="small">Payload selection for upcoming lunar missions includes plant and microbial studies.</div></div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- right column -->
+      <aside>
+        <div class="card">
+          <h3>Search Publications</h3>
+          <div style="margin-top:10px">
+            <input id="search-input" placeholder="Search title/author" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)">
+          </div>
+          <div style="margin-top:12px">
+            <button id="search-btn" class="btn">Search</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3>Featured Dataset</h3>
+          <p class="small">Plant growth in microgravity — dataset summary from OSDR (placeholder). Use OSDR to fetch real dataset records.</p>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3>Quick Links</h3>
+          <ul style="padding-left:16px;margin:8px 0;color:var(--muted)">
+            <li>NASA OSDR</li>
+            <li>NSLSL</li>
+            <li>NASA Task Book</li>
+          </ul>
+        </div>
+      </aside>
     </div>
 
-    <div class="dashboard-container">
-        <header>
-            <h1>EXBIO Portal</h1>
-            <div class="header-info">
-                <button id="settings-btn" title="Settings"><i class="fas fa-cog"></i></button>
-                <span id="user-role-display">Role: N/A</span>
-                <button id="change-role-btn" title="Change Role / Login"><i class="fas fa-user-circle"></i></button>
-            </div>
-        </header>
+    <footer>BioSpace Engine — demo portal • All content here is placeholder / demo text</footer>
+  </main>
 
-        <nav class="tabs">
-            <button class="nav-button active" data-tab="about">About Us</button>
-           
-            <div class="dropdown">
-                <button class="nav-button dropdown-main" data-tab-main="publications">Publications <i class="fas fa-caret-down"></i></button>
-                <div class="dropdown-content" data-dropdown="publications">
-                    <button class="nav-button" data-tab="pub-library">Publication Library</button>
-                    <button class="nav-button" data-tab="pub-announcements">Announcements</button>
-                    <button class="nav-button" data-tab="pub-submit">Submit a new application</button>
-                </div>
-            </div>
-
-            <button class="nav-button" data-tab="news">News</button>
-           
-            <div class="dropdown">
-                <button class="nav-button dropdown-main" data-tab-main="activities">Activities <i class="fas fa-caret-down"></i></button>
-                <div class="dropdown-content" data-dropdown="activities">
-                    <button class="nav-button" data-tab="act-qa">Q/A</button>
-                    <button class="nav-button" data-tab="act-interactives">Interactives</button>
-                </div>
-            </div>
-
-            <div class="dropdown">
-                <button class="nav-button dropdown-main" data-tab-main="career">Career <i class="fas fa-caret-down"></i></button>
-                <div class="dropdown-content" data-dropdown="career">
-                    <button class="nav-button" data-tab="car-life">Life at NASA</button>
-                    <button class="nav-button" data-tab="car-future">Future of biospace studies</button>
-                </div>
-            </div>
-           
-            <button class="nav-button" data-tab="library">Library</button>
-        </nav>
-
-        <main class="tab-content-container">
-           
-            <div id="about" class="tab-content active">
-                <h2>About Us</h2>
-                <p>Welcome to the EXBIO Portal, powered by the NASA Space Apps Challenge team. We aim to consolidate and visualize NASA's Space Biology research to support mission planning, research, and public education.</p>
-                <p class="role-tip" data-role-target="Scientist,Manager,Architect">This section provides background and links to key external resources.</p>
-            </div>
-
-            <div id="pub-library" class="tab-content">
-                <h2>Publication Library (Core Data)</h2>
-                <p class="role-tip" data-role-target="Scientist,Manager,Architect">Search the curated subset of real NASA publication data below.</p>
-
-                <div class="search-controls">
-                    <input type="text" id="publication-search" placeholder="Search by title, abstract, or keywords...">
-                    <select id="year-filter">
-                        <option value="">Filter by Year (All)</option>
-                    </select>
-                </div>
-               
-                <div class="publication-data-info">
-                    <span id="row-count">Loading data...</span>
-                </div>
-
-                <div class="table-scroll-container">
-                    <table id="publications-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Title</th>
-                                <th>Abstract Summary</th>
-                                <th>Year</th>
-                                <th>Link</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="pub-announcements" class="tab-content">
-                <h2>Publications Announcements</h2>
-                <p>No new publications or events announced today. Check back later for updates!</p>
-            </div>
-           
-            <div id="pub-submit" class="tab-content">
-                <h2>Submit a new application</h2>
-                <p class="role-tip" data-role-target="Scientist">Use this form to submit your idea or research abstract for consideration by the EXBIO team.</p>
-                <div class="form-placeholder">
-                    <p>*** Submission Form Placeholder ***</p>
-                    <p>Fields: Define your idea, Personal details/contact, Submit.</p>
-                </div>
-            </div>
-           
-            <div id="news" class="tab-content">
-                <h2>News & Updates</h2>
-                <p>Latest news from NASA Space Life Sciences. News includes recent breakthroughs and mission updates.</p>
-            </div>
-           
-            <div id="library" class="tab-content">
-                <h2>Library (External Resources)</h2>
-                <p>This section provides links to NASA Open Science Data Repositories and external tools.</p>
-            </div>
-
-            <div id="act-qa" class="tab-content">
-                <h2>Q/A (Questions and Answers)</h2>
-                <p class="role-tip" data-role-target="Visitor">This is a collection of Frequently Asked Questions about Space Biology.</p>
-                <p>***</p>
-                <h3>Q: What is the main challenge of long-duration spaceflight?</h3>
-                <p>A: The main challenges are radiation exposure, microgravity-induced health effects (bone loss, vision changes), and psychological isolation.</p>
-            </div>
-           
-            <div id="act-interactives" class="tab-content">
-                <h2>Interactives (Games & Simulations)</h2>
-                <p class="role-tip" data-role-target="Visitor">Engage with fun activities to learn about the challenges of living in space.</p>
-                <div class="activity-card">
-                    <h3>Quiz: Life in Space</h3>
-                    <p>What is the primary effect of long-term microgravity on the human body?</p>
-                    <ul class="quiz-options">
-                        <li><input type="radio" name="q1" value="a"> Increased muscle mass</li>
-                        <li><input type="radio" name="q1" value="b"> Bone density loss</li>
-                        <li><input type="radio" name="q1" value="c"> Enhanced vision</li>
-                    </ul>
-                    <button class="check-answer-btn" data-correct="b">Check Answer</button>
-                    <p class="quiz-feedback"></p>
-                </div>
-            </div>
-
-            <div id="car-life" class="tab-content">
-                <h2>Life at NASA</h2>
-                <p>Hear from NASA employees about their daily work and experience in the Space Life Sciences division.</p>
-                <div class="career-grid">
-                    <div class="career-card">
-                        <h3>Astronaut Health Specialist</h3>
-                        <p>Works directly with flight crews to monitor and maintain physical and mental well-being before, during, and after missions.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="car-future" class="tab-content">
-                <h2>Future of biospace studies</h2>
-                <p>This field is rapidly expanding to cover areas like personalized medicine in space, artificial gravity, and planetary protection.</p>
-                <div class="career-grid">
-                    <div class="career-card">
-                        <h3>Planetary Protection Officer</h3>
-                        <p>Ensures we do not contaminate other worlds with Earth microbes, and that samples returned to Earth are safely managed.</p>
-                    </div>
-                    <div class="career-card">
-                        <h3>Space Biologist</h3>
-                        <p>Focuses on how living organisms, from microbes to humans, adapt to or are affected by space environments.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="chatbot-modal" class="chatbot-floating-modal">
-                <button id="close-chatbot-btn">&times;</button>
-                <h2>EXBIO-AI Chatbot (Simulated)</h2>
-                <p class="role-tip" data-role-target="Scientist,Manager">The chatbot is programmed to provide answers grounded in the publication data available in this portal.</p>
-                <div class="chat-window">
-                    <div id="chat-messages" class="chat-messages">
-                        <div class="message system">
-                            Hello! I am EXBIO-AI, your Space Biology assistant. Ask me about radiation, long-duration missions, or microgravity effects.
-                        </div>
-                    </div>
-                    <div class="chat-input-container">
-                        <input type="text" id="chat-input" placeholder="Ask a question..." disabled>
-                        <button id="send-chat-btn" disabled><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>
-
-        </main>
+  <!-- chat -->
+  <div id="chat-toggle" class="chat-toggle" title="Open chat">💬</div>
+  <div id="chat-window" class="chat-window" role="dialog" aria-hidden="true">
+    <div class="chat-header">
+      <div>Bio Assistant</div>
+      <div style="display:flex;gap:8px">
+        <button id="chat-min" class="icon-btn" title="Minimize" style="color:rgba(255,255,255,0.95);background:transparent;border:0">—</button>
+        <button id="chat-close" class="icon-btn" title="Close" style="color:rgba(255,255,255,0.95);background:transparent;border:0">✕</button>
+      </div>
     </div>
-   
-    <button id="fixed-chatbot-btn" title="Open Chatbot"><i class="fas fa-question-circle"></i></button>
+    <div id="chat-body" class="chat-body">
+      <div class="msg bot">Hi — ask me about publications or resources (demo).</div>
+    </div>
+    <div class="chat-input">
+      <input id="chat-input" placeholder="Type a question..." />
+      <button id="chat-send" class="btn">Send</button>
+    </div>
+  </div>
 
-    <script src="script.js"></script>
+  <!-- login modal -->
+  <div id="modal-login" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="login-heading">
+      <h3 id="login-heading">Login or Create Account</h3>
+      <div id="login-form">
+        <div class="form-row"><input id="login-email" type="email" placeholder="Email"></div>
+        <div class="form-row"><input id="login-pass" type="password" placeholder="Password"></div>
+        <div style="display:flex;gap:8px"><button id="login-submit" class="btn">Login (demo)</button><button id="open-create" class="btn ghost">Create account</button></div>
+      </div>
+
+      <div id="create-form" style="display:none;margin-top:12px">
+        <div class="form-row"><input id="create-name" placeholder="Full name"></div>
+        <div class="form-row"><input id="create-email" type="email" placeholder="Email"></div>
+        <div class="form-row"><input id="create-pass" type="password" placeholder="Password"></div>
+        <div class="form-row"><input id="create-pass2" type="password" placeholder="Confirm password"></div>
+        <div style="display:flex;gap:8px"><button id="create-submit" class="btn">Create account</button><button id="back-login" class="btn ghost">Back</button></div>
+      </div>
+
+      <div id="login-msg" class="small" style="margin-top:10px;color:var(--muted)"></div>
+    </div>
+  </div>
+
+  <!-- settings modal -->
+  <div id="modal-settings" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="settings-heading">
+      <h3 id="settings-heading">Settings</h3>
+      <div class="form-row">
+        <label class="small">Font Size</label>
+        <select id="font-size">
+          <option value="14px">Small</option>
+          <option value="16px" selected>Normal</option>
+          <option value="18px">Large</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="small">Font Family</label>
+        <select id="font-family">
+          <option value="Inter, Arial, Helvetica, sans-serif" selected>Inter / Arial</option>
+          <option value="'Times New Roman', serif">Times New Roman</option>
+          <option value="'Courier New', monospace">Courier New</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="small">Theme</label>
+        <select id="theme-select">
+          <option value="light" selected>Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px"><button id="save-settings" class="btn">Apply</button><button id="close-settings" class="btn ghost">Close</button></div>
+    </div>
+  </div>
+
+<script>
+/* --- Navigation behavior --- */
+document.querySelectorAll('.nav-link[data-page], .dropdown a[data-page]').forEach(el=>{
+  el.addEventListener('click', (e)=>{
+    e.preventDefault();
+    const page = el.dataset.page;
+    if(!page) return;
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    const target = document.getElementById(page);
+    if(target) target.classList.add('active');
+    // update nav active
+    document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+    el.classList.add('active');
+    // scroll to top
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* --- Chat widget --- */
+const chatToggle = document.getElementById('chat-toggle');
+const chatWindow = document.getElementById('chat-window');
+const chatBody = document.getElementById('chat-body');
+chatToggle.addEventListener('click', ()=> {
+  chatWindow.style.display = (chatWindow.style.display === 'flex') ? 'none' : 'flex';
+  chatWindow.style.flexDirection = 'column';
+  chatWindow.setAttribute('aria-hidden', chatWindow.style.display === 'none');
+});
+document.getElementById('chat-close').addEventListener('click', ()=> { chatWindow.style.display='none' });
+document.getElementById('chat-min').addEventListener('click', ()=> { chatWindow.style.display='none' });
+
+function appendChat(text, who='bot'){
+  const d = document.createElement('div');
+  d.className = 'msg ' + (who==='bot' ? 'bot' : 'user');
+  d.textContent = text;
+  chatBody.appendChild(d);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+document.getElementById('chat-send').addEventListener('click', ()=>{
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text) return;
+  appendChat(text,'user');
+  input.value='';
+  // simulated response:
+  setTimeout(()=> appendChat('Demo assistant: This is a placeholder reply. Try asking about publications or Q/A.'), 600);
+});
+
+/* --- Login / Create Account --- */
+const modalLogin = document.getElementById('modal-login');
+document.getElementById('login-open').addEventListener('click', ()=> { modalLogin.style.display='flex'; modalLogin.setAttribute('aria-hidden','false') });
+document.getElementById('open-create').addEventListener('click', ()=> {
+  document.getElementById('login-form').style.display='none';
+  document.getElementById('create-form').style.display='block';
+});
+document.getElementById('back-login').addEventListener('click', ()=> {
+  document.getElementById('login-form').style.display='block';
+  document.getElementById('create-form').style.display='none';
+});
+document.getElementById('login-submit').addEventListener('click', ()=> {
+  const name = (document.getElementById('login-email').value || 'Gopika R Nair').split('@')[0];
+  loginSimulate(name);
+});
+document.getElementById('create-submit').addEventListener('click', ()=> {
+  // very light validation:
+  const p1 = document.getElementById('create-pass').value;
+  const p2 = document.getElementById('create-pass2').value;
+  if(p1 !== p2){ document.getElementById('login-msg').textContent = 'Passwords do not match.'; return; }
+  const name = document.getElementById('create-name').value || 'New User';
+  document.getElementById('login-msg').textContent = 'Account created (demo). Logging in...';
+  setTimeout(()=> loginSimulate(name), 700);
+});
+function loginSimulate(name){
+  // replace auth area with profile compact
+  const auth = document.getElementById('auth-area');
+  auth.innerHTML = '';
+  const wrap = document.createElement('div'); wrap.className='profile-compact';
+  wrap.innerHTML = `<div style="text-align:right"><div class="small">Welcome,</div><div class="name">${escapeHtml(name)}</div></div><img alt="profile" src="https://i.pravatar.cc/48?u=${encodeURIComponent(name)}">`;
+  wrap.addEventListener('click', ()=> alert('Profile menu not implemented in demo.'));
+  auth.appendChild(wrap);
+  modalLogin.style.display='none';
+  modalLogin.setAttribute('aria-hidden','true');
+}
+
+/* --- Settings --- */
+const modalSettings = document.getElementById('modal-settings');
+document.getElementById('settings-open').addEventListener('click', ()=> { modalSettings.style.display='flex'; modalSettings.setAttribute('aria-hidden','false') });
+document.getElementById('close-settings').addEventListener('click', ()=> { modalSettings.style.display='none'; modalSettings.setAttribute('aria-hidden','true') });
+document.getElementById('save-settings').addEventListener('click', ()=>{
+  const fontSize = document.getElementById('font-size').value;
+  const fontFamily = document.getElementById('font-family').value;
+  const theme = document.getElementById('theme-select').value;
+  document.body.style.fontSize = fontSize;
+  document.body.style.fontFamily = fontFamily;
+  document.body.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+  modalSettings.style.display='none';
+  modalSettings.setAttribute('aria-hidden','true');
+});
+
+/* --- Publication loading: try to fetch publications_pmc.csv --- */
+const pubListEl = document.getElementById('pub-list');
+const samplePubs = [
+  {title:'Microgravity effects on Arabidopsis growth', authors:'A. Patel, L. Wong', year:'2024', source:'OSDR / Journal of Plant Research', summary:'Study of root and shoot development under microgravity conditions.'},
+  {title:'Space microbiome dynamics aboard ISS', authors:'R. Singh, M. Chen', year:'2023', source:'Journal of Astrobiology', summary:'Longitudinal survey of microbial communities on ISS surfaces and crew.'},
+  {title:'Cellular response to cosmic radiation', authors:'D. Alvarez', year:'2022', source:'BioSpace Journal', summary:'DNA damage and repair pathways in mammalian cells exposed to simulated space radiation.'}
+];
+function renderPubs(pubs){ pubListEl.innerHTML=''; pubs.forEach(p=>{
+  const d = document.createElement('div'); d.className='pub-item';
+  d.innerHTML = `<div class="pub-title">${escapeHtml(p.title)}</div><div class="meta">${escapeHtml(p.authors)} • ${escapeHtml(p.year)} • ${escapeHtml(p.source)}</div><div class="small" style="margin-top:6px">${escapeHtml(p.summary)}</div>`;
+  pubListEl.appendChild(d);
+}); }
+renderPubs(samplePubs);
+
+// attempt to load /publications_pmc.csv relative path (works if you uploaded to same repo)
+fetch('./publications_pmc.csv').then(r=>{
+  if(!r.ok) throw new Error('no csv');
+  return r.text();
+}).then(txt=>{
+  // simple CSV parse (header assumed: title,authors,year,source,summary)
+  const rows = txt.trim().split(/\r?\n/).filter(Boolean);
+  const header = rows.shift().split(',');
+  const idx = (name)=> header.indexOf(name);
+  const pubs = rows.map(r=>{
+    const cols = r.split(',');
+    return { title: cols[idx('title')] || cols[0], authors: cols[idx('authors')] || cols[1] || '', year: cols[idx('year')] || '', source: cols[idx('source')] || '', summary: cols[idx('summary')] || '' };
+  });
+  if(pubs.length) renderPubs(pubs);
+}).catch(()=>{/* keep samplePubs if csv not present */});
+
+/* --- Q/A sample population (placeholder from NASA-like sources) --- */
+const qaListEl = document.getElementById('qa-list');
+const sampleQA = [
+  {q:'How do microbes behave in microgravity?', a:'Microbes can exhibit altered growth, biofilm formation, and gene expression in microgravity. Studies show species-specific responses and potential implications for crew health.'},
+  {q:'What happens to plant roots in space?', a:'Without gravity as a primary cue, roots may show altered growth orientation. Plants rely on light and moisture cues; experiments study root tropisms in microgravity.'},
+  {q:'How does cosmic radiation affect cells?', a:'High-energy particles cause DNA damage, oxidative stress, and can alter cell signaling. Research focuses on repair mechanisms and shielding approaches.'}
+];
+function renderQA(list){
+  qaListEl.innerHTML=''; list.forEach(item=>{
+    const el = document.createElement('div'); el.className='qa-item';
+    el.innerHTML = `<div class="q">${escapeHtml(item.q)}</div><div class="a">${escapeHtml(item.a)}</div>`;
+    qaListEl.appendChild(el);
+  });
+}
+renderQA(sampleQA);
+
+/* --- Submit publication demo --- */
+document.getElementById('sub-submit').addEventListener('click', ()=>{
+  const t = document.getElementById('sub-title').value.trim();
+  const a = document.getElementById('sub-authors').value.trim();
+  const s = document.getElementById('sub-abstract').value.trim();
+  if(!t){ document.getElementById('sub-feedback').textContent='Please provide a title.'; return; }
+  // append to top of pub list as a demo
+  samplePubs.unshift({title:t,authors:a||'Unknown',year:(new Date()).getFullYear(),source:'User submission (demo)',summary:s||'No abstract provided.'});
+  renderPubs(samplePubs);
+  document.getElementById('sub-feedback').textContent = 'Submitted (demo) — publication added to list locally.';
+  document.getElementById('sub-title').value=''; document.getElementById('sub-authors').value=''; document.getElementById('sub-abstract').value='';
+});
+document.getElementById('sub-clear').addEventListener('click', ()=> { document.getElementById('sub-title').value=''; document.getElementById('sub-authors').value=''; document.getElementById('sub-abstract').value=''; document.getElementById('sub-feedback').textContent=''; });
+
+/* --- Search publications (simple) --- */
+document.getElementById('search-btn').addEventListener('click', ()=>{
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  if(!q){ renderPubs(samplePubs); return; }
+  const filtered = samplePubs.filter(p=> (p.title+p.authors+p.summary).toLowerCase().includes(q) );
+  renderPubs(filtered);
+});
+
+/* --- small helpers & click outside to close modals --- */
+function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* close modals when clicking backdrop */
+document.querySelectorAll('.modal-backdrop').forEach(back=>{
+  back.addEventListener('click', (e)=> {
+    if(e.target === back){ back.style.display='none'; back.setAttribute('aria-hidden','true'); }
+  });
+});
+
+/* close chat if click outside (optional) */
+document.addEventListener('keydown', e => { if(e.key === 'Escape'){ document.querySelectorAll('.modal-backdrop').forEach(b=>b.style.display='none'); chatWindow.style.display='none'; } });
+
+/* ensure pages default to home on load */
+window.addEventListener('load', ()=> { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('home').classList.add('active'); });
+
+</script>
 </body>
 </html>
-
