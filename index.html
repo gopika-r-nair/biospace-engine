@@ -1,87 +1,79 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>BioSpace Engine</title>
-<style>
-  :root {
-    --accent: #4CAF50;
-    --bg: #ffffff;
-    --card: #fbfbfb;
-    --text: #111;
-    --muted: #6b6b6b;
-  }
-  [data-theme="dark"]{
-    --bg:#0f1113; --card:#121315; --text:#e8e8e8; --muted:#9aa0a6;
-  }
-  html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
-  /* top bar */
-  .topbar{position:sticky;top:0;z-index:1200;display:flex;align-items:center;padding:10px 18px;background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);border-bottom:1px solid rgba(0,0,0,0.04)}
-  .brand{font-weight:700;margin-right:16px}
-  nav.nav-left{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-  .nav-item{position:relative}
-  .nav-link{display:inline-block;padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:600;font-size:14px}
-  .nav-link:hover{background:rgba(0,0,0,0.04)}
-  .dropdown{position:absolute;top:calc(100% + 10px);left:0;min-width:240px;background:var(--card);box-shadow:0 12px 30px rgba(0,0,0,0.08);border-radius:10px;padding:10px;display:none}
-  .nav-item:hover .dropdown{display:block}
-  .dropdown a{display:block;padding:8px;border-radius:6px;text-decoration:none;color:var(--text)}
-  .dropdown a:hover{background:rgba(0,0,0,0.03)}
-  .top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-  .icon-btn{padding:8px;border-radius:8px;border:0;background:transparent;cursor:pointer}
-  .btn{padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:white;font-weight:600;cursor:pointer}
-  .btn.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--text)}
-  /* profile compact */
-  .profile-compact{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:10px;cursor:pointer}
-  .profile-compact img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)}
-  .profile-compact .name{font-size:13px;line-height:1}
-  .profile-compact .small{font-size:12px;color:var(--muted)}
-  /* layout */
-  .container{max-width:1200px;margin:20px auto;padding:0 16px}
-  .grid{display:grid;grid-template-columns:1fr 340px;gap:20px}
-  @media (max-width:980px){.grid{grid-template-columns:1fr;padding-bottom:80px}}
-  .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.04)}
-  h1,h2{margin:0 0 12px 0}
-  p{margin:0 0 10px 0;color:var(--muted)}
-  /* pages */
-  .page{display:none}
-  .page.active{display:block}
-  /* publications */
-  .pub-item{padding:10px;border-radius:8px;margin-bottom:10px;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)}
-  .pub-title{font-weight:700}
-  .meta{font-size:13px;color:var(--muted)}
-  /* announcements */
-  .announcement{padding:10px;border-left:4px solid var(--accent);margin-bottom:10px}
-  /* qa */
-  .qa-item{margin-bottom:12px}
-  .q{font-weight:700}
-  .a{color:var(--muted);margin-top:6px}
-  /* simulations */
-  .sim-card{padding:12px;border-radius:8px;margin-bottom:10px;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)}
-  /* modal */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:1400}
-  .modal{background:var(--card);padding:18px;border-radius:10px;width:94%;max-width:480px;box-shadow:0 14px 40px rgba(0,0,0,0.4)}
-  .form-row{margin-bottom:10px}
-  .form-row input,.form-row select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent;color:var(--text)}
-  .small{font-size:13px;color:var(--muted)}
-  /* chatbot */
-  .chat-toggle{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;box-shadow:0 12px 36px rgba(0,0,0,0.25);z-index:1500}
-  .chat-window{position:fixed;right:18px;bottom:84px;width:340px;height:440px;border-radius:12px;background:var(--card);box-shadow:0 18px 40px rgba(0,0,0,0.25);display:none;flex-direction:column;overflow:hidden;z-index:1500}
-  .chat-header{padding:10px 12px;background:linear-gradient(90deg,var(--accent),#2e8b3a);color:#fff;display:flex;justify-content:space-between;align-items:center}
-  .chat-body{padding:12px;flex:1;overflow:auto}
-  .chat-input{display:flex;padding:10px;border-top:1px solid rgba(0,0,0,0.06);gap:8px}
-  .chat-input input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
-  .msg{padding:8px 10px;border-radius:10px;margin-bottom:8px;max-width:78%}
-  .msg.bot{background:#efefef;color:#111}
-  .msg.user{background:var(--accent);color:#fff;margin-left:auto}
-  footer{padding:18px;text-align:center;color:var(--muted);font-size:13px;margin-top:24px}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EXBIO PORTAL</title>
+  <style>
+    :root{--accent:#4CAF50;--bg:#ffffff;--card:#fbfbfb;--text:#111;--muted:#6b6b6b}
+    [data-theme="dark"]{--bg:#0f1113;--card:#121315;--text:#e8e8e8;--muted:#9aa0a6}
+    html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    /* Top bar */
+    .topbar{position:sticky;top:0;z-index:1200;display:flex;align-items:center;padding:10px 18px;background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);border-bottom:1px solid rgba(0,0,0,0.04)}
+    .brand{font-weight:800;margin-right:16px;font-size:18px}
+    nav.nav-left{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .nav-item{position:relative}
+    .nav-link{display:inline-block;padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:600;font-size:14px}
+    .nav-link:hover{background:rgba(0,0,0,0.04)}
+    .dropdown{position:absolute;top:calc(100% + 10px);left:0;min-width:260px;background:var(--card);box-shadow:0 12px 30px rgba(0,0,0,0.08);border-radius:10px;padding:10px;display:none}
+    .nav-item:hover .dropdown{display:block}
+    .dropdown a{display:block;padding:8px;border-radius:6px;text-decoration:none;color:var(--text)}
+    .dropdown a:hover{background:rgba(0,0,0,0.03)}
+    .top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+    .icon-btn{padding:8px;border-radius:8px;border:0;background:transparent;cursor:pointer}
+    .btn{padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:white;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--text)}
+    /* profile compact */
+    .profile-compact{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:10px;cursor:pointer}
+    .profile-compact img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)}
+    .profile-compact .name{font-size:13px;line-height:1}
+    .profile-compact .small{font-size:12px;color:var(--muted)}
+    /* layout */
+    .container{max-width:1200px;margin:20px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:1fr 340px;gap:20px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr;padding-bottom:120px}}
+    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.04)}
+    h1,h2{margin:0 0 12px 0}
+    p{margin:0 0 10px 0;color:var(--muted)}
+    /* pages */
+    .page{display:none}
+    .page.active{display:block}
+    /* publications */
+    .pub-item{padding:10px;border-radius:8px;margin-bottom:10px;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)}
+    .pub-title{font-weight:700}
+    .meta{font-size:13px;color:var(--muted)}
+    /* announcements */
+    .announcement{padding:10px;border-left:4px solid var(--accent);margin-bottom:10px}
+    /* qa */
+    .qa-item{margin-bottom:12px}
+    .q{font-weight:700}
+    .a{color:var(--muted);margin-top:6px}
+    /* simulations */
+    .sim-card{padding:12px;border-radius:8px;margin-bottom:10px;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)}
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:1400}
+    .modal{background:var(--card);padding:18px;border-radius:10px;width:94%;max-width:520px;box-shadow:0 14px 40px rgba(0,0,0,0.4)}
+    .form-row{margin-bottom:10px}
+    .form-row input,.form-row select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent;color:var(--text)}
+    .small{font-size:13px;color:var(--muted)}
+    /* chatbot */
+    .chat-toggle{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;box-shadow:0 12px 36px rgba(0,0,0,0.25);z-index:1500}
+    .chat-window{position:fixed;right:18px;bottom:84px;width:360px;height:460px;border-radius:12px;background:var(--card);box-shadow:0 18px 40px rgba(0,0,0,0.25);display:none;flex-direction:column;overflow:hidden;z-index:1500}
+    .chat-header{padding:10px 12px;background:linear-gradient(90deg,var(--accent),#2e8b3a);color:#fff;display:flex;justify-content:space-between;align-items:center}
+    .chat-body{padding:12px;flex:1;overflow:auto}
+    .chat-input{display:flex;padding:10px;border-top:1px solid rgba(0,0,0,0.06);gap:8px}
+    .chat-input input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
+    .msg{padding:8px 10px;border-radius:10px;margin-bottom:8px;max-width:78%}
+    .msg.bot{background:#efefef;color:#111}
+    .msg.user{background:var(--accent);color:#fff;margin-left:auto}
+    footer{padding:18px;text-align:center;color:var(--muted);font-size:13px;margin-top:24px}
+  </style>
 </head>
 <body data-theme="light">
 
   <!-- topbar -->
   <div class="topbar" role="navigation" aria-label="Top Navigation">
-    <div class="brand">BioSpace Engine</div>
+    <div class="brand">EXBIO PORTAL</div>
 
     <nav class="nav-left" aria-label="Main Links">
       <div class="nav-item"><a class="nav-link" href="#" data-page="home">About Us</a></div>
@@ -130,23 +122,14 @@
 
         <!-- Home -->
         <section id="home" class="page active card" aria-labelledby="home-heading">
-          <h1 id="home-heading">About BioSpace Engine</h1>
-          <p>BioSpace Engine aggregates summaries, publications, datasets and resources related to biology in space — experiments aboard the ISS, ground-analogs, and mission planning for lunar and Martian bioscience.</p>
+          <h1 id="home-heading">About EXBIO PORTAL</h1>
+          <p>EXBIO PORTAL aggregates summaries, publications, datasets and resources related to biology in space — experiments aboard the ISS, ground-analogs, and mission planning for lunar and Martian bioscience.</p>
 
           <h2 style="margin-top:14px">Portal highlights</h2>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px">
-            <div style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfb)">
-              <strong>OSDR experiments</strong>
-              <div class="small">Summaries and datasets from NASA's Open Science Data Repository for biological experiments in space.</div>
-            </div>
-            <div style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfb)">
-              <strong>Space Life Sciences Library</strong>
-              <div class="small">Consolidated literature and references supporting space life sciences research.</div>
-            </div>
-            <div style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfb)">
-              <strong>Simulations & Tools</strong>
-              <div class="small">Descriptions of available simulation tools for plant growth, microbe behavior, radiation effects and more.</div>
-            </div>
+            <div style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfb)"><strong>OSDR experiments</strong><div class="small">Summaries and datasets from NASA's Open Science Data Repository for biological experiments in space.</div></div>
+            <div style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfb)"><strong>Space Life Sciences Library</strong><div class="small">Consolidated literature and references supporting space life sciences research.</div></div>
+            <div style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfb)"><strong>Simulations & Tools</strong><div class="small">Descriptions of available simulation tools for plant growth, microbe behavior, radiation effects and more.</div></div>
           </div>
         </section>
 
@@ -175,14 +158,8 @@
           <h2>Announcements</h2>
           <p class="small">Latest portal announcements & community news.</p>
           <div style="margin-top:12px">
-            <div class="announcement">
-              <strong>NASA Space Biology Challenge 2025</strong>
-              <div class="small">Call for abstracts and student participation — deadline: Dec 10, 2025 (placeholder).</div>
-            </div>
-            <div class="announcement">
-              <strong>New OSDR experiment dataset added</strong>
-              <div class="small">Dataset: Plant growth under partial gravity analog — sample summary available.</div>
-            </div>
+            <div class="announcement"><strong>NASA Space Biology Challenge 2025</strong><div class="small">Call for abstracts and student participation — deadline: Dec 10, 2025 (placeholder).</div></div>
+            <div class="announcement"><strong>New OSDR experiment dataset added</strong><div class="small">Dataset: Plant growth under partial gravity analog — sample summary available.</div></div>
           </div>
         </section>
 
@@ -198,14 +175,8 @@
           <h2>Simulations</h2>
           <p class="small">Descriptions of simulation tools and experiment types used to model biology in space.</p>
           <div style="margin-top:12px">
-            <div class="sim-card">
-              <strong>Plant growth microgravity simulation</strong>
-              <div class="small">Simulate root orientation, nutrient flow, and water behavior for plants in microgravity conditions.</div>
-            </div>
-            <div class="sim-card">
-              <strong>Radiation exposure model</strong>
-              <div class="small">Model cellular radiation damage and shielding effects for orbital and deep-space missions.</div>
-            </div>
+            <div class="sim-card"><strong>Plant growth microgravity simulation</strong><div class="small">Simulate root orientation, nutrient flow, and water behavior for plants in microgravity conditions.</div></div>
+            <div class="sim-card"><strong>Radiation exposure model</strong><div class="small">Model cellular radiation damage and shielding effects for orbital and deep-space missions.</div></div>
           </div>
         </section>
 
@@ -223,27 +194,21 @@
         <section id="life-at-nasa" class="page card">
           <h2>Life at NASA</h2>
           <p class="small">Profiles and experiences: astronaut lab workflows, experimental procedures aboard the ISS, and training for biological investigations.</p>
-          <div style="margin-top:12px">
-            <div class="small">Astronauts follow strict protocols to collect biological samples — sample preparation, contamination control, and cold-chain storage are critical.</div>
-          </div>
+          <div style="margin-top:12px"><div class="small">Astronauts follow strict protocols to collect biological samples — sample preparation, contamination control, and cold-chain storage are critical.</div></div>
         </section>
 
         <!-- Future of Biospace -->
         <section id="future-of-biospace" class="page card">
           <h2>Future of Biospace Studies</h2>
           <p class="small">Overview of planned missions and research directions: lunar habitats, Mars life support testing, synthetic biology in space.</p>
-          <div style="margin-top:12px">
-            <div class="small">Research priorities include closed-loop life support, radiation protection, and long-duration physiology monitoring.</div>
-          </div>
+          <div style="margin-top:12px"><div class="small">Research priorities include closed-loop life support, radiation protection, and long-duration physiology monitoring.</div></div>
         </section>
 
         <!-- News -->
         <section id="news" class="page card">
           <h2>News</h2>
           <p class="small">Notable items and press — placeholder content for demo.</p>
-          <div style="margin-top:12px">
-            <div class="announcement"><strong>Artemis biology payloads announced</strong><div class="small">Payload selection for upcoming lunar missions includes plant and microbial studies.</div></div>
-          </div>
+          <div style="margin-top:12px"><div class="announcement"><strong>Artemis biology payloads announced</strong><div class="small">Payload selection for upcoming lunar missions includes plant and microbial studies.</div></div></div>
         </section>
 
       </div>
@@ -252,50 +217,25 @@
       <aside>
         <div class="card">
           <h3>Search Publications</h3>
-          <div style="margin-top:10px">
-            <input id="search-input" placeholder="Search title/author" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)">
-          </div>
-          <div style="margin-top:12px">
-            <button id="search-btn" class="btn">Search</button>
-          </div>
+          <div style="margin-top:10px"><input id="search-input" placeholder="Search title/author" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)"></div>
+          <div style="margin-top:12px"><button id="search-btn" class="btn">Search</button></div>
         </div>
 
-        <div class="card" style="margin-top:16px">
-          <h3>Featured Dataset</h3>
-          <p class="small">Plant growth in microgravity — dataset summary from OSDR (placeholder). Use OSDR to fetch real dataset records.</p>
-        </div>
+        <div class="card" style="margin-top:16px"><h3>Featured Dataset</h3><p class="small">Plant growth in microgravity — dataset summary from OSDR (placeholder). Use OSDR to fetch real dataset records.</p></div>
 
-        <div class="card" style="margin-top:16px">
-          <h3>Quick Links</h3>
-          <ul style="padding-left:16px;margin:8px 0;color:var(--muted)">
-            <li>NASA OSDR</li>
-            <li>NSLSL</li>
-            <li>NASA Task Book</li>
-          </ul>
-        </div>
+        <div class="card" style="margin-top:16px"><h3>Quick Links</h3><ul style="padding-left:16px;margin:8px 0;color:var(--muted)"><li>NASA OSDR</li><li>NSLSL</li><li>NASA Task Book</li></ul></div>
       </aside>
     </div>
 
-    <footer>BioSpace Engine — demo portal • All content here is placeholder / demo text</footer>
+    <footer>EXBIO PORTAL — demo portal • All content here is placeholder / demo text</footer>
   </main>
 
   <!-- chat -->
   <div id="chat-toggle" class="chat-toggle" title="Open chat">💬</div>
   <div id="chat-window" class="chat-window" role="dialog" aria-hidden="true">
-    <div class="chat-header">
-      <div>Bio Assistant</div>
-      <div style="display:flex;gap:8px">
-        <button id="chat-min" class="icon-btn" title="Minimize" style="color:rgba(255,255,255,0.95);background:transparent;border:0">—</button>
-        <button id="chat-close" class="icon-btn" title="Close" style="color:rgba(255,255,255,0.95);background:transparent;border:0">✕</button>
-      </div>
-    </div>
-    <div id="chat-body" class="chat-body">
-      <div class="msg bot">Hi — ask me about publications or resources (demo).</div>
-    </div>
-    <div class="chat-input">
-      <input id="chat-input" placeholder="Type a question..." />
-      <button id="chat-send" class="btn">Send</button>
-    </div>
+    <div class="chat-header"><div>EXBIO Assistant</div><div style="display:flex;gap:8px"><button id="chat-min" class="icon-btn" title="Minimize" style="color:rgba(255,255,255,0.95);background:transparent;border:0">—</button><button id="chat-close" class="icon-btn" title="Close" style="color:rgba(255,255,255,0.95);background:transparent;border:0">✕</button></div></div>
+    <div id="chat-body" class="chat-body"><div class="msg bot">Hi — ask me about publications or resources (demo).</div></div>
+    <div class="chat-input"><input id="chat-input" placeholder="Type a question..." /><button id="chat-send" class="btn">Send</button></div>
   </div>
 
   <!-- login modal -->
@@ -324,215 +264,78 @@
   <div id="modal-settings" class="modal-backdrop" aria-hidden="true">
     <div class="modal" role="dialog" aria-labelledby="settings-heading">
       <h3 id="settings-heading">Settings</h3>
-      <div class="form-row">
-        <label class="small">Font Size</label>
-        <select id="font-size">
-          <option value="14px">Small</option>
-          <option value="16px" selected>Normal</option>
-          <option value="18px">Large</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label class="small">Font Family</label>
-        <select id="font-family">
-          <option value="Inter, Arial, Helvetica, sans-serif" selected>Inter / Arial</option>
-          <option value="'Times New Roman', serif">Times New Roman</option>
-          <option value="'Courier New', monospace">Courier New</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label class="small">Theme</label>
-        <select id="theme-select">
-          <option value="light" selected>Light</option>
-          <option value="dark">Dark</option>
-        </select>
-      </div>
+      <div class="form-row"><label class="small">Font Size</label><select id="font-size"><option value="14px">Small</option><option value="16px" selected>Normal</option><option value="18px">Large</option></select></div>
+      <div class="form-row"><label class="small">Font Family</label><select id="font-family"><option value="Inter, Arial, Helvetica, sans-serif" selected>Inter / Arial</option><option value="'Times New Roman', serif">Times New Roman</option><option value="'Courier New', monospace">Courier New</option></select></div>
+      <div class="form-row"><label class="small">Theme</label><select id="theme-select"><option value="light" selected>Light</option><option value="dark">Dark</option></select></div>
       <div style="display:flex;gap:8px;margin-top:8px"><button id="save-settings" class="btn">Apply</button><button id="close-settings" class="btn ghost">Close</button></div>
     </div>
   </div>
 
-<script>
-/* --- Navigation behavior --- */
-document.querySelectorAll('.nav-link[data-page], .dropdown a[data-page]').forEach(el=>{
-  el.addEventListener('click', (e)=>{
-    e.preventDefault();
-    const page = el.dataset.page;
-    if(!page) return;
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    const target = document.getElementById(page);
-    if(target) target.classList.add('active');
-    // update nav active
-    document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
-    el.classList.add('active');
-    // scroll to top
-    window.scrollTo({top:0,behavior:'smooth'});
+  <script>
+  // Navigation
+  document.querySelectorAll('.nav-link[data-page], .dropdown a[data-page]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      e.preventDefault(); const page = el.dataset.page; if(!page) return;
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      const target = document.getElementById(page); if(target) target.classList.add('active');
+      document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+      el.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'});
+    });
   });
-});
 
-/* --- Chat widget --- */
-const chatToggle = document.getElementById('chat-toggle');
-const chatWindow = document.getElementById('chat-window');
-const chatBody = document.getElementById('chat-body');
-chatToggle.addEventListener('click', ()=> {
-  chatWindow.style.display = (chatWindow.style.display === 'flex') ? 'none' : 'flex';
-  chatWindow.style.flexDirection = 'column';
-  chatWindow.setAttribute('aria-hidden', chatWindow.style.display === 'none');
-});
-document.getElementById('chat-close').addEventListener('click', ()=> { chatWindow.style.display='none' });
-document.getElementById('chat-min').addEventListener('click', ()=> { chatWindow.style.display='none' });
+  // Chat
+  const chatToggle = document.getElementById('chat-toggle');
+  const chatWindow = document.getElementById('chat-window');
+  const chatBody = document.getElementById('chat-body');
+  chatToggle.addEventListener('click', ()=>{ chatWindow.style.display = (chatWindow.style.display === 'flex') ? 'none' : 'flex'; chatWindow.style.flexDirection='column'; chatWindow.setAttribute('aria-hidden', chatWindow.style.display === 'none'); });
+  document.getElementById('chat-close').addEventListener('click', ()=>{ chatWindow.style.display='none' });
+  document.getElementById('chat-min').addEventListener('click', ()=>{ chatWindow.style.display='none' });
+  function appendChat(text, who='bot'){ const d = document.createElement('div'); d.className='msg ' + (who==='bot' ? 'bot' : 'user'); d.textContent=text; chatBody.appendChild(d); chatBody.scrollTop = chatBody.scrollHeight; }
+  document.getElementById('chat-send').addEventListener('click', ()=>{ const input = document.getElementById('chat-input'); const text = input.value.trim(); if(!text) return; appendChat(text,'user'); input.value=''; setTimeout(()=> appendChat('EXBIO Assistant: This is a demo reply. Check Publications or Activities for details.'),600); });
 
-function appendChat(text, who='bot'){
-  const d = document.createElement('div');
-  d.className = 'msg ' + (who==='bot' ? 'bot' : 'user');
-  d.textContent = text;
-  chatBody.appendChild(d);
-  chatBody.scrollTop = chatBody.scrollHeight;
-}
-document.getElementById('chat-send').addEventListener('click', ()=>{
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if(!text) return;
-  appendChat(text,'user');
-  input.value='';
-  // simulated response:
-  setTimeout(()=> appendChat('Demo assistant: This is a placeholder reply. Try asking about publications or Q/A.'), 600);
-});
+  // Login/Create
+  const modalLogin = document.getElementById('modal-login');
+  document.getElementById('login-open').addEventListener('click', ()=>{ modalLogin.style.display='flex'; modalLogin.setAttribute('aria-hidden','false') });
+  document.getElementById('open-create').addEventListener('click', ()=>{ document.getElementById('login-form').style.display='none'; document.getElementById('create-form').style.display='block'; });
+  document.getElementById('back-login').addEventListener('click', ()=>{ document.getElementById('login-form').style.display='block'; document.getElementById('create-form').style.display='none'; });
+  document.getElementById('login-submit').addEventListener('click', ()=>{ const name = (document.getElementById('login-email').value || 'Gopika R Nair').split('@')[0]; loginSimulate(name); });
+  document.getElementById('create-submit').addEventListener('click', ()=>{ const p1=document.getElementById('create-pass').value; const p2=document.getElementById('create-pass2').value; if(p1!==p2){ document.getElementById('login-msg').textContent='Passwords do not match.'; return; } const name=document.getElementById('create-name').value||'New User'; document.getElementById('login-msg').textContent='Account created (demo). Logging in...'; setTimeout(()=> loginSimulate(name),700); });
+  function loginSimulate(name){ const auth = document.getElementById('auth-area'); auth.innerHTML=''; const wrap=document.createElement('div'); wrap.className='profile-compact'; const imgSrc='/mnt/data/8557cac8-18cc-4a4c-bd58-aee24a96f456.png'; wrap.innerHTML=`<div style="text-align:right"><div class="small">Welcome,</div><div class="name">${escapeHtml(name)}</div></div><img alt="profile" src="${imgSrc}">`;
+    wrap.addEventListener('click', ()=> alert('Profile menu not implemented in demo.'));
+    auth.appendChild(wrap);
+    modalLogin.style.display='none'; modalLogin.setAttribute('aria-hidden','true'); }
 
-/* --- Login / Create Account --- */
-const modalLogin = document.getElementById('modal-login');
-document.getElementById('login-open').addEventListener('click', ()=> { modalLogin.style.display='flex'; modalLogin.setAttribute('aria-hidden','false') });
-document.getElementById('open-create').addEventListener('click', ()=> {
-  document.getElementById('login-form').style.display='none';
-  document.getElementById('create-form').style.display='block';
-});
-document.getElementById('back-login').addEventListener('click', ()=> {
-  document.getElementById('login-form').style.display='block';
-  document.getElementById('create-form').style.display='none';
-});
-document.getElementById('login-submit').addEventListener('click', ()=> {
-  const name = (document.getElementById('login-email').value || 'Gopika R Nair').split('@')[0];
-  loginSimulate(name);
-});
-document.getElementById('create-submit').addEventListener('click', ()=> {
-  // very light validation:
-  const p1 = document.getElementById('create-pass').value;
-  const p2 = document.getElementById('create-pass2').value;
-  if(p1 !== p2){ document.getElementById('login-msg').textContent = 'Passwords do not match.'; return; }
-  const name = document.getElementById('create-name').value || 'New User';
-  document.getElementById('login-msg').textContent = 'Account created (demo). Logging in...';
-  setTimeout(()=> loginSimulate(name), 700);
-});
-function loginSimulate(name){
-  // replace auth area with profile compact
-  const auth = document.getElementById('auth-area');
-  auth.innerHTML = '';
-  const wrap = document.createElement('div'); wrap.className='profile-compact';
-  wrap.innerHTML = `<div style="text-align:right"><div class="small">Welcome,</div><div class="name">${escapeHtml(name)}</div></div><img alt="profile" src="https://i.pravatar.cc/48?u=${encodeURIComponent(name)}">`;
-  wrap.addEventListener('click', ()=> alert('Profile menu not implemented in demo.'));
-  auth.appendChild(wrap);
-  modalLogin.style.display='none';
-  modalLogin.setAttribute('aria-hidden','true');
-}
+  // Settings
+  const modalSettings = document.getElementById('modal-settings');
+  document.getElementById('settings-open').addEventListener('click', ()=>{ modalSettings.style.display='flex'; modalSettings.setAttribute('aria-hidden','false') });
+  document.getElementById('close-settings').addEventListener('click', ()=>{ modalSettings.style.display='none'; modalSettings.setAttribute('aria-hidden','true') });
+  document.getElementById('save-settings').addEventListener('click', ()=>{ const fontSize=document.getElementById('font-size').value; const fontFamily=document.getElementById('font-family').value; const theme=document.getElementById('theme-select').value; document.body.style.fontSize=fontSize; document.body.style.fontFamily=fontFamily; document.body.setAttribute('data-theme', theme==='dark'?'dark':'light'); modalSettings.style.display='none'; modalSettings.setAttribute('aria-hidden','true'); });
 
-/* --- Settings --- */
-const modalSettings = document.getElementById('modal-settings');
-document.getElementById('settings-open').addEventListener('click', ()=> { modalSettings.style.display='flex'; modalSettings.setAttribute('aria-hidden','false') });
-document.getElementById('close-settings').addEventListener('click', ()=> { modalSettings.style.display='none'; modalSettings.setAttribute('aria-hidden','true') });
-document.getElementById('save-settings').addEventListener('click', ()=>{
-  const fontSize = document.getElementById('font-size').value;
-  const fontFamily = document.getElementById('font-family').value;
-  const theme = document.getElementById('theme-select').value;
-  document.body.style.fontSize = fontSize;
-  document.body.style.fontFamily = fontFamily;
-  document.body.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
-  modalSettings.style.display='none';
-  modalSettings.setAttribute('aria-hidden','true');
-});
-
-/* --- Publication loading: try to fetch publications_pmc.csv --- */
-const pubListEl = document.getElementById('pub-list');
-const samplePubs = [
-  {title:'Microgravity effects on Arabidopsis growth', authors:'A. Patel, L. Wong', year:'2024', source:'OSDR / Journal of Plant Research', summary:'Study of root and shoot development under microgravity conditions.'},
-  {title:'Space microbiome dynamics aboard ISS', authors:'R. Singh, M. Chen', year:'2023', source:'Journal of Astrobiology', summary:'Longitudinal survey of microbial communities on ISS surfaces and crew.'},
-  {title:'Cellular response to cosmic radiation', authors:'D. Alvarez', year:'2022', source:'BioSpace Journal', summary:'DNA damage and repair pathways in mammalian cells exposed to simulated space radiation.'}
-];
-function renderPubs(pubs){ pubListEl.innerHTML=''; pubs.forEach(p=>{
-  const d = document.createElement('div'); d.className='pub-item';
-  d.innerHTML = `<div class="pub-title">${escapeHtml(p.title)}</div><div class="meta">${escapeHtml(p.authors)} • ${escapeHtml(p.year)} • ${escapeHtml(p.source)}</div><div class="small" style="margin-top:6px">${escapeHtml(p.summary)}</div>`;
-  pubListEl.appendChild(d);
-}); }
-renderPubs(samplePubs);
-
-// attempt to load /publications_pmc.csv relative path (works if you uploaded to same repo)
-fetch('./publications_pmc.csv').then(r=>{
-  if(!r.ok) throw new Error('no csv');
-  return r.text();
-}).then(txt=>{
-  // simple CSV parse (header assumed: title,authors,year,source,summary)
-  const rows = txt.trim().split(/\r?\n/).filter(Boolean);
-  const header = rows.shift().split(',');
-  const idx = (name)=> header.indexOf(name);
-  const pubs = rows.map(r=>{
-    const cols = r.split(',');
-    return { title: cols[idx('title')] || cols[0], authors: cols[idx('authors')] || cols[1] || '', year: cols[idx('year')] || '', source: cols[idx('source')] || '', summary: cols[idx('summary')] || '' };
-  });
-  if(pubs.length) renderPubs(pubs);
-}).catch(()=>{/* keep samplePubs if csv not present */});
-
-/* --- Q/A sample population (placeholder from NASA-like sources) --- */
-const qaListEl = document.getElementById('qa-list');
-const sampleQA = [
-  {q:'How do microbes behave in microgravity?', a:'Microbes can exhibit altered growth, biofilm formation, and gene expression in microgravity. Studies show species-specific responses and potential implications for crew health.'},
-  {q:'What happens to plant roots in space?', a:'Without gravity as a primary cue, roots may show altered growth orientation. Plants rely on light and moisture cues; experiments study root tropisms in microgravity.'},
-  {q:'How does cosmic radiation affect cells?', a:'High-energy particles cause DNA damage, oxidative stress, and can alter cell signaling. Research focuses on repair mechanisms and shielding approaches.'}
-];
-function renderQA(list){
-  qaListEl.innerHTML=''; list.forEach(item=>{
-    const el = document.createElement('div'); el.className='qa-item';
-    el.innerHTML = `<div class="q">${escapeHtml(item.q)}</div><div class="a">${escapeHtml(item.a)}</div>`;
-    qaListEl.appendChild(el);
-  });
-}
-renderQA(sampleQA);
-
-/* --- Submit publication demo --- */
-document.getElementById('sub-submit').addEventListener('click', ()=>{
-  const t = document.getElementById('sub-title').value.trim();
-  const a = document.getElementById('sub-authors').value.trim();
-  const s = document.getElementById('sub-abstract').value.trim();
-  if(!t){ document.getElementById('sub-feedback').textContent='Please provide a title.'; return; }
-  // append to top of pub list as a demo
-  samplePubs.unshift({title:t,authors:a||'Unknown',year:(new Date()).getFullYear(),source:'User submission (demo)',summary:s||'No abstract provided.'});
+  // Publications: sample data + attempt to load CSV
+  const pubListEl = document.getElementById('pub-list');
+  const samplePubs=[{title:'Microgravity effects on Arabidopsis growth',authors:'A. Patel, L. Wong',year:'2024',source:'OSDR / Journal of Plant Research',summary:'Study of root and shoot development under microgravity conditions.'},{title:'Space microbiome dynamics aboard ISS',authors:'R. Singh, M. Chen',year:'2023',source:'Journal of Astrobiology',summary:'Longitudinal survey of microbial communities on ISS surfaces and crew.'},{title:'Cellular response to cosmic radiation',authors:'D. Alvarez',year:'2022',source:'BioSpace Journal',summary:'DNA damage and repair pathways in mammalian cells exposed to simulated space radiation.'},{title:'Circadian rhythm shifts in spaceflight',authors:'S. Lopez',year:'2021',source:'Space Physiology',summary:'Effects of altered light-dark cycles on mammalian circadian regulation during long-duration missions.'},{title:'Biofilm formation in microgravity',authors:'K. Ahmed',year:'2020',source:'Microbiology Today',summary:'Investigating adhesion and biofilm robustness of Pseudomonas under low-shear conditions.'}];
+  function renderPubs(pubs){ pubListEl.innerHTML=''; pubs.forEach(p=>{ const d=document.createElement('div'); d.className='pub-item'; d.innerHTML=`<div class="pub-title">${escapeHtml(p.title)}</div><div class="meta">${escapeHtml(p.authors)} • ${escapeHtml(p.year)} • ${escapeHtml(p.source)}</div><div class="small" style="margin-top:6px">${escapeHtml(p.summary)}</div>`; pubListEl.appendChild(d); }); }
   renderPubs(samplePubs);
-  document.getElementById('sub-feedback').textContent = 'Submitted (demo) — publication added to list locally.';
-  document.getElementById('sub-title').value=''; document.getElementById('sub-authors').value=''; document.getElementById('sub-abstract').value='';
-});
-document.getElementById('sub-clear').addEventListener('click', ()=> { document.getElementById('sub-title').value=''; document.getElementById('sub-authors').value=''; document.getElementById('sub-abstract').value=''; document.getElementById('sub-feedback').textContent=''; });
+  fetch('./publications_pmc.csv').then(r=>{ if(!r.ok) throw new Error('no csv'); return r.text(); }).then(txt=>{ const rows=txt.trim().split(/\r?\n/).filter(Boolean); const header=rows.shift().split(','); const idx=(name)=>header.indexOf(name); const pubs=rows.map(r=>{ const cols=r.split(','); return{ title:cols[idx('title')]||cols[0], authors:cols[idx('authors')]||cols[1]||'', year:cols[idx('year')]||'', source:cols[idx('source')]||'', summary:cols[idx('summary')]||'' }; }); if(pubs.length) renderPubs(pubs); }).catch(()=>{/* keep sample */});
 
-/* --- Search publications (simple) --- */
-document.getElementById('search-btn').addEventListener('click', ()=>{
-  const q = document.getElementById('search-input').value.trim().toLowerCase();
-  if(!q){ renderPubs(samplePubs); return; }
-  const filtered = samplePubs.filter(p=> (p.title+p.authors+p.summary).toLowerCase().includes(q) );
-  renderPubs(filtered);
-});
+  // Q/A
+  const qaListEl=document.getElementById('qa-list');
+  const sampleQA=[{q:'How do microbes behave in microgravity?',a:'Microbes can exhibit altered growth, biofilm formation, and gene expression in microgravity. Studies show species-specific responses and potential implications for crew health.'},{q:'What happens to plant roots in space?',a:'Without gravity as a primary cue, roots may show altered growth orientation. Plants rely on light and moisture cues; experiments study root tropisms in microgravity.'},{q:'How does cosmic radiation affect cells?',a:'High-energy particles cause DNA damage, oxidative stress, and can alter cell signaling. Research focuses on repair mechanisms and shielding.'},{q:'Can we grow food on Moon or Mars?',a:'Research explores regolith conditioning, closed-loop water systems, and crop selection; controlled environment agriculture and hydroponics are promising approaches (placeholder).'}];
+  function renderQA(list){ qaListEl.innerHTML=''; list.forEach(item=>{ const el=document.createElement('div'); el.className='qa-item'; el.innerHTML=`<div class="q">${escapeHtml(item.q)}</div><div class="a">${escapeHtml(item.a)}</div>`; qaListEl.appendChild(el); }); }
+  renderQA(sampleQA);
 
-/* --- small helpers & click outside to close modals --- */
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  // Submit publication demo
+  document.getElementById('sub-submit').addEventListener('click', ()=>{ const t=document.getElementById('sub-title').value.trim(); const a=document.getElementById('sub-authors').value.trim(); const s=document.getElementById('sub-abstract').value.trim(); if(!t){ document.getElementById('sub-feedback').textContent='Please provide a title.'; return; } samplePubs.unshift({title:t,authors:a||'Unknown',year:(new Date()).getFullYear(),source:'User submission (demo)',summary:s||'No abstract provided.'}); renderPubs(samplePubs); document.getElementById('sub-feedback').textContent='Submitted (demo) — publication added to list locally.'; document.getElementById('sub-title').value=''; document.getElementById('sub-authors').value=''; document.getElementById('sub-abstract').value=''; });
+  document.getElementById('sub-clear').addEventListener('click', ()=>{ document.getElementById('sub-title').value=''; document.getElementById('sub-authors').value=''; document.getElementById('sub-abstract').value=''; document.getElementById('sub-feedback').textContent=''; });
 
-/* close modals when clicking backdrop */
-document.querySelectorAll('.modal-backdrop').forEach(back=>{
-  back.addEventListener('click', (e)=> {
-    if(e.target === back){ back.style.display='none'; back.setAttribute('aria-hidden','true'); }
-  });
-});
+  // Search
+  document.getElementById('search-btn').addEventListener('click', ()=>{ const q=document.getElementById('search-input').value.trim().toLowerCase(); if(!q){ renderPubs(samplePubs); return; } const filtered=samplePubs.filter(p=> (p.title+p.authors+p.summary).toLowerCase().includes(q) ); renderPubs(filtered); });
 
-/* close chat if click outside (optional) */
-document.addEventListener('keydown', e => { if(e.key === 'Escape'){ document.querySelectorAll('.modal-backdrop').forEach(b=>b.style.display='none'); chatWindow.style.display='none'; } });
-
-/* ensure pages default to home on load */
-window.addEventListener('load', ()=> { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('home').classList.add('active'); });
-
-</script>
+  // helpers & modal backdrop close
+  function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  document.querySelectorAll('.modal-backdrop').forEach(back=>{ back.addEventListener('click', (e)=>{ if(e.target===back){ back.style.display='none'; back.setAttribute('aria-hidden','true'); } }); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ document.querySelectorAll('.modal-backdrop').forEach(b=>b.style.display='none'); chatWindow.style.display='none'; } });
+  window.addEventListener('load', ()=>{ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('home').classList.add('active'); });
+  </script>
 </body>
 </html>
